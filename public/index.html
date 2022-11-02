@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Teldoo POS</title>
+  <link rel="stylesheet" href="css/tailwind.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+  <script src="js/airtable/build/airtable.browser.js"></script>
+  <script src="js/localdb.js"></script>
+  <script src="js/moment.min.js"></script>
+  <script src="js/moment-with-locales.js"></script>
+  <script src="https://ucarecdn.com/libs/widget/3.x/uploadcare.full.min.js"></script>
+  <script src="js/script.js"></script>
+  <script src="js/alpine.min.js"></script>
+</head>
+<body class="bg-blue-gray-50" x-data="initApp()"  x-init="loadProducts()">
+  <!-- noprint-area -->
+  <div class="hide-print flex flex-row h-screen antialiased text-blue-gray-900">
+    <!-- page content -->
+    <div class="flex-grow flex">
+      <!-- store menu -->
+      <div class="flex flex-col bg-blue-gray-200 h-full w-full">
+
+        <div class="flex flex-row relative px-2 py-2 bg-blue-gray-900">
+          <input type="text" class="shadow text-lg full w-full h-10 py-2 px-2 transition-shadow focus:shadow-2xl focus:outline-none" placeholder="Recherche" x-model="keyword" />
+          <button class="px-2 py-2 bg-green-400 text-white ml-3" x-on:click="addProductModal = true">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="white" viewBox="0 0 24 24">
+              <path d="M24 10h-10v-10h-4v10h-10v4h10v10h4v-10h10z" />
+            </svg>
+          </button>
+          <button class="px-2 py-2 bg-green-400 text-white ml-3">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="white" viewBox="0 0 24 24">
+              <path d="M11.499 12.03v11.971l-10.5-5.603v-11.835l10.5 5.467zm11.501 6.368l-10.501 5.602v-11.968l10.501-5.404v11.77zm-16.889-15.186l10.609 5.524-4.719 2.428-10.473-5.453 4.583-2.499zm16.362 2.563l-4.664 2.4-10.641-5.54 4.831-2.635 10.474 5.775z" />
+            </svg>
+          </button>
+          <button class="px-2 py-2 bg-green-400 text-white ml-3">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="white" viewBox="0 0 24 24">
+              <path d="M18.799 7.038c-.496-.535-.799-1.252-.799-2.038 0-1.656 1.344-3 3-3s3 1.344 3 3-1.344 3-3 3c-.146 0-.29-.01-.431-.031l-3.333 6.032c.475.53.764 1.231.764 1.999 0 1.656-1.344 3-3 3s-3-1.344-3-3c0-.583.167-1.127.455-1.587l-2.565-3.547c-.281.087-.58.134-.89.134l-.368-.022-3.355 6.069c.451.525.723 1.208.723 1.953 0 1.656-1.344 3-3 3s-3-1.344-3-3 1.344-3 3-3c.186 0 .367.017.543.049l3.298-5.967c-.52-.539-.841-1.273-.841-2.082 0-1.656 1.344-3 3-3s3 1.344 3 3c0 .617-.187 1.191-.507 1.669l2.527 3.495c.307-.106.637-.164.98-.164.164 0 .325.013.482.039l3.317-6.001zm-3.799 7.962c.552 0 1 .448 1 1s-.448 1-1 1-1-.448-1-1 .448-1 1-1zm-6-8c.552 0 1 .448 1 1s-.448 1-1 1-1-.448-1-1 .448-1 1-1z" />
+            </svg>
+          </button>
+        </div>
+
+        <div class="h-full overflow-hidden pt-2">
+          <div class="h-full overflow-y-auto px-2">
+            <div class="select-none flex flex-wrap content-center justify-center h-full opacity-25" x-show="products.length === 0" >
+              <div class="w-full text-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-24 w-24 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
+                </svg>
+                <p class="text-xl">
+                  PAS DE PRODUIT TROUVER
+                </p>
+              </div>
+            </div>
+            <div class="select-none flex flex-wrap content-center justify-center h-full opacity-25" x-show="filteredProducts().length === 0 && keyword.length > 0"  >
+              <div class="w-full text-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-24 w-24 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                <p class="text-xl">
+                  AUCUN RESULTAT POUR 
+                  <br/>
+                  "<span x-text="keyword" class="font-semibold"></span>"
+                </p>
+              </div>
+            </div>
+            <div x-show="filteredProducts().length" class="grid grid-cols-5 gap-2 pb-1">
+              <template x-for="product in filteredProducts()" :key="product.ID">
+                <div
+                  role="button"
+                  class="select-none cursor-pointer transition-shadow overflow-hidden bg-white shadow hover:shadow-lg"
+                  :title="product.name"
+                  x-on:click="addToCart(product)"
+                >
+                  <img :src="product.image" :alt="product.name" class="h-2/3 border-b">
+                  <div class="py-2 px-2">
+                    <p class="flex-grow truncate mr-1 text-xs" x-text="product.name"></p>
+                    <p class="nowrap font-semibold text-sm" x-text="priceFormat(product.price)"></p>
+                  </div>
+                </div>
+              </template>
+            </div>
+          </div>
+        </div>   
+      </div>
+      <!-- end of store menu -->
+
+      <!-- PANIER -->
+      <div class="w-1/2 flex flex-col h-full bg-white shadow">
+        <!-- cart items -->
+        <div class="h-16 text-center flex justify-center border-b mb-3">
+          <div class="pl-8 text-left text-lg py-4 relative">
+            <!-- cart icon -->
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+            </svg>
+            <div x-show="getItemsCount() > 0" class="text-center absolute bg-red-600 text-white w-5 h-5 text-xs p-0 leading-5  -right-2 top-3" x-text="getItemsCount()"></div>
+          </div>
+          <div class="flex-grow px-8 text-right text-lg py-4 relative">
+            <!-- trash button -->
+            <button x-on:click="clear()" class="text-blue-gray-300 hover:text-pink-500 focus:outline-none">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div class="flex-1 flex flex-col overflow-auto">
+
+          <div x-show="cart.length === 0" class="flex-1 w-full p-4 opacity-25 select-none flex flex-col flex-wrap content-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-16 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+            </svg>
+            <p>PANIER VIDE</p>
+          </div>
+
+          <div class="flex-1 w-full px-2 overflow-auto">
+            <template x-for="item in cart" :key="item.productId">
+              <div class="select-none w-full text-blue-gray-700 flex justify-center py-1 px-1 shadow mb-2">
+                <img :src="item.image" alt="" class="h-10 w-10 bg-white mr-1">
+                <div class="flex-grow">
+                  <h5 class="text-xs text-blue-gray-900" x-text="item.name"></h5>
+                  <p class="text-sm block text-blue-gray-900" x-text="priceFormat(item.price)"></p>
+                </div>
+                <div class="py-1">
+                  <div class="w-20 grid grid-cols-3">
+                    <button x-on:click="addQty(item, -1)" class="text-center py-1 text-white bg-blue-gray-900">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-3 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
+                      </svg>
+                    </button>
+                    <input x-model.number="item.qty" type="text" class="bg-blue-gray-50 text-center focus:outline-none focus:shadow-lg text-sm">
+                    <button x-on:click="addQty(item, 1)" class="text-center py-1 text-white bg-blue-gray-900">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-3 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </template>
+          </div>
+        </div>
+
+        <div class="text-center bg-red-600 py-2 px-2 leading-3 w-full h-17">
+          <div class="text-xs text-white">TOTAL</div>
+          <div class="w-full text-lg font-bold text-white -mt-1" x-text="priceFormat(getTotalPrice())"></div>
+        </div>
+      </div>
+
+      <!-- right sidebar -->
+      <div class="w-1/2 flex flex-col h-full bg-white shadow">
+        <div class="bg-white flex flex-col h-full p-2 overflow-auto">
+          <div class="text-sm font-bold"><span x-text="getVentesCount()"></span> Ventes - T: <span x-text="priceFormat(getVentesTotal())"></span></div>
+          <hr class="my-2">
+          <div class="flex flex-col overflow-auto">
+            <template x-for="(item, index) in ventes" :key="item.ID">
+              <div class="shadow bg-blue-gray-50 flex flex-row py-1 px-1 mb-2">
+                <div class="mr-2 pr-2 border-r border-black">
+                  <p class="text-center text-xl font-bold" x-text="item.Produits.length"></p>
+                  <p class="text-center text-xs">Produits</p>
+                </div>
+                <div>
+                  <div>T: <span class="text-left text-sm font-semibold" x-text="priceFormat(item.Total)"></span></div>
+                  <p class="text-left text-xs tracking-tighter" x-text="item.Date"></p>
+                </div>
+              </div>
+            </template>
+          </div>
+        </div>
+        <!-- payment info -->
+        <div class="text-blue-gray-700 px-3 py-2 h-auto w-full text-center bg-blue-gray-900">
+          <input placeholder="CASH" x-bind:value="numberFormat(cash)" x-on:keyup="updateCash($event.target.value)" type="text" class="text-right text-blue-gray-900 bg-blue-gray-50 focus:shadow-lg px-2 focus:outline-none w-full font-semibold h-10">
+          <hr class="my-2">
+          <div class="grid grid-cols-3 gap-1 pb-1">
+            <button x-on:click="addCashNumber('1')" class="h-10 leading-10 bg-blue-gray-800 text-green-200 shadow hover:shadow-lg hover:bg-blue-gray-50 hover:text-blue-gray-900 focus:outline-none">1</button>
+            <button x-on:click="addCashNumber('2')" class="h-10 leading-10 bg-blue-gray-800 text-green-200 shadow hover:shadow-lg hover:bg-blue-gray-50 hover:text-blue-gray-900 focus:outline-none">2</button>
+            <button x-on:click="addCashNumber('3')" class="h-10 leading-10 bg-blue-gray-800 text-green-200 shadow hover:shadow-lg hover:bg-blue-gray-50 hover:text-blue-gray-900 focus:outline-none">3</button>
+            <button x-on:click="addCashNumber('4')" class="h-10 leading-10 bg-blue-gray-800 text-green-200 shadow hover:shadow-lg hover:bg-blue-gray-50 hover:text-blue-gray-900 focus:outline-none">4</button>
+            <button x-on:click="addCashNumber('5')" class="h-10 leading-10 bg-blue-gray-800 text-green-200 shadow hover:shadow-lg hover:bg-blue-gray-50 hover:text-blue-gray-900 focus:outline-none">5</button>
+            <button x-on:click="addCashNumber('6')" class="h-10 leading-10 bg-blue-gray-800 text-green-200 shadow hover:shadow-lg hover:bg-blue-gray-50 hover:text-blue-gray-900 focus:outline-none">6</button>
+            <button x-on:click="addCashNumber('7')" class="h-10 leading-10 bg-blue-gray-800 text-green-200 shadow hover:shadow-lg hover:bg-blue-gray-50 hover:text-blue-gray-900 focus:outline-none">7</button>
+            <button x-on:click="addCashNumber('8')" class="h-10 leading-10 bg-blue-gray-800 text-green-200 shadow hover:shadow-lg hover:bg-blue-gray-50 hover:text-blue-gray-900 focus:outline-none">8</button>
+            <button x-on:click="addCashNumber('9')" class="h-10 leading-10 bg-blue-gray-800 text-green-200 shadow hover:shadow-lg hover:bg-blue-gray-50 hover:text-blue-gray-900 focus:outline-none">9</button>
+            <button x-on:click="clearCashNumber()" class="h-10 leading-10 bg-red-400 text-blue-gray-900 shadow hover:shadow-lg focus:outline-none">EFF</button>
+            <button x-on:click="addCashNumber('0')" class="h-10 leading-10 bg-blue-gray-800 text-green-200 shadow hover:shadow-lg hover:bg-blue-gray-50 hover:text-blue-gray-900 focus:outline-none">0</button>
+            <button x-on:click="deleteCashNumber()" class="h-10 leading-10 bg-yellow-400 text-blue-gray-900 shadow hover:shadow-lg focus:outline-none">SUP</button>
+          </div>
+          <hr class="my-2">
+          <div class="w-full bg-red-200 py-2 px-2 h-12">
+            <div class="text-blue-gray-900 text-xs">MONNAIE</div>
+            <div  x-show="change > 0" class="text-center">
+              <div class="text-blue-gray-900 text-lg font-semibold -mt-1" x-text="priceFormat(change)"></div>
+            </div>
+            <div x-show="change == 0 && cart.length > 0" class="flex justify-center text-lg font-semibold text-cyan-700">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" />
+              </svg>
+            </div>
+          </div>
+          <hr class="my-2">
+        </div>
+        <button class="h-32 text-white text-center font-bold w-full py-3 focus:outline-none" x-bind:class="{ 'bg-green-400': submitable(), 'bg-blue-gray-100': !submitable() }" :disabled="!submitable()" x-on:click="submit()">
+          CONFIRMER
+        </button>
+      </div>
+      <!-- end of right sidebar -->
+    </div>
+
+    <!-- modal add product -->
+    <template x-if="addProductModal">
+    <div class="fixed glass w-full h-screen left-0 top-0 z-10 flex flex-wrap justify-center content-center p-24" x-transition:enter="transition ease-out duration-100"  x-transition:enter-start="opacity-0 transform scale-90" x-transition:enter-end="opacity-100 transform scale-100"  x-transition:leave="transition ease-in duration-100" x-transition:leave-start="opacity-100 transform scale-100" x-transition:leave-end="opacity-0 transform scale-90">
+      <div class="w-96 p-8 bg-white shadow-xl relative">
+        <button class="absolute right-3 top-3" x-on:click="addProductModal = false"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M23 20.168l-8.185-8.187 8.185-8.174-2.832-2.807-8.182 8.179-8.176-8.179-2.81 2.81 8.186 8.196-8.186 8.184 2.81 2.81 8.203-8.192 8.18 8.192z"/></svg></button>
+        <div class="text-center  mb-8">
+          <h3 class="text-center text-2xl">Ajouter un produit</h3>
+          <p id="addProductAlert" class="text-red-500 text-xs"></p>
+        </div>
+        <div class="gap-2 mb-2">
+          <label>Nom du produit</label>
+          <input id="productName" placeholder="Entrer le nom du produit" type="text" class="mb-2 text-left text-blue-gray-900 bg-blue-gray-50 focus:shadow-lg px-2 focus:outline-none w-full font-semibold h-10">
+          <label>Prix du produit</label>
+          <input id="productPrice" placeholder="Entrer le prix" type="number" class="mb-2 text-left text-blue-gray-900 bg-blue-gray-50 focus:shadow-lg px-2 focus:outline-none w-full font-semibold h-10">
+          <label>Quantité & Unité</label>
+          <div class="flex flex-row gap-2 mb-2">
+            <input id="productQte" placeholder="Entrer la quantité" type="number" class="text-left text-blue-gray-900 bg-blue-gray-50 focus:shadow-lg px-2 focus:outline-none w-full font-semibold h-10">
+            <select id="productUnt" class="text-left text-blue-gray-900 bg-blue-gray-50 focus:shadow-lg px-2 focus:outline-none w-full font-semibold h-10">
+              <option value="" disabled>Entrer l'unité</option>
+              <option>unité</option>
+              <option>Carton</option>
+              <option>Paquet</option>
+              <option>Pack</option>
+              <option>Bouteille</option>
+              <option>Sac</option>
+              <option>Kg</option>
+            </select>
+          </div>
+          <label>Selectionner une image</label>
+          <input id="productImage" type="hidden" role="uploadcare-uploader" data-public-key="0a289eddc452b02f7a8e" data-tabs="file camera" value="" data-crop="1:1"/>
+        </div>
+        <div class="text-left">
+          <button x-on:click="addProduct()" class="text-left w-full mb-3 bg-blue-gray-500 text-white focus:outline-none hover:bg-cyan-400 px-4 py-4">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 inline-block -mt-1 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 4H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-2m-4-1v8m0 0l3-3m-3 3L9 8m-5 5h2.586a1 1 0 01.707.293l2.414 2.414a1 1 0 00.707.293h3.172a1 1 0 00.707-.293l2.414-2.414a1 1 0 01.707-.293H20" />
+            </svg>
+            ENREGISTRER
+          </button>
+        </div>
+      </div>
+    </div>
+    </template>
+
+    <template x-if="firstTime">
+    <div class="fixed glass w-full h-screen left-0 top-0 z-10 flex flex-wrap justify-center content-center p-24">
+      <div class="w-96 p-8 bg-white shadow-xl">
+        <div class="text-center w-full">
+          <svg version="1.1" class="w-2/3 ml-auto mr-auto" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+              viewBox="0 0 937.9 285.8" enable-background="new 0 0 937.9 285.8" xml:space="preserve">
+          <path fill-rule="evenodd" clip-rule="evenodd" fill="#FF0000" d="M776.8,84.5c0-7.7,3.3-14.3,10-19.7c6.6-5.4,15.9-8.1,27.9-8.1
+            c10.6,0,21.1,2,31.5,6.1c10,3.9,20.1,9.5,30.2,16.8v-45c-4.9-2.5-10-4.8-15.2-6.7c-13.6-5-28.9-7.5-45.9-7.5
+            c-11.5,0-22.1,1.6-31.8,4.8c-9.7,3.2-18,7.8-24.9,13.8c-6.9,6-12.3,13.1-16.3,21.4c-3.9,8.3-5.9,17.5-5.9,27.7
+            c0,10.8,1.7,20,5.1,27.5c3.4,7.5,8.5,13.9,15,19.2c6.5,5.3,14.6,9.7,24.3,13.3c9.7,3.5,20.7,6.7,33.1,9.6
+            c10.8,2.7,19.6,5.2,26.4,7.6c6.7,2.4,12,5,16,7.8c3.9,2.8,6.5,5.8,8,9.1c1.4,3.3,2.2,7.1,2.2,11.3c0,9.1-3.7,16.2-11.1,21.6
+            c-7.4,5.3-17.4,8-30,8c-17.5,0-31.4-3.2-46.7-11.2c-10.7-5.6-35.9-22.1-50.2-55.6c-11.6-27.1-7.5-46.9-24-74.7
+            c-19.9-33.7-56.6-56.3-98.6-56.3c-46.9,0-87.1,28.2-104.9,68.5C473.5,50.6,441,23.8,390.4,23.8h-91.5V256h40.5v-74.6h46.2
+            c12.9,0,24.9-1.7,36.3-5.1c11.3-3.4,21.1-8.5,29.6-15.1c2.6-2.1,5-4.3,7.3-6.6c-6.4-17.5-14.6-30.4-23-39.9c-2,7.3-6,13.5-12,18.5
+            c-9,7.7-21.2,11.5-36.8,11.5h-47.6V60.7h47.6c40,0,72.9,33.2,89.8,66.8c12,22.7,17.4,47,28.3,67c19.4,35.7,57.2,59.9,100.7,59.9
+            c32.5,0,61.9-13.6,82.8-35.4c-6.9-9.3-14.5-21.1-20.9-35c-13.8,19.3-36.3,31.8-61.8,31.8c-32.6,0-60.3-20.5-71.1-49.3
+            c-1.3-3.5-2.5-7.5-3.2-11.1c-1-5-1.6-10.2-1.6-15.5c0-41.9,34-75.9,75.9-75.9c32.3,0,59.9,20.2,70.8,48.6
+            c5.5,14.2,4.7,28.5,9.4,43.6c6.7,21.4,18,38.7,27.2,50.2c4.7,5.8,9.7,10.9,14.6,15.4l-0.3,0.4c13.9,12.6,29.1,21.9,45.4,28
+            c16.4,6.1,33.5,9.1,51.4,9.1c12.2,0,23.3-1.6,33.5-4.6c10.1-3.1,18.9-7.6,26-13.6c7.2-6,12.9-13.3,17-21.9c4-8.6,6.1-18.5,6.1-29.5
+            c0-9.7-1.6-18.2-4.8-25.4c-3.2-7.2-8-13.5-14.1-18.9c-6.2-5.4-14-10-23.4-13.8c-9.4-3.8-20.2-7.2-32.4-10.3
+            c-11.1-2.7-20.2-5.2-27.5-7.6c-7.2-2.4-12.8-5.1-17-8c-4.1-2.9-6.9-6-8.5-9.3C777.6,93.2,776.8,89.2,776.8,84.5z"/>
+          <rect x="34.8" y="25.1" fill="#FF0000" width="231.7" height="231.7"/>
+          <g id="Layer_1_1_" display="none">
+            <path display="inline" fill="#FFFFFF" d="M671.8-93.3V75.4c0,46-37.3,83.2-83.2,83.2c0,0,0,0,0,0h-12.9c-46,0-83.2-37.2-83.3-83.2
+              c0,0,0,0,0,0V-93.3c0-46,37.3-83.3,83.3-83.3h13C634.6-176.4,671.8-139.2,671.8-93.3z M641.9,36.6v-91.5
+              c0-33.6-27.2-60.8-60.8-60.8s-60.8,27.2-60.8,60.8l0,0v91.5C523.7,117,638.6,117,641.9,36.6z"/>
+          </g>
+          <g id="Layer_1_2_">
+            
+              <image overflow="visible" opacity="0.14" enable-background="new    " width="71" height="71" xlink:href="data:image/png;base64,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
+          gAEA0/ZSAZIxij8AAAAASUVORK5CYII=" transform="matrix(0.905 0 0 0.905 168.468 185.7385)">
+            </image>
+            <path fill="#FFFFFF" d="M203.5,209.9l8.5-2.2c-0.1-0.2-0.2-0.6-0.3-1c0,0-0.3-0.8-0.5-1.5c-0.5-1.2-1.2-2.4-1.9-3.5
+              c-1.1-1.5-2.4-2.9-3.9-4c-5.5-4.5-13.2-5.2-19.4-1.7c-3,1.6-5.4,3.9-7.1,6.8c-1.4,2.4-2.3,5.1-2.5,7.8c-0.8,9.9,6.6,18.6,16.5,19.4
+              c1.4,0.1,2.9,0.1,4.3-0.2c7.4-1.1,13.3-6.8,14.8-14.1l-8.4-2.1c-0.1,0.5-0.2,1-0.4,1.5c-0.4,1.3-1,2.6-1.8,3.7c-1.3,1.5-3,2.6-5,3
+              c-2,0.4-4,0.2-5.8-0.6c-1.5-0.7-2.8-1.8-3.7-3.2c-0.8-1.3-1.4-2.7-1.6-4.2c-0.4-1.9-0.2-4,0.5-5.8c1.3-3.6,4.6-6,8.4-6
+              c1.6,0,3.1,0.3,4.5,1C202.4,204.9,203.3,209.2,203.5,209.9z"/>
+            <path fill="#FFFFFF" d="M169.2,181.2v47.7l-8.7,0.1l0.1-3.6c-0.2,0.2-0.5,0.5-0.9,0.8c-1.1,0.9-2.3,1.7-3.6,2.4
+              c-1.5,0.7-3.1,1.2-4.7,1.3c-1.8,0.2-3.6,0-5.3-0.5c-1.3-0.3-2.5-0.7-3.7-1.4c-1.5-0.9-2.8-2-3.9-3.3c-1.2-1.2-2.2-2.6-3-4.1
+              c-0.9-1.8-1.6-3.8-1.8-5.8c-0.3-2.2-0.3-4.4,0.1-6.5c0.4-2.4,1.2-4.8,2.5-6.9c1.2-2,2.8-3.7,4.7-5c1.8-1.2,3.8-2.1,5.9-2.5
+              c3.4-0.7,6.9-0.1,10,1.5c1.4,0.7,2.6,1.6,3.8,2.7v-17L169.2,181.2z M151.7,201.5c-5.2,0-9.5,4.5-9.5,10.2c0,5.7,4.2,10.2,9.5,10.2
+              s9.5-4.5,9.5-10.2C161.1,206,156.9,201.5,151.7,201.5L151.7,201.5z"/>
+            <rect x="118.5" y="182.1" fill="#FFFFFF" width="8.8" height="47.8"/>
+            <polygon fill="#FFFFFF" points="73.1,182.1 47.4,182.1 47.4,192.1 55.4,192.1 55.4,229.9 64.6,229.9 64.6,192.1 73.1,192.2 	"/>
+            <path fill="#FFFFFF" d="M112.5,213.6H84.9c0.4,2.6,1.7,4.9,3.7,6.5c4.3,3.4,9.7,1.5,10.4,1.2c1.6-0.6,3-1.5,4.2-2.8l7.5,3.5
+              c-1.3,1.9-2.9,3.5-4.8,4.8c-3.4,2.2-7.4,3.2-11.5,2.9c-2-0.1-7.7-0.3-12.5-4.8c-5.4-5.2-5.4-12-5.4-13.6c-0.1-4.4,1.3-8.6,4.1-12.1
+              c5.1-6.2,12.7-6.3,13.9-6.3c9.8-0.2,18,7.5,18.2,17.3C112.7,211.5,112.7,212.6,112.5,213.6z M94.7,200.4c-4.1,0-7.8,2.6-9.3,6.4
+              h18.5C102.5,203,98.8,200.4,94.7,200.4L94.7,200.4z"/>
+            <path fill="#FFFFFF" d="M212.4,211.7c0,10-8.1,18.1-18.1,18.1c-10,0-18.1-8.1-18.1-18.1s8.1-18.1,18.1-18.1
+              C204.3,193.6,212.4,201.8,212.4,211.7z M194.3,202c-5.4,0-9.7,4.4-9.7,9.7c0,5.4,4.4,9.7,9.7,9.7c5.4,0,9.7-4.4,9.7-9.7
+              c0,0,0,0,0,0C204,206.4,199.7,202,194.3,202C194.3,202,194.3,202,194.3,202L194.3,202z"/>
+            <path fill="#FFFFFF" d="M254,211.8c0,10-8.1,18.1-18.1,18.1s-18.1-8.1-18.1-18.1c0-10,8.1-18.1,18.1-18.1S254,201.8,254,211.8z
+                M235.9,202.1c-5.4,0-9.7,4.3-9.7,9.7c0,5.4,4.3,9.7,9.7,9.7c5.4,0,9.7-4.3,9.7-9.7c0,0,0,0,0,0
+              C245.6,206.4,241.2,202.1,235.9,202.1C235.9,202.1,235.9,202.1,235.9,202.1L235.9,202.1z"/>
+          </g>
+          </svg>
+          <p class="text-center text-xs mb-8">teldoo.web.app<br>teldoogroup@gmail.com<br>78 010 89 62 - 76 773 89 62</p>
+        </div>
+        <input id="keyActivation" placeholder="Entrer votre clé" type="text" class="mb-5 text-left text-blue-gray-900 bg-blue-gray-50 focus:shadow-lg px-2 focus:outline-none w-full font-semibold h-10">
+        <div class="text-left">
+          <button x-on:click="syncData()" class="text-left w-full mb-3 bg-blue-gray-500 text-white focus:outline-none hover:bg-cyan-400 px-4 py-4">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 inline-block -mt-1 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 4H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-2m-4-1v8m0 0l3-3m-3 3L9 8m-5 5h2.586a1 1 0 01.707.293l2.414 2.414a1 1 0 00.707.293h3.172a1 1 0 00.707-.293l2.414-2.414a1 1 0 01.707-.293H20" />
+            </svg>
+            ACTIVER
+          </button>
+        </div>
+        <p class="text-xs">Si vous ne disposer pas de clé, veillez contacter le support.</p>
+      </div>
+      <p class="absolute bottom-5 text-white font-bold">© Teldoo Group</p>
+    </div>
+    </template>
+
+    <template x-if="isShowModalReceipt">
+    <div class="fixed w-full h-screen left-0 top-0 z-10 flex flex-wrap justify-center content-center" x-transition:enter="transition ease-out duration-100"  x-transition:enter-start="opacity-0 transform scale-90" x-transition:enter-end="opacity-100 transform scale-100"  x-transition:leave="transition ease-in duration-100" x-transition:leave-start="opacity-100 transform scale-100" x-transition:leave-end="opacity-0 transform scale-90">
+      <div class="fixed glass w-full h-screen left-0 top-0 z-0" x-on:click="isShowModalReceipt = false"></div>
+      <div class="w-2/4 bg-white shadow-xl h-screen overflow-hidden z-10">
+        <div id="receipt-content" class="text-left w-full text-sm p-8 overflow-auto bg-white h-screen">
+          <div class="">
+            <div class="text-center pb-2 bg-black text-white">
+              <h2 class="text-3xl font-bold">TOUBA DAROU SALAM ALIMENTATION GENERAL</h2>
+              <p class="text-xs mx-10">NINEA: 009040982 / RC: SNDBL 2021 A 4075 - Route de dande mayo, Ndouloumadji dembe</p>
+            </div>
+            <div class="flex mb-5 py-2 text-xs px-2">
+              <div class="flex-1 text-left"> 
+                <p class="text-sm"><strong>NIANG & FRERE</strong></p>
+                <p class="font-semibold">Mamoudou Niang</p>
+                <p>77 352 39 87 <br>76 158 42 12</p>
+              </div>
+              <div class="text-right">
+                <div class="text-4xl font-bold">FACTURE</div>
+                <p>
+                  <span>N° </span>
+                  <span x-text="receiptNo"></span>
+                </p>
+                <span x-text="receiptDate"></span>
+              </div>
+            </div>
+          </div>
+          <div class="text-xs text-left mb-3 -mt-3 border border-black pl-2 py-4 mx-2">Client:</div>
+          <div class="mx-2">
+            <table class="w-full text-xs border px-2">
+              <thead class="bg-black text-white px-2" >
+                <tr class="">
+                  <th class="py-1 px-2 border border-black w-1/12 text-center">#</th>
+                  <th class="py-1 px-2 border border-black text-left">Produits</th>
+                  <th class="py-1 px-2 border border-black text-left">Prix Unitaire</th>
+                  <th class="py-1 px-2 border border-black w-2/12 text-center">Qté</th>
+                  <th class="py-1 px-2 border border-black w-3/12 text-right">SousTotal</th>
+                </tr>
+              </thead>
+              <tbody>
+                <template x-for="(item, index) in cart" :key="item">
+                  <tr class="border">
+                    <td class="py-2 px-2 text-center border border-black" x-text="index+1"></td>
+                    <td class="py-2 px-2 text-left border border-black" x-text="item.name"></td>
+                    <td class="py-2 px-2 text-left border border-black" x-text="priceFormat(item.price)"></td>
+                    <td class="py-2 px-2 text-center border border-black" x-text="item.qty"></td>
+                    <td class="py-2 px-2 text-right border border-black" x-text="priceFormat(item.qty * item.price)"></td>
+                  </tr>
+                </template>
+              </tbody>
+            </table>
+          </div>
+          <div class="w-60 border text-left border-black mt-4 px-2 py-2 ml-auto mr-2 mb-3">
+            <div class="flex font-semibold">
+              <div class="flex-grow">TOTAL</div>
+              <div x-text="priceFormat(getTotalPrice())"></div>
+            </div>
+            <div class="flex text-xs font-semibold">
+              <div class="flex-grow">CASH</div>
+              <div x-text="priceFormat(cash)"></div>
+            </div>
+            <hr class="my-2">
+            <div class="flex text-xs font-semibold">
+              <div class="flex-grow">MONNAIE</div>
+              <div x-text="priceFormat(change)"></div>
+            </div>
+          </div>
+          <hr class="my-2">
+        </div>
+        <button class="bg-cyan-500 text-white text-lg px-4 py-3 w-full focus:outline-none" x-on:click="printAndProceed()">IMPRIMER</button>
+      </div>
+    </div>
+    </template>
+  </div>
+  <div id="print-area" class="print-area text-center text-xs"></div>
+</body>
+</html>
