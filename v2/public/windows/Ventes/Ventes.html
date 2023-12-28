@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ventes</title>
+  <link rel="stylesheet" href="../../css/tailwind.min.css">
+  <link rel="stylesheet" href="../../css/style.css">
+  <script src="../../js/moment.min.js"></script>
+  <script src="../../js/moment-with-locales.js"></script>
+  <script src="Ventes.js"></script>
+  <script src="../../js/alpine.min.js"></script>
+</head>
+<body class="bg-white p-4" x-data="init()" x-init="loadVentes()">
+    <div class="hide-print fixed bg-blue-gray-50 w-full h-full left-0 top-0 z-9 flex flex-wrap justify-center content-center">
+        <div class="w-full h-full z-10">
+    
+          <div class="h-full flex flex-col">
+            <div id="AppHeader" class="relative h-12 p-3 bg-white shadow">
+              <div class="text-xs flex font-bold flex-row relative z-1 h-full">
+                <button x-on:click="history.back()" class="rounded-md bg-red-400 text-white font-bold flex flex-row items-center pr-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="white" viewBox="0 0 24 24" class="px-2 h-full w-7"><path d="M16.67 0l2.83 2.829-9.339 9.175 9.339 9.167-2.83 2.829-12.17-11.996z"/></svg>
+                  Retour
+                </button>      
+                <input type="text" class="bg-blue-gray-50 rounded-md mx-10 w-full  px-2 transition-shadow focus:shadow-2xl focus:outline-none" placeholder="Recherche" x-model="searchKeyword" />
+                <div class="gap-3 flex">
+                  <div class="rounded-md bg-blue-gray-900 text-white py-1 px-2"><span x-text="ventes.length" class="mr-1"></span>Ventes</div>
+                </div>
+              </div>
+            </div>
+    
+            <div class="overflow-y-auto h-full m-3 flex  flex-row gap-2">
+              <div class="w-full">
+                <table class="w-full text-xs p-2 bg-white shadow rounded-xl overflow-hidden">
+                  <thead class="text-black p-2" >
+                    <tr class="">
+                      <th class="p-2 border text-center">N°</th>
+                      <th class="p-2 border text-center">Date</th>
+                      <th class="p-2 border text-center">Client</th>
+                      <th class="p-2 border text-center">N produit</th>
+                      <th class="p-2 border text-right">Total</th>
+                      <th class="p-2 border text-right">Accompte</th>
+                      <th class="p-2 border text-right">Net a payer</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <template x-show="searchVentes().length" x-for="vente in searchVentes()" :key="vente._id">
+                      <tr class="border border-black" role="button" x-on:click="factureView(vente)">
+                        <td class="p-2 text-center border" x-text="vente.No"></td>
+                        <td class="p-2 text-center border" x-text="vente.Date"></td>
+                        <td class="p-2 text-center border">
+                          <template x-if="vente.Client">
+                            <template x-for="client in vente.Client" :key="client.Nom">
+                              <div x-text="client.Prenom"></div>
+                            </template>
+                          </template>
+                        </td>
+                        <td class="p-2 text-center border" x-text="vente.Produits.length"></td>
+                        <td class="p-2 text-right border" x-text="priceFormat(vente.Total)"></td>
+                        <td class="p-2 text-right border" x-text="priceFormat(vente.Accompte)"></td>
+                        <td class="p-2 text-right border" x-text="priceFormat(vente.Netapayer)"></td>
+                      </tr>
+                    </template>
+                  </tbody>
+                </table>
+              </div>
+              <div class="w-2/4 flex flex-col justify-between h-full bg-white shadow rounded-md p-3 overflow-hidden">
+                <div id="receipt-content" class="text-black w-full h-full text-sm overflow-y-auto">
+                    <div class="flex-1 mb-3">
+                        <div class="text-center">
+                            <svg version="1.1" id="Calque_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"                         viewBox="0 0 595.3 79.5" style="enable-background:new 0 0 595.3 79.5;" xml:space="preserve">                     <style type="text/css">                         .st0{font-family:'ArialMT';}                         .st1{font-size:12.4241px;}                     </style>                     <text transform="matrix(1 0 0 1 39.6997 56.5675)"><tspan x="0" y="0" class="st0 st1">Route de dande mayo, Ndouloumadji dembe • NINEA: 009040982 / RC: SNDBL 2021 A 4075</tspan><tspan x="96.1" y="14.9" class="st0 st1">GERANT: Mamoudou Niang - 77 352 39 87 / 76 158 42 12</tspan></text>                     <g>                         <path d="M17.2,2.2v7.8h-4.1v31.4H6.1V10.1H2V2.2H17.2z"/>                         <path d="M34.6,25.2c0,3.9-0.1,6.7-0.2,8.4c-0.1,1.6-0.5,3.1-1.2,4.5c-0.7,1.4-1.6,2.4-2.7,3.1c-1.1,0.7-2.4,1.1-3.9,1.1                         c-1.4,0-2.7-0.3-3.8-1c-1.1-0.7-2-1.7-2.7-3.1c-0.7-1.4-1.1-2.9-1.2-4.5s-0.2-4.4-0.2-8.5v-6.7c0-3.9,0.1-6.7,0.2-8.4                         c0.1-1.6,0.5-3.1,1.2-4.5s1.6-2.4,2.7-3.1c1.1-0.7,2.4-1.1,3.9-1.1c1.4,0,2.7,0.3,3.8,1c1.1,0.7,2,1.7,2.7,3.1                         c0.7,1.4,1.1,2.9,1.2,4.5s0.2,4.4,0.2,8.5V25.2z M27.6,12.3c0-1.8-0.1-3-0.2-3.5c-0.1-0.5-0.4-0.8-0.8-0.8c-0.4,0-0.6,0.2-0.8,0.6                         c-0.2,0.4-0.3,1.6-0.3,3.6v18.3c0,2.3,0.1,3.7,0.2,4.2c0.1,0.5,0.4,0.8,0.9,0.8c0.5,0,0.8-0.3,0.9-0.9c0.1-0.6,0.2-2.1,0.2-4.4                         V12.3z"/>                         <path d="M52.9,2.2v26.2c0,3-0.1,5.1-0.2,6.3c-0.1,1.2-0.5,2.4-1.2,3.7c-0.6,1.3-1.5,2.2-2.6,2.9c-1.1,0.7-2.3,1-3.7,1                         c-1.6,0-3-0.4-4.2-1.2c-1.2-0.8-2.1-1.8-2.7-3c-0.6-1.2-1-2.6-1.1-3.9c-0.1-1.4-0.2-4.3-0.2-8.7V2.2H44v29.4c0,1.7,0.1,2.8,0.2,3.3                         c0.1,0.5,0.4,0.7,0.8,0.7c0.4,0,0.7-0.3,0.8-0.8c0.1-0.5,0.2-1.8,0.2-3.7V2.2H52.9z"/>                         <path d="M55.6,2.2h6.9c2.2,0,3.8,0.3,5,0.8c1.1,0.5,2,1.5,2.7,3c0.7,1.5,1,4,1,7.4c0,2.3-0.2,3.9-0.7,4.8c-0.5,0.9-1.4,1.6-2.9,2.1                         c1.6,0.5,2.7,1.4,3.3,2.7c0.6,1.2,0.9,3.1,0.9,5.7v3.6c0,2.6-0.2,4.6-0.6,5.9c-0.4,1.3-1.1,2.1-2,2.6c-0.9,0.5-2.7,0.7-5.5,0.7h-8                         V2.2z M62.5,9v8.7c0.3,0,0.5,0,0.7,0c0.7,0,1.1-0.2,1.3-0.7c0.2-0.5,0.3-1.9,0.3-4.2c0-1.2-0.1-2.1-0.2-2.6                         c-0.2-0.5-0.4-0.8-0.6-0.9C63.7,9,63.2,9,62.5,9z M62.5,23.8v11c1,0,1.6-0.3,1.9-0.7c0.3-0.4,0.4-1.4,0.4-3v-3.7                         c0-1.7-0.1-2.7-0.4-3.1C64.2,24,63.5,23.8,62.5,23.8z"/>                         <path d="M86.1,2.2l4,39.2H83l-0.4-7h-2.5l-0.4,7h-7.2l3.5-39.2H86.1z M82.5,27.5c-0.4-4.4-0.7-9.9-1.1-16.5                         c-0.7,7.5-1.1,13-1.3,16.5H82.5z"/>                         <path d="M97.2,2.2h5.2c3.3,0,5.6,0.2,6.8,0.7c1.2,0.5,2.1,1.2,2.7,2.2c0.6,1,1,2.2,1.2,3.5c0.2,1.3,0.2,3.8,0.2,7.5v13.7                         c0,3.5-0.1,5.9-0.3,7.1c-0.2,1.2-0.6,2.1-1.2,2.8c-0.6,0.7-1.2,1.1-2.1,1.4s-2.1,0.4-3.7,0.4h-8.7V2.2z M104.1,9v25.8                         c1,0,1.6-0.3,1.8-0.9c0.2-0.6,0.3-2.2,0.3-4.8V13.8c0-1.8,0-2.9-0.1-3.4c-0.1-0.5-0.3-0.9-0.5-1.1C105.4,9.1,104.9,9,104.1,9z"/>                         <path d="M127.8,2.2l4,39.2h-7.1l-0.4-7h-2.5l-0.4,7h-7.2l3.5-39.2H127.8z M124.1,27.5c-0.4-4.4-0.7-9.9-1.1-16.5                         c-0.7,7.5-1.1,13-1.3,16.5H124.1z"/>                         <path d="M132.9,2.2h4.9c3.3,0,5.5,0.2,6.6,0.6c1.2,0.4,2.1,1.3,2.8,2.8c0.7,1.5,1.1,4,1.1,7.3c0,3.1-0.3,5.1-0.8,6.1                         c-0.5,1-1.5,1.7-3,1.9c1.4,0.5,2.3,1.2,2.8,2c0.5,0.8,0.8,1.6,0.9,2.3c0.1,0.7,0.2,2.6,0.2,5.8v10.3h-6.4v-13                         c0-2.1-0.1-3.4-0.3-3.9c-0.2-0.5-0.8-0.8-1.8-0.8v17.7h-6.9V2.2z M139.8,9v8.7c0.8,0,1.3-0.2,1.6-0.5c0.3-0.3,0.5-1.3,0.5-3.1V12                         c0-1.2-0.2-2.1-0.5-2.4C141.2,9.1,140.6,9,139.8,9z"/>                         <path d="M166.9,25.2c0,3.9-0.1,6.7-0.2,8.4c-0.1,1.6-0.5,3.1-1.2,4.5c-0.7,1.4-1.6,2.4-2.7,3.1c-1.1,0.7-2.4,1.1-3.9,1.1                         c-1.4,0-2.7-0.3-3.8-1c-1.1-0.7-2-1.7-2.7-3.1s-1.1-2.9-1.2-4.5s-0.2-4.4-0.2-8.5v-6.7c0-3.9,0.1-6.7,0.2-8.4                         c0.1-1.6,0.5-3.1,1.2-4.5s1.6-2.4,2.7-3.1c1.1-0.7,2.4-1.1,3.9-1.1c1.4,0,2.7,0.3,3.8,1c1.1,0.7,2,1.7,2.7,3.1s1.1,2.9,1.2,4.5                         s0.2,4.4,0.2,8.5V25.2z M159.9,12.3c0-1.8-0.1-3-0.2-3.5c-0.1-0.5-0.4-0.8-0.8-0.8c-0.4,0-0.6,0.2-0.8,0.6                         c-0.2,0.4-0.3,1.6-0.3,3.6v18.3c0,2.3,0.1,3.7,0.2,4.2c0.1,0.5,0.4,0.8,0.9,0.8c0.5,0,0.8-0.3,0.9-0.9c0.1-0.6,0.2-2.1,0.2-4.4                         V12.3z"/>                         <path d="M185.2,2.2v26.2c0,3-0.1,5.1-0.2,6.3c-0.1,1.2-0.5,2.4-1.2,3.7c-0.6,1.3-1.5,2.2-2.6,2.9c-1.1,0.7-2.3,1-3.7,1                         c-1.6,0-3-0.4-4.2-1.2c-1.2-0.8-2.1-1.8-2.7-3c-0.6-1.2-1-2.6-1.1-3.9c-0.1-1.4-0.2-4.3-0.2-8.7V2.2h6.9v29.4                         c0,1.7,0.1,2.8,0.2,3.3c0.1,0.5,0.4,0.7,0.8,0.7c0.4,0,0.7-0.3,0.8-0.8c0.1-0.5,0.2-1.8,0.2-3.7V2.2H185.2z"/>                         <path d="M208.5,14.1H202v-2.9c0-1.4-0.1-2.2-0.2-2.6c-0.2-0.4-0.4-0.6-0.8-0.6c-0.4,0-0.7,0.3-0.9,0.8c-0.2,0.5-0.3,1.3-0.3,2.3                         c0,1.3,0.1,2.3,0.4,3c0.2,0.7,0.9,1.5,2,2.4c3.1,2.7,5,4.9,5.8,6.6c0.8,1.7,1.2,4.5,1.2,8.4c0,2.8-0.2,4.9-0.7,6.2                         c-0.4,1.3-1.3,2.4-2.6,3.3c-1.3,0.9-2.8,1.3-4.4,1.3c-1.9,0-3.4-0.5-4.7-1.5c-1.3-1-2.2-2.3-2.6-3.9c-0.4-1.6-0.6-3.9-0.6-6.8v-2.6                         h6.4v4.8c0,1.5,0.1,2.4,0.3,2.8c0.2,0.4,0.5,0.6,1,0.6c0.5,0,0.8-0.3,1-0.8c0.2-0.5,0.3-1.3,0.3-2.4c0-2.3-0.2-3.8-0.6-4.5                         c-0.4-0.7-1.5-1.9-3.2-3.6c-1.7-1.7-2.9-2.9-3.4-3.7c-0.6-0.8-1-1.8-1.4-3.1c-0.4-1.3-0.6-3.1-0.6-5.1c0-3,0.3-5.2,0.8-6.6                         c0.5-1.4,1.4-2.5,2.5-3.3c1.2-0.8,2.6-1.2,4.2-1.2c1.8,0,3.3,0.4,4.6,1.3c1.3,0.9,2.1,1.9,2.5,3.2c0.4,1.3,0.6,3.5,0.6,6.6V14.1z"                         />                         <path d="M223.2,2.2l4,39.2h-7.1l-0.4-7h-2.5l-0.4,7h-7.2l3.5-39.2H223.2z M219.5,27.5c-0.4-4.4-0.7-9.9-1.1-16.5                         c-0.7,7.5-1.1,13-1.3,16.5H219.5z"/>                         <path d="M235.2,2.2v31.4h4.2v7.8h-11.1V2.2H235.2z"/>                         <path d="M253.9,2.2l4,39.2h-7.1l-0.4-7H248l-0.4,7h-7.2l3.5-39.2H253.9z M250.2,27.5c-0.4-4.4-0.7-9.9-1.1-16.5                         c-0.7,7.5-1.1,13-1.3,16.5H250.2z"/>                         <path d="M280.4,2.2v39.2h-6.1l0-26.5l-2.4,26.5h-4.3l-2.5-25.9l0,25.9H259V2.2h9c0.3,2.4,0.5,5.1,0.8,8.3l1,10l1.6-18.3H280.4z"/>                         <path d="M301.1,2.2l4,39.2H298l-0.4-7h-2.5l-0.4,7h-7.2l3.5-39.2H301.1z M297.4,27.5c-0.4-4.4-0.7-9.9-1.1-16.5                         c-0.7,7.5-1.1,13-1.3,16.5H297.4z"/>                         <path d="M313.1,2.2v31.4h4.2v7.8h-11.1V2.2H313.1z"/>                         <path d="M326,2.2v39.2H319V2.2H326z"/>                         <path d="M350.1,2.2v39.2H344l0-26.5l-2.4,26.5h-4.3l-2.5-25.9l0,25.9h-6.1V2.2h9c0.3,2.4,0.5,5.1,0.8,8.3l1,10l1.6-18.3H350.1z"/>                         <path d="M352.9,2.2h11.5v7.8h-4.6v7.4h4.3V25h-4.3v8.6h5.1v7.8h-12V2.2z"/>                         <path d="M382.3,2.2v39.2h-6.1l-3.6-17.8v17.8h-5.8V2.2h5.8l3.9,17.6V2.2H382.3z"/>                         <path d="M399,2.2v7.8h-4.1v31.4H388V10.1h-4.1V2.2H399z"/>                         <path d="M411.2,2.2l4,39.2h-7.1l-0.4-7h-2.5l-0.4,7h-7.2l3.5-39.2H411.2z M407.6,27.5c-0.4-4.4-0.7-9.9-1.1-16.5                         c-0.7,7.5-1.1,13-1.3,16.5H407.6z"/>                         <path d="M428.4,2.2v7.8h-4.1v31.4h-6.9V10.1h-4.1V2.2H428.4z"/>                         <path d="M436.9,2.2v39.2H430V2.2H436.9z"/>                         <path d="M455.5,25.2c0,3.9-0.1,6.7-0.2,8.4c-0.1,1.6-0.5,3.1-1.2,4.5c-0.7,1.4-1.6,2.4-2.7,3.1c-1.1,0.7-2.4,1.1-3.9,1.1                         c-1.4,0-2.7-0.3-3.8-1c-1.1-0.7-2-1.7-2.7-3.1c-0.7-1.4-1.1-2.9-1.2-4.5s-0.2-4.4-0.2-8.5v-6.7c0-3.9,0.1-6.7,0.2-8.4                         c0.1-1.6,0.5-3.1,1.2-4.5s1.6-2.4,2.7-3.1c1.1-0.7,2.4-1.1,3.9-1.1c1.4,0,2.7,0.3,3.8,1c1.1,0.7,2,1.7,2.7,3.1                         c0.7,1.4,1.1,2.9,1.2,4.5s0.2,4.4,0.2,8.5V25.2z M448.6,12.3c0-1.8-0.1-3-0.2-3.5c-0.1-0.5-0.4-0.8-0.8-0.8c-0.4,0-0.6,0.2-0.8,0.6                         c-0.2,0.4-0.3,1.6-0.3,3.6v18.3c0,2.3,0.1,3.7,0.2,4.2c0.1,0.5,0.4,0.8,0.9,0.8c0.5,0,0.8-0.3,0.9-0.9c0.1-0.6,0.2-2.1,0.2-4.4                         V12.3z"/>                         <path d="M473.6,2.2v39.2h-6.1l-3.6-17.8v17.8h-5.8V2.2h5.8l3.9,17.6V2.2H473.6z"/>                         <path d="M498.2,16.7h-6.9v-3.6c0-2.2-0.1-3.6-0.2-4.2c-0.1-0.6-0.4-0.8-0.9-0.8c-0.4,0-0.7,0.2-0.9,0.7c-0.2,0.5-0.2,1.7-0.2,3.7                         v18.8c0,1.8,0.1,2.9,0.2,3.5c0.2,0.6,0.5,0.8,0.9,0.8c0.5,0,0.8-0.3,1-0.9c0.2-0.6,0.3-1.9,0.3-3.7v-4.6h-1.4v-6h8.1v21h-4.3                         l-0.6-2.8c-0.5,1.2-1.1,2.1-1.8,2.7c-0.7,0.6-1.6,0.9-2.5,0.9c-1.2,0-2.3-0.4-3.3-1.2c-1-0.8-1.8-1.9-2.3-3.1                         c-0.5-1.2-0.9-2.5-1-3.9c-0.1-1.3-0.2-3.4-0.2-6.1V16.4c0-3.7,0.1-6.5,0.4-8.2c0.3-1.7,1.1-3.2,2.4-4.7s3-2.1,5-2.1                         c2,0,3.7,0.6,5,1.8c1.3,1.2,2.2,2.7,2.6,4.4c0.4,1.7,0.6,4.1,0.6,7.3V16.7z"/>                         <path d="M500.9,2.2h11.5v7.8h-4.6v7.4h4.3V25h-4.3v8.6h5.1v7.8h-12V2.2z"/>                         <path d="M530.3,2.2v39.2h-6.1l-3.6-17.8v17.8h-5.8V2.2h5.8l3.9,17.6V2.2H530.3z"/>                         <path d="M533.1,2.2h11.5v7.8H540v7.4h4.3V25H540v8.6h5.1v7.8h-12V2.2z"/>                         <path d="M547.1,2.2h4.9c3.3,0,5.5,0.2,6.6,0.6c1.2,0.4,2.1,1.3,2.8,2.8c0.7,1.5,1.1,4,1.1,7.3c0,3.1-0.3,5.1-0.8,6.1                         c-0.5,1-1.5,1.7-3,1.9c1.4,0.5,2.3,1.2,2.8,2c0.5,0.8,0.8,1.6,0.9,2.3c0.1,0.7,0.2,2.6,0.2,5.8v10.3h-6.4v-13                         c0-2.1-0.1-3.4-0.3-3.9c-0.2-0.5-0.8-0.8-1.8-0.8v17.7h-6.9V2.2z M554,9v8.7c0.8,0,1.3-0.2,1.6-0.5c0.3-0.3,0.5-1.3,0.5-3.1V12                         c0-1.2-0.2-2.1-0.5-2.4C555.3,9.1,554.8,9,554,9z"/>                         <path d="M577.2,2.2l4,39.2h-7.1l-0.4-7h-2.5l-0.4,7h-7.2l3.5-39.2H577.2z M573.5,27.5c-0.4-4.4-0.7-9.9-1.1-16.5                         c-0.7,7.5-1.1,13-1.3,16.5H573.5z"/>                         <path d="M589.2,2.2v31.4h4.2v7.8h-11.1V2.2H589.2z"/>                     </g>                     </svg>
+                        </div>
+                    </div>
+                    <template x-for="Facture in FactureView" :key="Facture._id">
+                        <div id="receiptinfo-content" class="flex flex-col justify-between h-full">
+                            <div class="flex text-xs h-auto mb-2">
+                                <div class="flex-1 text-left rounded-md border border-black pl-2 py-2 w-60 flex flex-row"> 
+                                    <p class="mr-10">Client:</p>
+                                    <template x-if="Facture.Client">
+                                        <template x-for="Client in Facture.Client" :key="Client.Nom">
+                                            <div class="">
+                                                <p class="text-xs ml-1" x-text="Client.Prenom+' '+Client.Nom"></p>
+                                                <p class="text-xs ml-1" x-text="Client.Telephone"></p>
+                                                <p class="text-xs ml-1" x-text="Client.Adresse"></p>
+                                            </div>
+                                        </template>
+                                    </template>
+                                </div>
+                                <div class="text-right ml-10">
+                                    <div class="text-xl font-bold">FACTURE</div>
+                                    <p>
+                                        <span>N° </span>
+                                        <span x-text="Facture.No"></span>
+                                    </p>
+                                    <span x-text="Facture.Date"></span>
+                                </div>
+                            </div>
+                            <div class="border border-black h-full rounded-md" style="height: 400px;">
+                                <table class="w-full text-xs px-2">
+                                    <thead class="text-black px-2" >
+                                        <tr class="">
+                                            <th class="py-1 px-2 border border-t-0 border-l-0 border-black w-2/12 text-center">Qté</th>
+                                            <th class="py-1 px-2 border border-t-0 border-black text-left">Désignation</th>
+                                            <th class="py-1 px-2 border border-t-0 border-black text-left">P.Unit</th>
+                                            <th class="py-1 px-2 border border-t-0 border-r-0 border-black w-3/12 text-right">S.Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <template x-for="Produit in Facture.Produits" :key="Produit.productId">
+                                            <tr class="border border-black ">
+                                            <td class="py-1 px-1 text-center border border-gray" x-text="Produit.qty"></td>
+                                            <td class="py-1 px-1 text-left border border-gray" x-text="Produit.name"></td>
+                                            <td class="py-1 px-1 text-left border border-gray" x-text="priceFormat(Produit.price)"></td>
+                                            <td class="py-1 px-1 text-right border border-gray" x-text="priceFormat(Produit.qty * Produit.price)"></td>
+                                            </tr>
+                                        </template>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="flex-1 w-auto rounded-md h-auto border text-left border-black mt-2 p-2 ml-auto">
+                                <div class="flex text-xs font-bold">
+                                    <div class="flex-grow mr-2">TOTAL</div>
+                                    <div x-text="priceFormat(Facture.Total)"></div>
+                                </div>
+                                <div class="flex text-xs font-semibold">
+                                    <div class="flex-grow mr-2">ACCOMPTE</div>
+                                    <div x-text="priceFormat(Facture.Accompte)"></div>
+                                </div>
+                                <hr class="my-2">
+                                <div class="flex font-semibold items-center">
+                                    <div class="flex-grow mr-2">NET A PAYER</div>
+                                    <div class="text-xl" x-text="priceFormat(Facture.Netapayer)"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                    <hr class="my-2">
+                </div>
+                <div class="w-full h-10 bg-red-500 text-white text-lg rounded-md">
+                    <button class="w-full h-full justify-center items-center" x-on:click="printAndProceed()">IMPRIMER</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+    <div id="print-area" class="print-area text-center text-xs"></div>
+</body>

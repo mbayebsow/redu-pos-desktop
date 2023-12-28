@@ -1,13 +1,14 @@
-var Airtable = require('airtable');
-var apiKey = 'keynPu75N2wziwDUk';
-moment.locale('fr'); 
-UPLOADCARE_LOCALE = "fr"
-var db = new localdb('TDPos');
-if (!db.tableExists('Produits')){
-  db.createTable('Produits');
+var Airtable = require("airtable");
+var apiKey = "keynPu75N2wziwDUk";
+moment.locale("fr");
+UPLOADCARE_LOCALE = "fr";
+var db = new localdb("ReduPos");
+
+if (!db.tableExists("Produits")) {
+  db.createTable("Produits");
 }
-if (!db.tableExists('Ventes')){
-  db.createTable('Ventes');
+if (!db.tableExists("Ventes")) {
+  db.createTable("Ventes");
 }
 
 function initApp() {
@@ -20,7 +21,7 @@ function initApp() {
     products: [],
     keyword: "",
     cart: [],
-    ventes: db.find('Ventes', {'Date': moment().format("dddd Do MMMM YYYY")}),
+    ventes: db.find("Ventes", { Date: moment().format("dddd Do MMMM YYYY") }),
     cash: 0,
     change: 0,
     receiptNo: null,
@@ -30,78 +31,85 @@ function initApp() {
       return this.products.filter((p) => !rg || p.name.match(rg));
     },
     loadProducts() {
-      this.products = JSON.parse(db.exportData('Produits')).rows;
+      this.products = JSON.parse(db.exportData("Produits")).rows;
     },
-    addProduct(){
-      const _this = this
-      var productName = document.getElementById('productName').value;
-      var productPrice = document.getElementById('productPrice').value;
-      var productQte = document.getElementById('productQte').value;
-      var productUnt = document.getElementById('productUnt').value;
-      var productImage = document.getElementById('productImage').value;
-      if(productName == ""){
-        document.getElementById('addProductAlert').innerText = 'Nom du produit ne peut pas être vide !'
-      }
-      else if(productPrice == ""){
-        document.getElementById('addProductAlert').innerText = 'Prix du produit ne peut pas être vide !'
-      }
-      else if(productImage == ""){
-        document.getElementById('addProductAlert').innerText = 'L\'image du produit ne peut pas être vide !'
-      }else{
-        var base = new Airtable({apiKey: apiKey}).base('appQay5lBp4zkiMR8');
-        base('Produits').create([
-          {
-            "fields": {
-              "Name": productName,
-              "Prix": productPrice,
-              "Quantité": productQte,
-              "Unité": productUnt,
-              "Image": productImage,
+    addProduct() {
+      const _this = this;
+      var productName = document.getElementById("productName").value;
+      var productPrice = document.getElementById("productPrice").value;
+      var productQte = document.getElementById("productQte").value;
+      var productUnt = document.getElementById("productUnt").value;
+      var productImage = document.getElementById("productImage").value;
+      if (productName == "") {
+        document.getElementById("addProductAlert").innerText = "Nom du produit ne peut pas être vide !";
+      } else if (productPrice == "") {
+        document.getElementById("addProductAlert").innerText = "Prix du produit ne peut pas être vide !";
+      } else if (productImage == "") {
+        document.getElementById("addProductAlert").innerText = "L'image du produit ne peut pas être vide !";
+      } else {
+        var base = new Airtable({ apiKey: apiKey }).base("appQay5lBp4zkiMR8");
+        base("Produits").create(
+          [
+            {
+              fields: {
+                Name: productName,
+                Prix: productPrice,
+                Quantité: productQte,
+                Unité: productUnt,
+                Image: productImage,
+              },
+            },
+          ],
+          function (err) {
+            if (err) {
+              console.error(err);
+              document.getElementById("addProductAlert").innerText = "Produit ajouté sur le Cloud";
             }
+            db.insert("Produits", {
+              name: productName,
+              price: productPrice,
+              Quantité: productQte,
+              Unité: productUnt,
+              image: productImage,
+            });
+            document.getElementById("addProductAlert").innerText = "Produit ajouté";
+            _this.addProductModal = false;
+            _this.loadProducts();
           }
-        ], function(err) {
-          if (err) {
-            console.error(err);
-            document.getElementById('addProductAlert').innerText = 'Produit ajouté sur le Cloud'
-          }
-          db.insert('Produits', {
-            'name': productName, 
-            'price': productPrice, 
-            'Quantité': productQte, 
-            'Unité': productUnt, 
-            'image': productImage,
-          });
-          document.getElementById('addProductAlert').innerText = 'Produit ajouté'
-          _this.addProductModal = false;
-          _this.loadProducts()
-        });
+        );
       }
-
     },
     syncData() {
-      const _this = this
-      var keyActivation = document.getElementById('keyActivation').value;
+      const _this = this;
+      var keyActivation = document.getElementById("keyActivation").value;
 
-      var base = new Airtable({apiKey: apiKey}).base(keyActivation);
-      base('Produits').select({
-        view: "Grid view"
-      }).eachPage(function page(records, fetchNextPage) {
-        records.forEach(function(record) {
-          db.insert('Produits', {
-            'name': record.get('Name'), 
-            'price': record.get('Prix'), 
-            'Quantité': record.get('Quantité'), 
-            'Unité': record.get('Unité'), 
-            'image': record.get('Image')
-          });
-        });
-        fetchNextPage();
-        
-      }, function done(err) {
-        if (err) { console.error(err); return; }
-        _this.loadProducts()
-        _this.setFirstTime(false)
-      });
+      var base = new Airtable({ apiKey: apiKey }).base(keyActivation);
+      base("Produits")
+        .select({
+          view: "Grid view",
+        })
+        .eachPage(
+          function page(records, fetchNextPage) {
+            records.forEach(function (record) {
+              db.insert("Produits", {
+                name: record.get("Name"),
+                price: record.get("Prix"),
+                Quantité: record.get("Quantité"),
+                Unité: record.get("Unité"),
+                image: record.get("Image"),
+              });
+            });
+            fetchNextPage();
+          },
+          function done(err) {
+            if (err) {
+              console.error(err);
+              return;
+            }
+            _this.loadProducts();
+            _this.setFirstTime(false);
+          }
+        );
     },
 
     setFirstTime(firstTime) {
@@ -146,8 +154,8 @@ function initApp() {
       }
       this.updateChange();
     },
-    addCash(amount) {  
-      this.cash = "";    
+    addCash(amount) {
+      this.cash = "";
       this.cash = (this.cash || 0) + amount;
       this.updateChange();
       this.beep();
@@ -169,7 +177,7 @@ function initApp() {
       this.updateChange();
     },
     addCashNumber(value) {
-      this.cash = this.cash + value ;
+      this.cash = this.cash + value;
       this.beep();
       this.updateChange();
     },
@@ -182,10 +190,7 @@ function initApp() {
       this.updateChange();
     },
     getTotalPrice() {
-      return this.cart.reduce(
-        (total, item) => total + item.qty * item.price,
-        0
-      );
+      return this.cart.reduce((total, item) => total + item.qty * item.price, 0);
     },
     submitable() {
       return this.change >= 0 && this.cart.length > 0;
@@ -197,7 +202,7 @@ function initApp() {
       this.receiptDate = moment(this.time).format("dddd Do MMM YYYY à HH:mm");
     },
     dateFormat(date) {
-      const formatter = new Intl.DateTimeFormat('id', { dateStyle: 'short', timeStyle: 'short'});
+      const formatter = new Intl.DateTimeFormat("id", { dateStyle: "short", timeStyle: "short" });
       return formatter.format(date);
     },
     numberFormat(number) {
@@ -210,15 +215,15 @@ function initApp() {
       return number ? `${this.numberFormat(number)} FCFA` : `0 FCFA`;
     },
     setVente() {
-      db.insert('Ventes',{
-        'Date': moment(this.time).format("dddd Do MMMM YYYY"),
-        'No': this.receiptNo,
-        'Total': this.getTotalPrice(),
-        'Cash': this.cash,
-        'Monnaie': this.change,
-        'Produits': this.cart,
-      })
-      this.ventes = db.find('Ventes', {'Date': moment().format("dddd Do MMMM YYYY")})
+      db.insert("Ventes", {
+        Date: moment(this.time).format("dddd Do MMMM YYYY"),
+        No: this.receiptNo,
+        Total: this.getTotalPrice(),
+        Cash: this.cash,
+        Monnaie: this.change,
+        Produits: this.cart,
+      });
+      this.ventes = db.find("Ventes", { Date: moment().format("dddd Do MMMM YYYY") });
     },
     clear() {
       this.cash = 0;
@@ -238,12 +243,12 @@ function initApp() {
       const sound = new Audio();
       sound.src = src;
       sound.play();
-      sound.onended = () => delete(sound);
+      sound.onended = () => delete sound;
     },
     printAndProceed() {
-      const receiptContent = document.getElementById('receipt-content');
+      const receiptContent = document.getElementById("receipt-content");
       const titleBefore = document.title;
-      const printArea = document.getElementById('print-area');
+      const printArea = document.getElementById("print-area");
       const copyright = `<div class="text-center w-full">
       <svg version="1.1" class="w-20 ml-auto mr-auto" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
           viewBox="0 0 937.9 285.8" enable-background="new 0 0 937.9 285.8" xml:space="preserve">
@@ -334,20 +339,20 @@ function initApp() {
       </g>
       </svg>
       <p class="text-center text-xs mb">www.teldoo.web.app<br>teldoogroup@gmail.com<br>78 010 89 62 - 76 773 89 62</p>
-    </div>`
+    </div>`;
       printArea.innerHTML = receiptContent.innerHTML + copyright;
-      document.title = 'Facture N° '+this.receiptNo+' - TPOS';
+      document.title = "Facture N° " + this.receiptNo + " - TPOS";
 
       window.print();
       this.isShowModalReceipt = false;
 
-      printArea.innerHTML = '';
+      printArea.innerHTML = "";
       document.title = titleBefore;
 
       // TODO save sale data to database
-      this.setVente()
+      this.setVente();
       this.clear();
-    }
+    },
   };
   return app;
 }

@@ -1,0 +1,31 @@
+{
+  "name": "TeldooPOS",
+  "version": "1.0.6b",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build all platform": "electron-builder -mwl",
+    "build macOS": "electron-builder --mac",
+    "build Windows": "electron-builder --win",
+    "build Linux": "electron-builder --linux"
+  },
+  "author": "Teldoo Group",
+  "license": "CC0-1.0",
+  "devDependencies": {
+    "electron": "^21.2.2",
+    "electron-builder": "^22.10.3"
+  },
+  "build": {
+    "mac": {
+      "category": "public.app-category.utilities"
+    }
+  },
+  "dependencies": {
+    "@electron/remote": "^2.0.8",
+    "fs-extra": "^11.1.0",
+    "nedb": "^1.8.0",
+    "node-fetch": "^2.6.7",
+    "request": "^2.88.2"
+  }
+}
