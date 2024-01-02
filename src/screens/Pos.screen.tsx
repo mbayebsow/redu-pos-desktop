@@ -2,8 +2,8 @@ import Cart from "../components/Cart";
 import NumericPad from "../components/NumericPad";
 import ExampleComponent from "../components/ExampleComponent";
 
-import { ProductProvider } from "../contexts/ProductContext";
-import { CartProvider } from "../contexts/CartContext";
+import { ProductProvider } from "../contexts/Product.context";
+import { CartProvider } from "../contexts/Cart.context";
 
 function PosScreen() {
   return (

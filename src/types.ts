@@ -4,9 +4,9 @@ export type ProductType = {
   id: number;
   name: string;
   price: number;
-  PriceDemi: boolean;
-  Unité: string;
-  Active: boolean;
+  priceDemi: boolean;
+  unite: string;
+  isActive: boolean;
   image: string;
 };
 
@@ -17,9 +17,10 @@ export type CartType = Required<ProductType> & {
 export type ClientType = {
   id: number;
   firstName: string;
-  nolastNamem: string;
-  phone: number;
-  adress: string;
+  lastName: string;
+  phone: string;
+  address: string;
+  date: string;
 };
 
 export type ProductActionType = { type: "ADD" } | { type: "HIDE" } | { type: "DELETE" };

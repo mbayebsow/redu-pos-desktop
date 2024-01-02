@@ -4,9 +4,12 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Layout from "./Layout.tsx";
 import "./index.css";
 
-import ProductScreen from "./routes/Products.screen.tsx";
-import ErrorScreen from "./routes/Error.screen.tsx";
-import PosScreen from "./routes/Pos.screen.tsx";
+import ProductScreen from "./screens/Products.screen.tsx";
+import ErrorScreen from "./screens/Error.screen.tsx";
+import PosScreen from "./screens/Pos.screen.tsx";
+import ClientsScreen from "./screens/Clients.screen.tsx";
+import SalesScreen from "./screens/Sales.screen.tsx";
+import StocksScreen from "./screens/Stocks.screen.tsx";
 
 const router = createBrowserRouter([
   {
@@ -21,6 +24,18 @@ const router = createBrowserRouter([
       {
         path: "products",
         element: <ProductScreen />,
+      },
+      {
+        path: "sales",
+        element: <SalesScreen />,
+      },
+      {
+        path: "clients",
+        element: <ClientsScreen />,
+      },
+      {
+        path: "stock",
+        element: <StocksScreen />,
       },
     ],
   },

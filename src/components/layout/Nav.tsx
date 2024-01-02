@@ -75,7 +75,7 @@ function RootNav() {
               `${
                 isActive
                   ? "bg-slate-50 text-black translate-x-2 rounded-tl-md rounded-bl-md"
-                  : `bg-${nav.color}-500 text-white fill-white translate-x-0 rounded-md`
+                  : `bg-${nav.color}-500/0 text-white fill-white translate-x-0 rounded-md`
               } aspect-square p-2  w-full flex flex-col gap-2 justify-center items-center transition-all`
             }
           >

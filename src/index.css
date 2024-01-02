@@ -52,7 +52,6 @@
   background-color: #006064;
 }
 
-
 .text-cyan-50,
 .hover\:text-cyan-50:hover {
   color: #e0f7fa;
@@ -367,7 +366,7 @@ body {
 }
 
 .content .offline h3 {
-  font-family: 'Cabin', sans-serif;
+  font-family: "Cabin", sans-serif;
   position: relative;
   font-size: 16px;
   font-weight: 600;
@@ -412,7 +411,7 @@ body {
 .offline-text {
   font-size: 100px;
   text-transform: uppercase;
-  color: #2f2e41
+  color: #2f2e41;
 }
 
 @media only screen and (max-width: 767px) {

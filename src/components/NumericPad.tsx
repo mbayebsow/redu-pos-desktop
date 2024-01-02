@@ -1,4 +1,4 @@
-import { useCart } from "../contexts/CartContext";
+import { useCart } from "../contexts/Cart.context";
 
 export default function NumericPad() {
   const { cartTotal, cartDeposit, addDeposit } = useCart();
