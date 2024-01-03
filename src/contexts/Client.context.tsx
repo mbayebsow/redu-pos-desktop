@@ -1,4 +1,4 @@
-import React, { createContext, useContext, ReactNode } from "react";
+import React, { createContext, useContext, ReactNode, useState } from "react";
 import { ClientType } from "../types";
 import useSound from "../hooks/useSound";
 
@@ -6,6 +6,8 @@ import clientsMock from "../mockdata/clients.json";
 
 interface DataContextProps {
   clients: ClientType[];
+  selectedClient: ClientType | undefined;
+  setSelectedClient: (client: ClientType) => void;
   addClient: (client: ClientType) => void;
 }
 
@@ -13,6 +15,7 @@ const ClientContext = createContext<DataContextProps | undefined>(undefined);
 
 const ClientProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   //   const [client, setClient] = useState<Array<ClientType>>(clientsMock);
+  const [selectedClient, setSelectedClient] = useState<ClientType>();
 
   const { playBeep } = useSound();
 
@@ -30,7 +33,7 @@ const ClientProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     // }
   };
 
-  return <ClientContext.Provider value={{ clients: clientsMock, addClient }}>{children}</ClientContext.Provider>;
+  return <ClientContext.Provider value={{ clients: clientsMock, selectedClient, setSelectedClient, addClient }}>{children}</ClientContext.Provider>;
 };
 
 const useClient = (): DataContextProps => {

@@ -1,7 +1,8 @@
 import { ClientProvider, useClient } from "../contexts/Client.context";
 
 function CLientsList() {
-  const { clients } = useClient();
+  const { clients, selectedClient, setSelectedClient } = useClient();
+  // const [selectedClient, setSelectedClient] = useState<ClientType>();
 
   return (
     <div className="relative overflow-x-auto w-full rounded-md">
@@ -25,7 +26,10 @@ function CLientsList() {
         </thead>
         <tbody>
           {clients.map((client) => (
-            <tr className="odd:bg-white even:bg-gray-100 border-b">
+            <tr
+              onClick={() => setSelectedClient(client)}
+              className={`odd:bg-white even:bg-gray-100 cursor-pointer ${selectedClient?.id === client.id ? "border-2 border-blue-500" : null} `}
+            >
               <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
                 {client.firstName}
               </th>
@@ -48,6 +52,34 @@ function CLientsList() {
   );
 }
 
+function ClientDetails() {
+  const { selectedClient } = useClient();
+
+  return (
+    selectedClient && (
+      <div>
+        <div className="flex gap-0 bg-gray-100 rounded-md">
+          <div className="aspect-square h-20 w-auto flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 24 24">
+              <path d="M19 7.001c0 3.865-3.134 7-7 7s-7-3.135-7-7c0-3.867 3.134-7.001 7-7.001s7 3.134 7 7.001zm-1.598 7.18c-1.506 1.137-3.374 1.82-5.402 1.82-2.03 0-3.899-.685-5.407-1.822-4.072 1.793-6.593 7.376-6.593 9.821h24c0-2.423-2.6-8.006-6.598-9.819z" />
+            </svg>
+          </div>
+          <div className="w-full p-3 border-l">
+            <div>
+              <div>{selectedClient.firstName} </div>
+              <div>{selectedClient.lastName} </div>
+              <div>{selectedClient.address} </div>
+              <div>{selectedClient.phone} </div>
+            </div>
+          </div>
+        </div>
+
+        <hr className="my-2" />
+      </div>
+    )
+  );
+}
+
 function ClientsScreen() {
   return (
     <ClientProvider>
@@ -55,7 +87,9 @@ function ClientsScreen() {
         <div className="w-full h-full overflow-y-scroll border rounded-md">
           <CLientsList />
         </div>
-        <div className="w-1/3 h-full rounded-md bg-white border"></div>
+        <div className="w-1/3 h-full rounded-md bg-white border p-3">
+          <ClientDetails />
+        </div>
       </div>
     </ClientProvider>
   );
