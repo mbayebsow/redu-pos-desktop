@@ -2,12 +2,14 @@ import React, { createContext, useContext, ReactNode, useState, useEffect } from
 import { ProductType, CartType, ClientType } from "../types";
 import useSound from "../hooks/useSound";
 
+import clientsMock from "../mockdata/clients.json";
+
 interface DataContextProps {
   cartProducts: CartType[];
   cartClient: ClientType | null;
   cartTotal: number;
   cartDeposit: number;
-  addClient: (client: ClientType) => void;
+  addClient: (id: number) => void;
   addProduct: (product: ProductType) => void;
   clearCart: () => void;
   adjustQty: (product: ProductType, type: "in" | "de") => void;
@@ -56,6 +58,14 @@ const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     setCartDeposit(Number(price.toPrecision(4)));
   };
 
+  const addClient = (id: number) => {
+    const client = clientsMock.find((c) => c.id === id);
+    console.log(client);
+    console.log(id);
+
+    setCartClient(client ? client : null);
+  };
+
   useEffect(() => {
     let tPrice: number = 0;
     cartProducts.map((product) => (tPrice = tPrice + product.qty * product.price));
@@ -63,9 +73,7 @@ const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   }, [cartProducts]);
 
   return (
-    <CartContext.Provider
-      value={{ cartProducts, cartClient, cartTotal, cartDeposit, addClient: setCartClient, addProduct, clearCart, adjustQty, addDeposit }}
-    >
+    <CartContext.Provider value={{ cartProducts, cartClient, cartTotal, cartDeposit, addClient, addProduct, clearCart, adjustQty, addDeposit }}>
       {children}
     </CartContext.Provider>
   );

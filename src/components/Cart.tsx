@@ -1,7 +1,8 @@
 import { useCart } from "../contexts/Cart.context";
+import ClientSelect from "./client/ClientSelect";
 
 export default function Cart() {
-  const { cartProducts, cartTotal, cartDeposit, clearCart, adjustQty } = useCart();
+  const { cartProducts, clearCart, adjustQty, addClient } = useCart();
 
   return (
     <>
@@ -76,6 +77,14 @@ export default function Cart() {
                 </div>
               </div>
             ))}
+          </div>
+
+          <div className="w-full bg-black flex gap-3 p-2 items-center">
+            <label htmlFor="clientCart" className="text-white">
+              CLIENT:
+            </label>
+
+            <ClientSelect onChange={addClient} />
           </div>
         </div>
       </div>
