@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import ProductList from "../components/product/ProductsList";
-import { ProductProvider, useProduct } from "../contexts/Product.context";
+import ProductList from "../components/product/products-list";
+import { ProductProvider, useProduct } from "../contexts/product-context";
 import { ProductType } from "../types";
 import useSound from "../hooks/useSound";
 

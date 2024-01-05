@@ -1,4 +1,4 @@
-import { ClientProvider, useClient } from "../../contexts/Client.context";
+import { ClientProvider, useClient } from "../../contexts/client-context";
 
 interface ClientSelectPros {
   onChange: (id: number) => void;
@@ -13,7 +13,7 @@ function Select({ onChange }: ClientSelectPros) {
       defaultValue="message"
       name="clientCart"
       id="clientCart"
-      className="w-full rounded-md p-1 bg-white/20 text-white"
+      className="w-full rounded-md p-1 bg-white"
     >
       <option disabled value="message">
         -- Choisir --

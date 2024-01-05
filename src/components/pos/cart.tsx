@@ -1,12 +1,12 @@
-import { useCart } from "../contexts/Cart.context";
-import ClientSelect from "./client/ClientSelect";
+import { useCart } from "../../contexts/cart-context";
+import ClientSelect from "../client/client-select";
 
 export default function Cart() {
   const { cartProducts, clearCart, adjustQty, addClient } = useCart();
 
   return (
     <>
-      <div className="rounded-md w-1/4 flex flex-col h-full bg-white shadow overflow-hidden">
+      <div className="rounded-lg w-1/4 flex flex-col h-full bg-white shadow overflow-hidden">
         <div className="h-16 text-center flex justify-center border-b mb-3">
           <div className="pl-8 text-left text-lg py-4 relative">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -79,8 +79,8 @@ export default function Cart() {
             ))}
           </div>
 
-          <div className="w-full bg-black flex gap-3 p-2 items-center">
-            <label htmlFor="clientCart" className="text-white">
+          <div className="w-full bg-zinc-700 flex gap-3 p-2 items-center">
+            <label htmlFor="clientCart" className="text-white font-bold">
               CLIENT:
             </label>
 

@@ -56,17 +56,14 @@ const NAVIGATIONS = [
   },
 ];
 
-function RootNav() {
+function ApptNav() {
   return (
-    <div className="w-20 h-full bg-black p-2 flex flex-col gap-10">
-      <div className="aspect-square h-auto w-full text-center flex justify-center items-center text-white/50">
-        <div>
-          <div className="text-xl font-bold">Redu</div>
-          <div className="-mt-2 text-2xl font-extrabold">POS</div>
-        </div>
+    <div className="w-20 h-full bg-black flex flex-col gap-10">
+      <div className="aspect-square w-full  flex justify-center items-center text-white/50 h-12 bg-emerald-500 p-3">
+        <div className="text-xl font-bold">REDU</div>
       </div>
 
-      <div className="h-full flex flex-col justify-center items-center gap-5">
+      <div className="h-full flex flex-col justify-center items-center gap-5 p-2">
         {NAVIGATIONS.map((nav, i) => (
           <NavLink
             key={i}
@@ -88,4 +85,4 @@ function RootNav() {
   );
 }
 
-export default RootNav;
+export default ApptNav;

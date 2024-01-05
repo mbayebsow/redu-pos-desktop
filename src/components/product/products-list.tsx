@@ -1,4 +1,4 @@
-import { useProduct } from "../../contexts/Product.context";
+import { useProduct } from "../../contexts/product-context";
 import { ProductType } from "../../types";
 
 interface ProductListProps {

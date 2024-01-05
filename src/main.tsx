@@ -4,12 +4,12 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Layout from "./Layout.tsx";
 import "./index.css";
 
-import ProductScreen from "./screens/Products.screen.tsx";
-import ErrorScreen from "./screens/Error.screen.tsx";
-import PosScreen from "./screens/Pos.screen.tsx";
-import ClientsScreen from "./screens/Clients.screen.tsx";
-import SalesScreen from "./screens/Sales.screen.tsx";
-import StocksScreen from "./screens/Stocks.screen.tsx";
+import ProductScreen from "./screens/products-screen.tsx";
+import ErrorScreen from "./screens/error-screen.tsx";
+import PosScreen from "./screens/pos-screen.tsx";
+import ClientsScreen from "./screens/clients-screen.tsx";
+import SalesScreen from "./screens/sales-screen.tsx";
+import StocksScreen from "./screens/stocks-screen.tsx";
 
 const router = createBrowserRouter([
   {

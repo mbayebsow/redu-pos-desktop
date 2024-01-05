@@ -1,13 +1,13 @@
-import RootNav from "./components/layout/Nav";
-import RootHeader from "./components/layout/Header";
+import ApptNav from "./components/layout/app-nav";
+import AppHeader from "./components/layout/app-header";
 import { Outlet } from "react-router-dom";
 
 function Layout() {
   return (
     <div className="overflow-hidden flex h-full w-full">
-      <RootNav />
+      <ApptNav />
       <div className="flex flex-col h-full w-full">
-        <RootHeader />
+        <AppHeader />
         <div className="flex-row p-3 flex gap-2 h-full w-full overflow-hidden">
           <Outlet />
         </div>

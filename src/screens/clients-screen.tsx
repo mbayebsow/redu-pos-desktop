@@ -1,4 +1,4 @@
-import { ClientProvider, useClient } from "../contexts/Client.context";
+import { ClientProvider, useClient } from "../contexts/client-context";
 
 function CLientsList() {
   const { clients, selectedClient, setSelectedClient } = useClient();
