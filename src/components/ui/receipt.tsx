@@ -1,22 +1,18 @@
-import { useReactToPrint } from "react-to-print";
 import { CartType, ClientType } from "../../types";
-import { useRef } from "react";
+import { LegacyRef } from "react";
 
-type ReceiptProps = { totalPrice: number; deposit: number; receiptNo: string; client: ClientType | null; products: CartType[] };
+interface ReceiptProps {
+  receiptRef?: LegacyRef<HTMLDivElement> | null;
+  totalPrice: number;
+  deposit: number;
+  receiptNo: string;
+  client: ClientType | null;
+  products: CartType[];
+}
 
-function Receipt({ totalPrice, deposit, receiptNo, client, products }: ReceiptProps) {
-  const componentRef = useRef<HTMLDivElement | null>(null);
-
-  const handlePrint = useReactToPrint({
-    content: () => componentRef.current,
-  });
-
+function Receipt({ receiptRef = null, totalPrice, deposit, receiptNo, client, products }: ReceiptProps) {
   return (
-    <div
-      ref={componentRef}
-      onClick={handlePrint}
-      className="relative flex flex-col aspect-[1/1.41] object-contain w-auto h-full mx-auto bg-white rounded-md"
-    >
+    <div ref={receiptRef} className="relative flex flex-col aspect-[1/1.41] object-contain w-auto h-full mx-auto bg-white rounded-md overflow-hidden">
       <div className="text-center h-20 flex justify-center items-center font-extrabold text-3xl  border-b border-dashed border-black">
         REDU POS SYSTEM
       </div>
@@ -24,9 +20,9 @@ function Receipt({ totalPrice, deposit, receiptNo, client, products }: ReceiptPr
       <div className="flex flex-col gap-2 justify-between h-full p-5">
         <div className="flex flex-col gap-2 h-full">
           <div className="flex justify-between">
-            <div className="border border-black p-2 flex flex-row gap-2 rounded-md">
+            <div className="border w-fit border-black p-2 flex flex-row gap-2 rounded-md">
               <p className="uppercase font-bold text-md">Client:</p>
-              <div>
+              <div className="w-fit">
                 {client ? (
                   <div className="">
                     <p className="text-xs ml-1">
@@ -40,9 +36,9 @@ function Receipt({ totalPrice, deposit, receiptNo, client, products }: ReceiptPr
                 )}
               </div>
             </div>
-            <div className="text-right ml-10">
+            <div className="text-right ml-10 w-auto">
               <div className="text-xl font-bold">FACTURE</div>
-              <span className="text-xs">N° {receiptNo} </span>
+              <span className="text-xs w-fit">N° {receiptNo} </span>
             </div>
           </div>
 

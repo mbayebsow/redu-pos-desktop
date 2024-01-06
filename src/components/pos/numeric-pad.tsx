@@ -1,9 +1,12 @@
 import { useCart } from "../../contexts/cart-context";
+import useSound from "../../hooks/useSound";
 
 export default function NumericPad() {
   const { cartTotal, cartDeposit, addDeposit } = useCart();
+  const { playPhoneKeypad } = useSound();
 
   const handleNumeric = (number: number) => {
+    playPhoneKeypad();
     const newDeposit = cartDeposit.toString() + number.toString();
     addDeposit(Number(newDeposit));
   };

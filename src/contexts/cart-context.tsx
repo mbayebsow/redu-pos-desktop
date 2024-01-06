@@ -3,6 +3,11 @@ import { ProductType, CartType, ClientType } from "../types";
 import useSound from "../hooks/useSound";
 
 import clientsMock from "../mockdata/clients.json";
+// import DB from "../lib/db";
+
+// const client_db = new DB("clients");
+
+// console.log(client_db.getById(4));
 
 interface DataContextProps {
   cartProducts: CartType[];
@@ -60,9 +65,6 @@ const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
 
   const addClient = (id: number) => {
     const client = clientsMock.find((c) => c.id === id);
-    console.log(client);
-    console.log(id);
-
     setCartClient(client ? client : null);
   };
 

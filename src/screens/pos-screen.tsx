@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { useReactToPrint } from "react-to-print";
 
 import { ProductProvider } from "../contexts/product-context";
 import { CartProvider, useCart } from "../contexts/cart-context";
@@ -9,17 +10,58 @@ import Modal from "../components/ui/modal";
 import Receipt from "../components/ui/receipt";
 import ProductsList from "../components/product/products-list";
 import CardNumber from "../components/ui/card-number";
+import useSound from "../hooks/useSound";
 
 function Main() {
-  const [showModal, setShowModal] = useState(false);
-  const { cartTotal, cartDeposit, cartClient, cartProducts, addProduct } = useCart();
+  const receiptRef = useRef<HTMLDivElement | null>(null);
+  const [showModalReceipt, setShowModalReceipt] = useState<boolean>(false);
+  const [receiptNo, setReceiptNo] = useState<string>("");
+  const { cartTotal, cartDeposit, cartClient, cartProducts, addProduct, clearCart } = useCart();
+  const { playSwitchClicked } = useSound();
+
+  const getRandomId = (min = 0, max = 500000) => {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    const num = Math.floor(Math.random() * (max - min + 1)) + min;
+    const NO = "RP/" + `${cartClient ? cartClient.firstName[0] + cartClient.lastName[0] : "NC"}` + "/" + num.toString().padStart(6, "0");
+    return NO;
+  };
+
+  const handlePrint = useReactToPrint({
+    content: () => receiptRef.current,
+    onBeforePrint: () => console.log("save to sale DB"),
+    onAfterPrint: () => {
+      setShowModalReceipt(false);
+      clearCart();
+    },
+    onPrintError: () => alert("Erreur d'impression."),
+  });
+
+  const viewReceipt = () => {
+    playSwitchClicked();
+    setShowModalReceipt(true);
+    const NO = getRandomId();
+    setReceiptNo(NO);
+  };
 
   return (
     <div className="flex-row flex gap-2 h-full w-full overflow-hidden">
       <Modal
-        setShowModal={setShowModal}
-        showModal={showModal}
-        content={<Receipt totalPrice={cartTotal} deposit={cartDeposit} receiptNo="34cef" client={cartClient} products={cartProducts} />}
+        actionButtonShow
+        actionButtonText="Valider"
+        actionButtonOnClick={handlePrint}
+        setShowModal={setShowModalReceipt}
+        showModal={showModalReceipt}
+        content={
+          <Receipt
+            receiptRef={receiptRef}
+            totalPrice={cartTotal}
+            deposit={cartDeposit}
+            receiptNo={receiptNo}
+            client={cartClient}
+            products={cartProducts}
+          />
+        }
       />
       <div className="w-1/2 h-full overflow-hidden">
         <div className="grid grid-cols-5 gap-2 pb-1 h-full w-full  overflow-y-scroll">
@@ -42,7 +84,7 @@ function Main() {
         </div>
         <button
           disabled={cartTotal === 0}
-          onClick={() => setShowModal(true)}
+          onClick={viewReceipt}
           className={`h-fit ${
             cartTotal === 0 ? "bg-green-300" : "bg-green-500"
           } text-white text-center text-3xl font-bold w-full py-3 focus:outline-none`}

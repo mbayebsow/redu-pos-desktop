@@ -4,7 +4,7 @@ interface ClientSelectPros {
   onChange: (id: number) => void;
 }
 
-function Select({ onChange }: ClientSelectPros) {
+function Main({ onChange }: ClientSelectPros) {
   const { clients } = useClient();
 
   return (
@@ -30,7 +30,7 @@ function Select({ onChange }: ClientSelectPros) {
 function ClientSelect({ onChange }: ClientSelectPros) {
   return (
     <ClientProvider>
-      <Select onChange={onChange} />
+      <Main onChange={onChange} />
     </ClientProvider>
   );
 }
