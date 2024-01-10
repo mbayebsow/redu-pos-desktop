@@ -13,11 +13,8 @@ interface ProductCardProps {
 
 function ProductCard({ handleClick, image, name, price }: ProductCardProps) {
   return (
-    <div
-      onClick={handleClick}
-      className="p-1 h-40 rounded-md productItem cursor-pointer select-none transition-shadow overflow-hidden bg-white shadow hover:shadow-lg"
-    >
-      <img src={image} alt={name} className="w-full rounded-md overflow-hidden aspect-square object-cover" />
+    <div onClick={handleClick} className="p-1 h-fit rounded-xl productItem cursor-pointer overflow-hidden bg-primary-50  hover:shadow-lg">
+      <img src={image} alt={name} className="w-full rounded-lg overflow-hidden aspect-square object-cover" />
       <div className="p-2">
         <p className="flex-grow truncate mr-1 text-xs">{name}</p>
         <p className="nowrap font-semibold text-sm">{price}</p>

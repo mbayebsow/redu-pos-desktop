@@ -63,34 +63,39 @@ function Main() {
           />
         }
       />
+
       <div className="w-1/2 h-full overflow-hidden">
-        <div className="grid grid-cols-5 gap-2 pb-1 h-full w-full  overflow-y-scroll">
+        <div className="grid grid-cols-5 gap-2 pb-1 h-full w-full  overflow-y-scroll  p-0 rounded-lg">
           <ProductsList handleClick={addProduct} />
         </div>
       </div>
+
       <Cart />
-      <div className="shadow rounded-lg w-1/4 flex flex-col justify-between h-full bg-black overflow-hidden">
-        <div className="h-full flex flex-col justify-between p-1">
+
+      <div className="shadow rounded-xl w-1/4 p-1 flex flex-col justify-between h-full bg-primary-900 text-primary-50 overflow-hidden">
+        <div className="h-full flex flex-col justify-between ">
           <div className="h-fit">
             <CardNumber title="TOTAL" content={cartTotal} />
             <CardNumber title="CASH" content={cartDeposit} />
             <CardNumber
               title={cartTotal - cartDeposit < 0 ? "MONNAIE" : cartTotal - cartDeposit > 0 ? "RÉSTE A PAYER" : "---"}
               content={Number((cartTotal - cartDeposit).toPrecision(4))}
-              bg={cartTotal - cartDeposit > 0 ? "bg-red-500" : "bg-green-500"}
+              focus
             />
           </div>
           <NumericPad />
         </div>
-        <button
-          disabled={cartTotal === 0}
-          onClick={viewReceipt}
-          className={`h-fit ${
-            cartTotal === 0 ? "bg-green-300" : "bg-green-500"
-          } text-white text-center text-3xl font-bold w-full py-3 focus:outline-none`}
-        >
-          PAYER
-        </button>
+        <div className="p-2">
+          <button
+            disabled={cartTotal === 0}
+            onClick={viewReceipt}
+            className={`h-fit ${
+              cartTotal === 0 ? "bg-primary-800 text-primary-700" : "bg-primary-200 text-primary-900"
+            } text-white text-center text-3xl font-bold w-full py-3 focus:outline-none rounded-md`}
+          >
+            PAYER
+          </button>
+        </div>
       </div>
     </div>
   );

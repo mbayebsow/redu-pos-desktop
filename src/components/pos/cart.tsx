@@ -6,8 +6,8 @@ export default function Cart() {
 
   return (
     <>
-      <div className="rounded-lg w-1/4 flex flex-col h-full bg-white shadow overflow-hidden">
-        <div className="h-16 text-center flex justify-center border-b mb-3">
+      <div className="rounded-xl w-1/4 flex flex-col h-full bg-primary-50 border border-primary-light overflow-hidden">
+        <div className="h-16 text-center flex justify-center border-b border-primary-light mb-3">
           <div className="pl-8 text-left text-lg py-4 relative">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path
@@ -17,7 +17,7 @@ export default function Cart() {
                 d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
               />
             </svg>
-            <div className="text-center absolute bg-red-600 rounded-full text-white w-5 h-5 text-xs p-0 leading-5 -right-2 top-3">
+            <div className="text-center absolute bg-primary-900 text-primary-50 rounded-full w-5 h-5 text-xs p-0 leading-5 -right-2 top-3">
               {cartProducts.length}
             </div>
           </div>
@@ -52,7 +52,7 @@ export default function Cart() {
 
           <div className="flex-1 w-full px-2 overflow-auto">
             {cartProducts.map((product) => (
-              <div key={product.id} className="rounded-md select-none w-full text-blue-gray-700 flex justify-center py-1 px-1 shadow mb-2">
+              <div key={product.id} className="rounded-lg select-none w-full flex justify-center py-1 px-1 mb-1 bg-primary-100">
                 <img src={product.image} alt={product.name} className="h-10 w-10 bg-white mr-2 rounded-md" />
                 <div className="flex-grow">
                   <h5 className="text-xs text-blue-gray-900">{product.name}</h5>
@@ -63,13 +63,13 @@ export default function Cart() {
 
                 <div className="py-1">
                   <div className="flex flex-row gap-2">
-                    <button onClick={() => adjustQty(product, "de")} className="w-7 rounded-md text-center py-1 text-white bg-red-500">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <button onClick={() => adjustQty(product, "de")} className="h-7 w-7 rounded-md flex justify-center items-center bg-primary-200">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M20 12H4" />
                       </svg>
                     </button>
-                    <button onClick={() => adjustQty(product, "in")} className="w-7 rounded-md text-center py-1 text-white bg-blue-500">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <button onClick={() => adjustQty(product, "in")} className="h-7 w-7 rounded-md flex justify-center items-center bg-primary-200">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                       </svg>
                     </button>
@@ -79,12 +79,14 @@ export default function Cart() {
             ))}
           </div>
 
-          <div className="w-full bg-zinc-700 flex gap-3 p-2 items-center">
-            <label htmlFor="clientCart" className="text-white font-bold">
-              CLIENT:
-            </label>
+          <div className="p-2">
+            <div className="w-full bg-primary-900 rounded-lg flex gap-3 p-2 items-center">
+              <label htmlFor="clientCart" className="text-primary-50 font-bold">
+                CLIENT:
+              </label>
 
-            <ClientSelect onChange={addClient} />
+              <ClientSelect onChange={addClient} />
+            </div>
           </div>
         </div>
       </div>
