@@ -8,7 +8,7 @@ function Layout() {
       <ApptNav />
       <div className="flex flex-col h-full w-full">
         <AppHeader />
-        <div className="p-2 flex h-full w-full overflow-hidden">
+        <div className="pb-2 pr-2 flex h-full w-full overflow-hidden">
           <Outlet />
         </div>
       </div>

@@ -64,9 +64,31 @@ function Main() {
         }
       />
 
-      <div className="w-1/2 h-full overflow-hidden">
-        <div className="grid grid-cols-5 gap-2 pb-1 h-full w-full  overflow-y-scroll  p-0 rounded-lg">
-          <ProductsList handleClick={addProduct} />
+      <div className="w-1/2 bg-primary-50 rounded-xl border border-primary-light">
+        <div className="p-2 flex justify-between gap-2 w-full border-b border-b-primary-light">
+          <div className="rounded-lg overflow-hidden h-fit w-2/5">
+            <input
+              type="text"
+              name="search"
+              placeholder="Recherche"
+              //value=""
+              // onChange={onChange}
+              className="w-full bg-primary-100 px-2 py-1 border-b border-primary-200"
+            />
+          </div>
+          <div className="flex gap-1 w-full overflow-x-scroll pb-1">
+            <button className="w-full rounded-lg px-5 bg-primary-200  border border-primary-300 whitespace-nowrap">Boissons</button>
+            <button className="w-full rounded-lg px-5 bg-primary-200  border border-primary-300 whitespace-nowrap">Céréales</button>
+            <button className="w-full rounded-lg px-5 bg-primary-200  border border-primary-300 whitespace-nowrap">Pâtes</button>
+            <button className="w-full rounded-lg px-5 bg-primary-200  border border-primary-300 whitespace-nowrap">Confitures</button>
+            <button className="w-full rounded-lg px-5 bg-primary-200  border border-primary-300 whitespace-nowrap">Divers</button>
+          </div>
+        </div>
+
+        <div className="w-full h-full overflow-y-scroll p-2">
+          <div className="grid grid-cols-5 gap-2 h-fit w-full  mb-16">
+            <ProductsList handleClick={addProduct} />
+          </div>
         </div>
       </div>
 

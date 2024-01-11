@@ -1,26 +1,28 @@
-interface TestFieldProps {
+interface TextFieldProps {
   label: string;
-  placeholder: string;
+  placeholder?: string;
   name: string;
   type: string;
-  value: string | number;
-  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  value?: string | number;
+  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-function TextField({ label, placeholder, name, type, value, onChange }: TestFieldProps) {
+function TextField({ label, placeholder, name, type, value, onChange }: TextFieldProps) {
   return (
-    <div className="flex gap-2 items-center rounded-lg px-3 bg-primary-100">
-      <label htmlFor="name" className="w-16 text-sm">
+    <div className="w-full">
+      <label htmlFor="name" className="ml-1 text-sm mb-2">
         {label}
       </label>
-      <input
-        type={type}
-        name={name}
-        placeholder={placeholder}
-        value={value}
-        onChange={onChange}
-        className="w-full p-2 bg-primary-100 border-b border-primary-700"
-      />
+      <div className="rounded-lg ">
+        <input
+          type={type}
+          name={name}
+          placeholder={placeholder}
+          value={value}
+          onChange={onChange}
+          className="w-full p-2 rounded-lg bg-primary-100 focus:shadow-lg border border-primary-200"
+        />
+      </div>
     </div>
   );
 }
