@@ -3,10 +3,11 @@ interface SelectFieldProps {
   placeholder?: string;
   name: string;
   options: Array<any>;
+  defaultValue?: string;
   onChange?: (event: any) => void;
 }
 
-function SelectField({ label, placeholder, name, options, onChange }: SelectFieldProps) {
+function SelectField({ label, placeholder, name, options, defaultValue, onChange }: SelectFieldProps) {
   return (
     <div className="w-full">
       <label htmlFor="name" className="ml-1 text-sm mb-2">
@@ -14,8 +15,8 @@ function SelectField({ label, placeholder, name, options, onChange }: SelectFiel
       </label>
       <div className="rounded-lg ">
         <select
-          onChange={(v) => onChange && onChange(Number(v.target.value))}
-          defaultValue={"null"}
+          onChange={onChange}
+          defaultValue={defaultValue ? defaultValue : "null"}
           name={name}
           className="w-full p-2 rounded-lg bg-primary-100 focus:shadow-lg border border-primary-200"
         >

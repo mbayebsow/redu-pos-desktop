@@ -1,7 +1,7 @@
 interface SwitchFieldProps {
   label: string;
   name: string;
-  checked: boolean;
+  checked?: boolean;
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 

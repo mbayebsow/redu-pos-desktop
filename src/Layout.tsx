@@ -1,10 +1,12 @@
 import ApptNav from "./components/layout/app-nav";
 import AppHeader from "./components/layout/app-header";
 import { Outlet } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
 
 function Layout() {
   return (
     <div className="overflow-hidden flex h-full w-full">
+      <Toaster />
       <ApptNav />
       <div className="flex flex-col h-full w-full">
         <AppHeader />

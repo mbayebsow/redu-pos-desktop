@@ -27,6 +27,7 @@ export default class DB {
       parsedData.push(newData);
 
       localStorage.setItem(this.#tableName, JSON.stringify(parsedData));
+      return { success: true };
     }
   }
 

@@ -24,9 +24,9 @@ function ProductCard({ handleClick, image, name, price }: ProductCardProps) {
 }
 
 function ProductsList({ handleClick }: ProductListProps) {
-  const { state } = useProduct();
+  const { products } = useProduct();
 
-  return state.products.map((product) => (
+  return products.map((product) => (
     <ProductCard key={product.id} handleClick={() => handleClick(product)} name={product.name} price={product.price} image={product.image} />
   ));
 }

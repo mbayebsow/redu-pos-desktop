@@ -1,17 +1,20 @@
 import { useEffect, useState } from "react";
-import ProductsList from "../components/product/products-list";
-import { ProductProvider, useProduct } from "../contexts/product-context";
 import { ProductType } from "../types";
+import { ProductProvider, useProduct } from "../contexts/product-context";
 import useSound from "../hooks/useSound";
+
 import TextField from "../components/ui/text-field";
-import Modal from "../components/ui/modal";
-import ProductAdd from "../components/product/product-add";
 import SwitchField from "../components/ui/switch-field";
+
+import Modal from "../components/ui/modal";
+
+import ProductAdd from "../components/product/product-add";
+import ProductsList from "../components/product/products-list";
 
 function ProductEdit({ product }: { product: ProductType }) {
   const { playBeep } = useSound();
-  const { state } = useProduct();
-  const [productSelected, setProductSelected] = useState(product ? product : state.products[0]);
+  const { products } = useProduct();
+  const [productSelected, setProductSelected] = useState(product ? product : products[0]);
 
   const getInputData = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, checked } = event.target;
@@ -58,13 +61,20 @@ function ProductEdit({ product }: { product: ProductType }) {
   );
 }
 
-function ProductsScreen() {
+function Main() {
   const [productSelected, setProductSelected] = useState<any>();
   const [opentAddModal, setOpentAddModal] = useState<boolean>(false);
-
+  const { addNewProduct } = useProduct();
   return (
-    <ProductProvider>
-      <Modal showModal={opentAddModal} setShowModal={setOpentAddModal} content={<ProductAdd />} />
+    <>
+      <Modal
+        showModal={opentAddModal}
+        setShowModal={setOpentAddModal}
+        content={<ProductAdd />}
+        actionButtonShow
+        actionButtonText="AJOUTER"
+        actionButtonOnClick={addNewProduct}
+      />
       <div className="w-full h-full overflow-hidden flex gap-2">
         <div className="w-full bg-primary-50 border border-primary-light p-2 rounded-xl">
           <div className="py-2 flex justify-between gap-2 w-full border-b border-b-primary-light">
@@ -98,6 +108,14 @@ function ProductsScreen() {
           <ProductEdit product={productSelected} />
         </div>
       </div>
+    </>
+  );
+}
+
+function ProductsScreen() {
+  return (
+    <ProductProvider>
+      <Main />
     </ProductProvider>
   );
 }

@@ -1,7 +1,5 @@
-import { Dispatch } from "react";
-
 export type ProductType = {
-  id: number;
+  id?: number;
   name: string;
   price: number;
   priceDemi: boolean;
@@ -22,23 +20,3 @@ export type ClientType = {
   address: string;
   date: string;
 };
-
-export type ProductActionType = { type: "ADD" } | { type: "HIDE" } | { type: "DELETE" };
-export type CartActionType = { type: "ADD_PRODUCT" | "DELETE_PRODUCT" | "ADD_CLIENT" | "REMOVE_PRODUCT" | "CLEAR_CART"; payload: ProductType };
-
-export type ProductStateType = {
-  products: Array<ProductType>;
-};
-
-export type CartStateType = {
-  cartProducts: Array<ProductType>;
-};
-
-export interface ProductContextPropsType {
-  state: ProductStateType;
-  dispatch: Dispatch<ProductActionType>;
-}
-export interface CartContextPropsType {
-  state: CartStateType;
-  dispatch: Dispatch<CartActionType>;
-}
