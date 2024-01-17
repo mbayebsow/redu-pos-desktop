@@ -1,24 +1,23 @@
-import { FC, ChangeEvent, createContext, useContext, ReactNode, useState } from "react";
+import { FC, ChangeEvent, createContext, useContext, ReactNode, useState, useEffect } from "react";
 import { ProductType } from "../types";
 
 import toast from "react-hot-toast";
-import productMock from "../mockdata/products.json";
 import DB from "../lib/db";
 
 const PRODUCT_DB = new DB("products");
 
 interface ProductContextPropsType {
-  products: ProductType[];
+  products: ProductType[] | null;
   newProductState: any;
   addNewProduct: () => void;
   handleNewProductValue: (event: ChangeEvent<HTMLInputElement>) => void;
 }
 
 const INITIAL_PRODUCT = {
-  name: null,
-  price: 0,
+  name: "",
+  price: "",
   priceDemi: false,
-  unite: "unite",
+  unite: "null",
   isActive: true,
   image: "http://dummyimage.com/100x100.png",
 };
@@ -27,6 +26,12 @@ const ProductContext = createContext<ProductContextPropsType | undefined>(undefi
 
 const ProductProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [newProductState, setNewProductState] = useState(INITIAL_PRODUCT);
+  const [products, setProducts] = useState<ProductType[] | null>(null);
+
+  const getproducts = () => {
+    const P = PRODUCT_DB.getAll();
+    setProducts(P);
+  };
 
   const handleNewProductValue = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value, files, checked } = event.target;
@@ -48,9 +53,6 @@ const ProductProvider: FC<{ children: ReactNode }> = ({ children }) => {
   };
 
   const addNewProduct = () => {
-    // toast.loading("Enregistrement du produit");
-    // PRODUCT_DB.add(newProductState);
-
     if (!newProductState.name) {
       toast.error("Le nom du produit est obligatoir");
       return;
@@ -58,15 +60,15 @@ const ProductProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
     PRODUCT_DB.add(newProductState);
     toast.success("Produit enregistrer.");
-
-    console.log(newProductState);
+    setNewProductState(INITIAL_PRODUCT);
+    getproducts();
   };
 
-  return (
-    <ProductContext.Provider value={{ products: productMock, newProductState, handleNewProductValue, addNewProduct }}>
-      {children}
-    </ProductContext.Provider>
-  );
+  useEffect(() => {
+    getproducts();
+  }, []);
+
+  return <ProductContext.Provider value={{ products, newProductState, handleNewProductValue, addNewProduct }}>{children}</ProductContext.Provider>;
 };
 
 // Fonction utilitaire pour utiliser le contexte dans un composant

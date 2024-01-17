@@ -31,15 +31,15 @@ export default class DB {
     }
   }
 
-  getAll(): DataWithId[] | undefined {
+  getAll() {
     const data = localStorage.getItem(this.#tableName);
     if (data) {
-      const newData: DataWithId[] = JSON.parse(data);
+      const newData = JSON.parse(data);
       return newData;
     }
   }
 
-  getById(id: number): DataWithId | undefined {
+  getById(id: number) {
     const data = localStorage.getItem(this.#tableName);
     if (data) {
       const parsedData: DataWithId[] = JSON.parse(data);
@@ -50,27 +50,35 @@ export default class DB {
   }
 
   update(id: number, newData: DataWithId) {
-    const existingData = this.getAll();
+    const data = localStorage.getItem(this.#tableName);
 
-    if (existingData) {
-      const index = existingData.findIndex((d) => d.id === id);
+    if (data) {
+      const existingData: DataWithId[] = JSON.parse(data);
 
-      if (index !== -1) {
-        existingData[index] = { ...existingData[index], newData };
-      } else {
-        existingData.push(newData);
+      if (existingData) {
+        const index = existingData.findIndex((d) => d.id === id);
+
+        if (index !== -1) {
+          existingData[index] = { ...existingData[index], newData };
+        } else {
+          existingData.push(newData);
+        }
+        localStorage.setItem(this.#tableName, JSON.stringify(existingData));
       }
-      localStorage.setItem(this.#tableName, JSON.stringify(existingData));
     }
   }
 
   delete(id: number) {
-    const existingData = this.getAll();
+    const data = localStorage.getItem(this.#tableName);
 
-    if (existingData) {
-      const filteredData = existingData.filter((d) => d.id !== id);
-      localStorage.setItem(this.#tableName, JSON.stringify(filteredData));
-      // this.add(filteredData);
+    if (data) {
+      const existingData: DataWithId[] = JSON.parse(data);
+
+      if (existingData) {
+        const filteredData = existingData.filter((d) => d.id !== id);
+        localStorage.setItem(this.#tableName, JSON.stringify(filteredData));
+        // this.add(filteredData);
+      }
     }
   }
 }

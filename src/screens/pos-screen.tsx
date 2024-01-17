@@ -86,8 +86,8 @@ function Main() {
         </div>
 
         <div className="w-full h-full overflow-y-scroll p-2">
-          <div className="grid grid-cols-5 gap-2 h-fit w-full  mb-16">
-            <ProductsList handleClick={addProduct} />
+          <div className="grid grid-cols-5 gap-2 h-fit w-full  mb-16 relative">
+            <ProductsList display="card" handleClick={addProduct} />
           </div>
         </div>
       </div>

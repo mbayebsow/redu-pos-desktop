@@ -13,13 +13,13 @@ import ProductsList from "../components/product/products-list";
 
 function ProductEdit({ product }: { product: ProductType }) {
   const { playBeep } = useSound();
-  const { products } = useProduct();
-  const [productSelected, setProductSelected] = useState(product ? product : products[0]);
+  const [productSelected, setProductSelected] = useState<ProductType>(product);
 
   const getInputData = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, checked } = event.target;
     let VALUE: string | boolean;
     VALUE = value ? value : checked;
+    // if (productSelected) setProductSelected({ ...productSelected, [name]: VALUE });
     setProductSelected({ ...productSelected, [name]: VALUE });
   };
 
@@ -36,18 +36,25 @@ function ProductEdit({ product }: { product: ProductType }) {
     <div className="flex flex-col justify-between items-center h-full">
       <div className="w-full flex flex-col gap-4">
         <div className="aspect-square w-auto h-28">
-          <img src={productSelected.image} className="w-auto h-full rounded-md" />
+          <img src={productSelected?.image} className="w-auto h-full rounded-md" />
         </div>
 
         <div className="gap-2 flex-col flex h-fit">
-          <TextField type="text" label="Nom:" name="name" placeholder="Nom du produit" value={productSelected.name} onChange={getInputData} />
+          <TextField type="text" label="Nom:" name="name" placeholder="Nom du produit" value={productSelected?.name} onChange={getInputData} />
           <div className="inline-flex gap-2 items-center">
-            <TextField type="number" label="Prix:" name="price" placeholder="Prix du produit" value={productSelected.price} onChange={getInputData} />
-            <TextField type="text" label="Unité:" name="unite" placeholder="Unité" value={productSelected.unite} onChange={getInputData} />
+            <TextField
+              type="number"
+              label="Prix:"
+              name="price"
+              placeholder="Prix du produit"
+              value={productSelected?.price}
+              onChange={getInputData}
+            />
+            <TextField type="text" label="Unité:" name="unite" placeholder="Unité" value={productSelected?.unite} onChange={getInputData} />
           </div>
 
-          <SwitchField label="Afficher le produit" name="isActive" onChange={getInputData} checked={productSelected.isActive} />
-          <SwitchField label="Prix moitié" name="priceDemi" onChange={getInputData} checked={productSelected.priceDemi} />
+          <SwitchField label="Afficher le produit" name="isActive" onChange={getInputData} checked={productSelected?.isActive} />
+          <SwitchField label="Prix moitié" name="priceDemi" onChange={getInputData} checked={productSelected?.priceDemi} />
         </div>
       </div>
 
@@ -98,7 +105,7 @@ function Main() {
           </div>
 
           <div className="w-full h-full overflow-y-scroll rounded-xl  py-2">
-            <div className="grid grid-cols-7 gap-2 h-fit w-full mb-10">
+            <div className="h-fit w-full relative">
               <ProductsList handleClick={setProductSelected} />
             </div>
           </div>
