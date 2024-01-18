@@ -83,8 +83,8 @@ function Main() {
         actionButtonOnClick={addNewProduct}
       />
       <div className="w-full h-full overflow-hidden flex gap-2">
-        <div className="w-full bg-primary-50 border border-primary-light p-2 rounded-xl">
-          <div className="py-2 flex justify-between gap-2 w-full border-b border-b-primary-light">
+        <div className="w-full">
+          <div className="py-2 flex justify-between gap-2 w-full ">
             <div className="rounded-lg overflow-hidden h-fit">
               <input
                 type="text"

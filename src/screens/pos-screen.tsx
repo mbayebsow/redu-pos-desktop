@@ -64,29 +64,30 @@ function Main() {
         }
       />
 
-      <div className="w-1/2 bg-primary-50 rounded-xl border border-primary-light">
-        <div className="p-2 flex justify-between gap-2 w-full border-b border-b-primary-light">
-          <div className="rounded-lg overflow-hidden h-fit w-2/5">
+      <div className="w-1/2">
+        <div className="p-2 gap-2 w-full">
+          <div className="rounded-lg overflow-hidden h-fit w-2/5 border border-primary-light mb-2">
             <input
               type="text"
               name="search"
               placeholder="Recherche"
               //value=""
               // onChange={onChange}
-              className="w-full bg-primary-100 px-2 py-1 border-b border-primary-200"
+              className="w-full px-2 py-1 bg-primary-50"
             />
           </div>
-          <div className="flex gap-1 w-full overflow-x-scroll pb-1">
-            <button className="w-full rounded-lg px-5 bg-primary-200  border border-primary-300 whitespace-nowrap">Boissons</button>
-            <button className="w-full rounded-lg px-5 bg-primary-200  border border-primary-300 whitespace-nowrap">Céréales</button>
-            <button className="w-full rounded-lg px-5 bg-primary-200  border border-primary-300 whitespace-nowrap">Pâtes</button>
-            <button className="w-full rounded-lg px-5 bg-primary-200  border border-primary-300 whitespace-nowrap">Confitures</button>
-            <button className="w-full rounded-lg px-5 bg-primary-200  border border-primary-300 whitespace-nowrap">Divers</button>
+          <div className="flex gap-1 w-full overflow-x-scroll">
+            <button className="w-full rounded-lg px-5 py-1 bg-primary-50/50  border border-primary-light whitespace-nowrap">Boissons</button>
+            <button className="w-full rounded-lg px-5 py-1 bg-primary-50/50   border border-primary-light whitespace-nowrap">Pâtes</button>
+            <button className="w-full rounded-lg px-5 py-1 bg-primary-50/50   border border-primary-light whitespace-nowrap">Céréales</button>
+            <button className="w-full rounded-lg px-5 py-1 bg-primary-50/50   border border-primary-light whitespace-nowrap">Confitures</button>
+            <button className="w-full rounded-lg px-5 py-1 bg-primary-50/50   border border-primary-light whitespace-nowrap">Divers</button>
+            <button className="w-full rounded-lg px-5 py-1 bg-primary-50/50   border border-primary-light whitespace-nowrap">Divers</button>
           </div>
         </div>
 
         <div className="w-full h-full overflow-y-scroll p-2">
-          <div className="grid grid-cols-5 gap-2 h-fit w-full  mb-16 relative">
+          <div className="grid grid-cols-5 gap-2 h-fit w-full mb-16 relative">
             <ProductsList display="card" handleClick={addProduct} />
           </div>
         </div>
@@ -111,9 +112,7 @@ function Main() {
           <button
             disabled={cartTotal === 0}
             onClick={viewReceipt}
-            className={`h-fit ${
-              cartTotal === 0 ? "bg-primary-800 text-primary-700" : "bg-primary-200 text-primary-900"
-            } text-white text-center text-3xl font-bold w-full py-3 focus:outline-none rounded-md`}
+            className={`h-fit  bg-primary-200 text-primary-900 text-white text-center text-3xl font-bold w-full py-3 focus:outline-none rounded-md`}
           >
             PAYER
           </button>
