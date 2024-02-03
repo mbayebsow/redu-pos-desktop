@@ -21,7 +21,7 @@ function Modal({
         <>
           <div className="h-full bg-primary-900/80 inline-flex justify-center items-center overflow-x-hidden overflow-y-auto fixed inset-0 z-50 p-3">
             <div className="flex flex-col gap-2 justify-between max-h-full h-fit w-fit mx-auto bg-primary-100 rounded-2xl overflow-hidden  p-2">
-              <div className="h-full w-auto min-h-80 min-w-96 overflow-y-auto rounded-xl overflow-hidden border border-primary-light bg-white">
+              <div className="h-full w-auto min-h-80 min-w-80 overflow-y-auto rounded-xl overflow-hidden border border-primary-light bg-white">
                 {content}
               </div>
               <div className="flex gap-2 items-center h-fit w-auto font-bold">

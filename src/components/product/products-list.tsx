@@ -7,6 +7,7 @@ import ProductTableOptions from "./product-table-options";
 interface ProductListProps {
   display?: "list" | "card";
   filterByName?: string;
+  filterByCategory?: number | null;
   handleClick?: (product: ProductType) => void;
 }
 interface ProductProps {
@@ -81,7 +82,12 @@ function Product({ handleClick, image, name, price }: ProductProps) {
   );
 }
 
-function ProductsList({ display = "list", filterByName = "", handleClick }: ProductListProps) {
+function ProductsList({
+  display = "list",
+  filterByName = "",
+  filterByCategory = 0,
+  handleClick,
+}: ProductListProps) {
   const { products } = useProduct();
 
   return products ? (
@@ -89,14 +95,23 @@ function ProductsList({ display = "list", filterByName = "", handleClick }: Prod
       <Table
         handleClick={handleClick}
         columns={columns}
-        data={products.filter((product) =>
-          product.name.toLocaleLowerCase().includes(filterByName.toLocaleLowerCase())
-        )}
+        data={products
+          .filter(
+            (product) =>
+              product.name.toLocaleLowerCase().includes(filterByName.toLocaleLowerCase()) &&
+              product.category == filterByCategory
+          )
+          .filter((product) =>
+            filterByCategory == 0 ? product : product.category == filterByCategory
+          )}
       />
     ) : (
       products
         .filter((product) =>
           product.name.toLocaleLowerCase().includes(filterByName.toLocaleLowerCase())
+        )
+        .filter((product) =>
+          filterByCategory == 0 ? product : product.category == filterByCategory
         )
         .map((product) => (
           <Product
