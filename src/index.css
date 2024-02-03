@@ -1,0 +1,51 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-track {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: #b9d1cf;
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #577572;
+}
+
+@media print {
+  @page {
+    size: 210mm 325mm;
+    margin: 5mm;
+  }
+  .text-xs {
+    font-size: 6mm;
+    line-height: 8mm;
+  }
+  .text-md {
+    font-size: 7mm;
+    line-height: 9mm;
+  }
+  .text-xl {
+    font-size: 8mm;
+    line-height: 10mm;
+  }
+  .text-3xl {
+    font-size: 10mm;
+    line-height: 12mm;
+  }
+  .gap-2 {
+    gap: 5mm;
+  }
+  .h-20 {
+    height: 30mm;
+  }
+  .w-52 {
+    width: 80mm;
+  }
+}
