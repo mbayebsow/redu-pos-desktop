@@ -1,35 +1,35 @@
-import React, { createContext, useContext, ReactNode, useState } from "react";
+import { FC, createContext, useContext, ReactNode, useState, useEffect } from "react";
 import { CustomerType } from "../lib/types";
-import useSound from "../hooks/useSound";
 
 import { CUSTOMERS_DB } from "../lib/db";
+import toast from "react-hot-toast";
 
 interface DataContextProps {
-  clients: CustomerType[];
-  selectedClient: CustomerType | undefined;
-  setSelectedClient: (client: CustomerType) => void;
+  clients: CustomerType[] | undefined;
   addClient: (client: CustomerType) => void;
 }
 
 const ClientContext = createContext<DataContextProps | undefined>(undefined);
 
-const ClientProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [selectedClient, setSelectedClient] = useState<CustomerType>();
+const ClientProvider: FC<{ children: ReactNode }> = ({ children }) => {
+  const [clients, setClients] = useState<CustomerType[]>();
 
-  const { playBeep } = useSound();
-
-  const addClient = (client: CustomerType) => {
-    playBeep();
-    console.log(client);
+  const getClients = () => {
+    const data = CUSTOMERS_DB.getAll();
+    setClients(data);
   };
 
-  return (
-    <ClientContext.Provider
-      value={{ clients: CUSTOMERS_DB.getAll(), selectedClient, setSelectedClient, addClient }}
-    >
-      {children}
-    </ClientContext.Provider>
-  );
+  const addClient = (client: CustomerType) => {
+    const saveClient = CUSTOMERS_DB.add(client);
+    if (saveClient?.success) toast.success("Client ajouter avec succes");
+    getClients();
+  };
+
+  useEffect(() => {
+    getClients();
+  }, []);
+
+  return <ClientContext.Provider value={{ clients, addClient }}>{children}</ClientContext.Provider>;
 };
 
 const useClient = (): DataContextProps => {

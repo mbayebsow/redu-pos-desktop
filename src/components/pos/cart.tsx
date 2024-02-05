@@ -2,7 +2,7 @@ import { useCart } from "../../contexts/cart-context";
 import ClientSelect from "../client/client-select";
 
 export default function Cart() {
-  const { cartProducts, clearCart, adjustQuantity, addClient } = useCart();
+  const { cartProducts, cartClient, clearCart, adjustQuantity, addClient } = useCart();
 
   return (
     <>
@@ -133,7 +133,7 @@ export default function Cart() {
           </div>
 
           <div className="p-2">
-            <ClientSelect onChange={addClient} />
+            <ClientSelect value={cartClient?.id} onChange={addClient} />
           </div>
         </div>
       </div>

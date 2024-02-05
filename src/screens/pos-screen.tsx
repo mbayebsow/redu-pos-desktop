@@ -14,17 +14,77 @@ import CardNumber from "../components/ui/card-number";
 import useSound from "../hooks/useSound";
 import TextField from "../components/ui/text-field";
 import Chips from "../components/ui/chips";
+import { SaleProvider, useSale } from "../contexts/sale-context";
+import { numberWithCommas } from "../lib";
 
-function Main() {
-  const receiptRef = useRef<HTMLDivElement | null>(null);
-  const [showModalReceipt, setShowModalReceipt] = useState<boolean>(false);
+interface BoxSectionProps {
+  setReceiptNo: (no: string) => void;
+  setShowModalReceipt: (show: boolean) => void;
+}
+
+function ProductSection() {
   const [productFilterByName, setProductFilterByName] = useState("");
   const [productFilterByCategory, setProductFilterByCategory] = useState(0);
-  const [receiptNo, setReceiptNo] = useState<string>("");
-  const { cartTotal, cartDeposit, cartClient, cartProducts, addDeposit, addProduct, clearCart } =
-    useCart();
+  const { addProduct } = useCart();
   const { categories } = useCategory();
+
+  return (
+    <div className="w-full h-full flex flex-col gap-2">
+      <div className="p-2 w-full h-fit bg-primary-50 rounded-xl flex flex-col gap-2 relative overflow-hidden">
+        <div className="h-fit">
+          <TextField
+            name="search"
+            label="Recherche"
+            type="text"
+            value={productFilterByName}
+            clrearValue={() => setProductFilterByName("")}
+            onChange={(e) => setProductFilterByName(e.target.value)}
+          />
+        </div>
+
+        <div className="overflow-x-scroll overflow-y-hidden relative h-[68px] w-full">
+          <div className="inline-flex gap-1 w-fit h-fit absolute top-0 bottom-0 left-0">
+            <Chips
+              handleClick={() => setProductFilterByCategory(0)}
+              active={productFilterByCategory === 0}
+              text={"Toutes le catégories"}
+              icon={<div className="w-4 h-4 rounded-full bg-primary-500" />}
+            />
+            {categories.map((category, i) => (
+              <Chips
+                key={i}
+                handleClick={() => setProductFilterByCategory(category.id ? category.id : 0)}
+                active={productFilterByCategory === category.id}
+                text={category.name}
+                icon={
+                  <div
+                    style={{ backgroundColor: category.color }}
+                    className="w-4 h-4 rounded-full"
+                  />
+                }
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="relative w-full h-full overflow-y-scroll pr-2">
+        <div className="grid grid-cols-5 gap-2 h-fit w-full">
+          <ProductsList
+            display="card"
+            handleClick={addProduct}
+            filterByName={productFilterByName}
+            filterByCategory={productFilterByCategory}
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function BoxSection({ setReceiptNo, setShowModalReceipt }: BoxSectionProps) {
   const { playSwitchClicked, playPhoneKeypad } = useSound();
+  const { cartTotal, cartDeposit, cartClient, addDeposit } = useCart();
 
   const getRandomId = (min = 0, max = 500000) => {
     min = Math.ceil(min);
@@ -37,16 +97,6 @@ function Main() {
       num.toString().padStart(6, "0");
     return NO;
   };
-
-  const handlePrint = useReactToPrint({
-    content: () => receiptRef.current,
-    onBeforePrint: () => console.log("save to sale DB"),
-    onAfterPrint: () => {
-      setShowModalReceipt(false);
-      clearCart();
-    },
-    onPrintError: () => alert("Erreur d'impression."),
-  });
 
   const viewReceipt = () => {
     playSwitchClicked();
@@ -61,9 +111,107 @@ function Main() {
     addDeposit(Number(newDeposit));
   };
 
-  function numberWithCommas(x: number) {
-    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-  }
+  return (
+    <div className="w-full h-full gap-2 flex flex-col justify-between ">
+      <div className="h-full w-full flex flex-col justify-between ">
+        <div className="h-fit w-full flex flex-col gap-2">
+          <CardNumber title="MONTANT A PAYER" content={numberWithCommas(cartTotal)} />
+          <CardNumber title="MONTANT REÇU" content={numberWithCommas(cartDeposit)} />
+          <CardNumber
+            focus
+            title={
+              cartTotal - cartDeposit < 0
+                ? "MONNAIE :"
+                : cartTotal - cartDeposit > 0
+                  ? "RÉSTANT :"
+                  : "OK"
+            }
+            content={numberWithCommas(Number((cartTotal - cartDeposit).toPrecision(4)))}
+          />
+        </div>
+
+        <div className="w-full h-full flex flex-col mt-[5vh]">
+          <div className="w-full flex gap-3 text-white">
+            <button
+              onClick={() => addDeposit(cartTotal / 3)}
+              className="w-full p-1 bg-primary-700 rounded-md"
+            >
+              {Number((cartTotal / 3).toPrecision(4))}
+            </button>
+            <button
+              onClick={() => addDeposit(cartTotal / 2)}
+              className="w-full p-1 bg-primary-700 rounded-md"
+            >
+              {Number((cartTotal / 2).toPrecision(4))}
+            </button>
+            <button
+              onClick={() => addDeposit(cartTotal)}
+              className="w-full p-1 bg-primary-200 text-primary-900 rounded-md"
+            >
+              {Number(cartTotal.toPrecision(4))}
+            </button>
+          </div>
+
+          <hr className="my-2 border-primary-500" />
+
+          <NumericPad
+            handleNumeric={handleNumeric}
+            handleClear={() => addDeposit(0)}
+            variant="dark"
+          />
+        </div>
+      </div>
+
+      <div className="p-0">
+        <button
+          disabled={cartTotal === 0}
+          onClick={viewReceipt}
+          className={`h-fit  bg-primary-200 text-primary-900 text-center text-3xl font-bold w-full py-3 focus:outline-none rounded-md`}
+        >
+          PAYER
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function Main() {
+  const receiptRef = useRef<HTMLDivElement | null>(null);
+  const [showModalReceipt, setShowModalReceipt] = useState<boolean>(false);
+  const [receiptNo, setReceiptNo] = useState<string>("");
+  const { cartTotal, cartDeposit, cartClient, cartProducts, clearCart } = useCart();
+  const { addSale } = useSale();
+
+  const beforePrint = () => {
+    const sale = {
+      date: new Date(),
+      amount: cartTotal,
+      discount: 0,
+      advance: cartDeposit,
+      itemsNumbers: cartProducts.length,
+      customer: cartClient ? cartClient.id : null,
+    };
+
+    const saleItems = cartProducts.map((product) => ({
+      saleId: 0,
+      productId: product.id,
+      quantity: product.quantity,
+      price: product.price,
+    }));
+
+    addSale(sale, saleItems);
+  };
+
+  const handlePrint = useReactToPrint({
+    content: () => receiptRef.current,
+    onBeforePrint: () => beforePrint(),
+    onAfterPrint: () => {
+      setShowModalReceipt(false);
+      clearCart();
+      console.log(cartClient);
+    },
+    onPrintError: () => alert("Erreur d'impression."),
+  });
 
   return (
     <div className="flex-row flex gap-2 h-full w-full overflow-hidden">
@@ -85,119 +233,16 @@ function Main() {
         }
       />
 
-      <div className="w-1/2 flex flex-col gap-2 h-full overflow-hidden">
-        <div className="p-2 w-full h-fit bg-primary-50 rounded-xl flex flex-col gap-2 relative overflow-hidden">
-          <div className="h-10">
-            <TextField
-              name="search"
-              label="Recherche"
-              type="text"
-              value={productFilterByName}
-              clrearValue={() => setProductFilterByName("")}
-              onChange={(e) => setProductFilterByName(e.target.value)}
-            />
-          </div>
-
-          <div className="overflow-x-scroll overflow-y-hidden relative h-20 w-full">
-            <div className="inline-flex gap-1 w-fit h-fit absolute top-0 bottom-0 left-0">
-              <Chips
-                handleClick={() => setProductFilterByCategory(0)}
-                active={productFilterByCategory === 0}
-                text={"Toutes le catégories"}
-                icon={<div className="w-4 h-4 rounded-full bg-primary-500" />}
-              />
-              {categories.map((category, i) => (
-                <Chips
-                  key={i}
-                  handleClick={() => setProductFilterByCategory(category.id ? category.id : 0)}
-                  active={productFilterByCategory === category.id}
-                  text={category.name}
-                  icon={
-                    <div
-                      style={{ backgroundColor: category.color }}
-                      className="w-4 h-4 rounded-full"
-                    />
-                  }
-                />
-              ))}
-            </div>
-          </div>
-        </div>
-
-        <div className="relative w-full h-full overflow-y-scroll">
-          <div className="grid grid-cols-5 gap-2 h-fit w-full">
-            <ProductsList
-              display="card"
-              handleClick={addProduct}
-              filterByName={productFilterByName}
-              filterByCategory={productFilterByCategory}
-            />
-          </div>
-        </div>
+      <div className="w-1/2 h-full overflow-hidden">
+        <ProductSection />
       </div>
 
       <div className="w-1/4 rounded-xl overflow-hidden bg-primary-50">
         <Cart />
       </div>
 
-      <div className="rounded-xl w-1/4 p-3 gap-2 flex flex-col justify-between h-full bg-primary-900 text-primary-50 overflow-hidden">
-        <div className="h-full w-full flex flex-col justify-between ">
-          <div className="h-fit w-full flex flex-col gap-2">
-            <CardNumber title="MONTANT A PAYER" content={numberWithCommas(cartTotal)} />
-            <CardNumber title="MONTANT REÇU" content={numberWithCommas(cartDeposit)} />
-            <CardNumber
-              title={
-                cartTotal - cartDeposit < 0
-                  ? "MONNAIE :"
-                  : cartTotal - cartDeposit > 0
-                    ? "RÉSTANT :"
-                    : "OK"
-              }
-              content={numberWithCommas(Number((cartTotal - cartDeposit).toPrecision(4)))}
-            />
-          </div>
-
-          <div className="w-full h-full flex flex-col mt-[5vh]">
-            <div className="w-full flex gap-3 text-white">
-              <button
-                onClick={() => addDeposit(cartTotal / 3)}
-                className="w-full p-1 bg-primary-700 rounded-md"
-              >
-                {Number((cartTotal / 3).toPrecision(4))}
-              </button>
-              <button
-                onClick={() => addDeposit(cartTotal / 2)}
-                className="w-full p-1 bg-primary-700 rounded-md"
-              >
-                {Number((cartTotal / 2).toPrecision(4))}
-              </button>
-              <button
-                onClick={() => addDeposit(cartTotal)}
-                className="w-full p-1 bg-primary-200 text-primary-900 rounded-md"
-              >
-                {Number(cartTotal.toPrecision(4))}
-              </button>
-            </div>
-
-            <hr className="my-2 border-primary-500" />
-
-            <NumericPad
-              handleNumeric={handleNumeric}
-              handleClear={() => addDeposit(0)}
-              variant="dark"
-            />
-          </div>
-        </div>
-
-        <div className="p-0">
-          <button
-            disabled={cartTotal === 0}
-            onClick={viewReceipt}
-            className={`h-fit  bg-primary-200 text-primary-900 text-center text-3xl font-bold w-full py-3 focus:outline-none rounded-md`}
-          >
-            PAYER
-          </button>
-        </div>
+      <div className="rounded-xl w-1/4 p-3 h-full bg-primary-900 text-primary-50 overflow-hidden">
+        <BoxSection setReceiptNo={setReceiptNo} setShowModalReceipt={setShowModalReceipt} />
       </div>
     </div>
   );
@@ -205,13 +250,15 @@ function Main() {
 
 function PosScreen() {
   return (
-    <CartProvider>
-      <ProductProvider>
-        <CategoryProvider>
-          <Main />
-        </CategoryProvider>
-      </ProductProvider>
-    </CartProvider>
+    <ProductProvider>
+      <CategoryProvider>
+        <SaleProvider>
+          <CartProvider>
+            <Main />
+          </CartProvider>
+        </SaleProvider>
+      </CategoryProvider>
+    </ProductProvider>
   );
 }
 export default PosScreen;

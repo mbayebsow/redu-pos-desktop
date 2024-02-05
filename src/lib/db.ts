@@ -32,11 +32,11 @@ export default class DB<T extends DataWithId> {
     if (existingData) {
       const existData = JSON.parse(existingData);
 
-      const newData = { ...data, id: data.id || existData.length + 1 };
+      const newData = { ...data, id: existData.length + 1 };
       existData.push(newData);
 
       localStorage.setItem(this.#tableName, JSON.stringify(existData));
-      return { success: true };
+      return { success: true, id: existData.length };
     }
     // return { success: false, message: "No tableName founded" };
   }

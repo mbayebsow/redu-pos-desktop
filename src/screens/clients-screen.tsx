@@ -1,9 +1,15 @@
-import Button from "../components/ui/button";
+import { useState } from "react";
+import { CustomerType, SalesType } from "../lib/types";
+
 import Table from "../components/ui/data-table";
 import TextField from "../components/ui/text-field";
-import { ClientProvider, useClient } from "../contexts/client-context";
+import AddClient from "../components/client/client-add";
 
-const columns = [
+import { ClientProvider, useClient } from "../contexts/client-context";
+import { SaleProvider, useSale } from "../contexts/sale-context";
+import { formatISODate, numberWithCommas } from "../lib";
+
+const clientsColumns = [
   {
     title: "Prenom",
     dataIndex: "firstName",
@@ -21,64 +27,106 @@ const columns = [
     dataIndex: "address",
   },
 ];
+const salesColumns = [
+  {
+    title: "N.P",
+    dataIndex: "date",
+    render: (record: SalesType) => <div className="whitespace-nowrap">{record.itemsNumbers}</div>,
+  },
+  {
+    title: "Montant",
+    dataIndex: "amount",
+    render: (record: SalesType) => (
+      <div className="whitespace-nowrap">
+        <div>Total: {numberWithCommas(record.amount)}</div>
+        <div>Reçu: {numberWithCommas(record.advance)}</div>
+      </div>
+    ),
+  },
+  {
+    title: "Date et heure",
+    dataIndex: "date",
+    render: (record: SalesType) => (
+      <div className=" whitespace-normal">{formatISODate(record.date)}</div>
+    ),
+  },
+];
 
-function CLientsList() {
-  const { clients, setSelectedClient } = useClient();
-  //selectedClient?.id === client.id
-  return <Table handleClick={setSelectedClient} columns={columns} data={clients} />;
-}
-
-function ClientDetails() {
-  const { selectedClient } = useClient();
-
+function ClientSales({ selectedClient }: { selectedClient: CustomerType | undefined }) {
+  const { sales } = useSale();
   return (
-    selectedClient && (
-      <div>
-        <div className="flex gap-0 bg-primary-100 rounded-lg">
-          <div className=" p-2">
-            <div className="aspect-square bg-primary-200 rounded-full fill-primary-800 p-3 flex items-center justify-center">
-              <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24">
-                <path d="M19 7.001c0 3.865-3.134 7-7 7s-7-3.135-7-7c0-3.867 3.134-7.001 7-7.001s7 3.134 7 7.001zm-1.598 7.18c-1.506 1.137-3.374 1.82-5.402 1.82-2.03 0-3.899-.685-5.407-1.822-4.072 1.793-6.593 7.376-6.593 9.821h24c0-2.423-2.6-8.006-6.598-9.819z" />
-              </svg>
-            </div>
-          </div>
-          <div className="w-full p-2">
-            <div>
-              <div>Prenom: {selectedClient.firstName} </div>
-              <div>Nom: {selectedClient.lastName} </div>
-              <div>Adresse: {selectedClient.address} </div>
-              <div>Phone: {selectedClient.phone} </div>
-            </div>
-          </div>
+    <div className="w-full h-full flex flex-col">
+      <div className="text-xl font-bold border-b pb-5">Achats du client</div>
+      <div className="w-full h-full overflow-y-scroll">
+        <div className="w-fit h-fit text-sm">
+          <Table
+            data={sales.filter((sale) =>
+              selectedClient ? sale.customer === selectedClient.id : null
+            )}
+            columns={salesColumns}
+          />
         </div>
       </div>
-    )
+    </div>
+  );
+}
+
+function CLientsList({ setSelectedClient }: { setSelectedClient: (client: CustomerType) => void }) {
+  const { clients } = useClient();
+  const [filterByName, setFilterByName] = useState("");
+
+  return (
+    <div className="w-full h-full flex flex-col gap-2">
+      <div className="py-2 flex justify-between gap-2 w-full bg-primary-50 rounded-xl p-2">
+        <TextField
+          label="Recherche"
+          type="text"
+          name="search"
+          onChange={(e) => setFilterByName(e.target.value)}
+        />
+        <div className="flex gap-1">
+          <AddClient />
+        </div>
+      </div>
+
+      <div className="w-full h-full overflow-y-scroll  pr-2">
+        <div className="h-fit w-full relative">
+          {clients && (
+            <Table
+              handleClick={setSelectedClient}
+              columns={clientsColumns}
+              data={clients.filter(
+                (client) =>
+                  client.firstName.toLocaleLowerCase().includes(filterByName.toLocaleLowerCase()) ||
+                  client.lastName.toLocaleLowerCase().includes(filterByName.toLocaleLowerCase())
+              )}
+            />
+          )}
+        </div>
+      </div>
+    </div>
   );
 }
 
 function ClientsScreen() {
-  return (
-    <ClientProvider>
-      <div className="flex gap-2 w-full h-full">
-        <div className="w-full h-full overflow-y-scroll flex flex-col gap-2">
-          <div className="py-2 flex justify-between gap-2 w-full bg-primary-50 rounded-xl p-2">
-            <TextField label="Recherche" type="text" name="search" />
-            <div className="flex gap-1">
-              <Button text="Ajouter" />
-            </div>
-          </div>
+  const [selectedClient, setSelectedClient] = useState<CustomerType>();
 
-          <div className="w-full h-full overflow-y-scroll py-2">
-            <div className="h-fit w-full relative">
-              <CLientsList />
-            </div>
-          </div>
+  return (
+    <>
+      <div className="flex gap-2 w-full h-full">
+        <div className="w-2/3 h-full">
+          <ClientProvider>
+            <CLientsList setSelectedClient={setSelectedClient} />
+          </ClientProvider>
         </div>
-        <div className="w-2/5 h-full bg-primary-50 rounded-xl p-3">
-          <ClientDetails />
+
+        <div className="w-1/3 h-full bg-primary-50 rounded-xl p-3">
+          <SaleProvider>
+            <ClientSales selectedClient={selectedClient} />
+          </SaleProvider>
         </div>
       </div>
-    </ClientProvider>
+    </>
   );
 }
 

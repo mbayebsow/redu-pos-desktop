@@ -47,7 +47,7 @@ function CategorySection() {
             onChange={(e) => setCategorySearchName(e.target.value)}
           />
         </div>
-        <div className="h-full w-full overflow-y-scroll flex flex-col gap-2">
+        <div className="h-full w-full overflow-y-scroll flex flex-col gap-2 pr-2">
           {categories
             .filter((category) =>
               category.name.toLocaleLowerCase().includes(categorySearchName.toLocaleLowerCase())
@@ -72,7 +72,7 @@ function CategorySection() {
 
 function ProductSection() {
   const [opentAddModal, setOpentAddModal] = useState<boolean>(false);
-  const [productSearchName, setProductSearchName] = useState("");
+  const [searchByName, setSearchByName] = useState("");
   const { addNewProduct } = useProduct();
 
   return (
@@ -91,9 +91,9 @@ function ProductSection() {
             type="text"
             label="Recherche"
             name="search"
-            value={productSearchName}
-            clrearValue={() => setProductSearchName("")}
-            onChange={(e) => setProductSearchName(e.target.value)}
+            value={searchByName}
+            clrearValue={() => setSearchByName("")}
+            onChange={(e) => setSearchByName(e.target.value)}
           />
 
           <div className="flex items-end gap-1">
@@ -108,7 +108,7 @@ function ProductSection() {
         </div>
 
         <div className="w-full h-full grid overflow-scroll bg-white rounded-xl">
-          <ProductsList filterByName={productSearchName} />
+          <ProductsList filterByName={searchByName} />
         </div>
       </div>
     </>

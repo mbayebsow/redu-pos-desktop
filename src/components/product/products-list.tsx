@@ -19,13 +19,6 @@ interface ProductProps {
 
 const columns = [
   {
-    title: "Image",
-    dataIndex: "image",
-    render: (record: ProductType) => (
-      <img className="rounded-lg h-10 aspect-square" src={record.image} />
-    ),
-  },
-  {
     title: "Code bare",
     dataIndex: "identifier",
     render: (record: ProductType) => (
@@ -96,10 +89,8 @@ function ProductsList({
         handleClick={handleClick}
         columns={columns}
         data={products
-          .filter(
-            (product) =>
-              product.name.toLocaleLowerCase().includes(filterByName.toLocaleLowerCase()) &&
-              product.category == filterByCategory
+          .filter((product) =>
+            product.name.toLocaleLowerCase().includes(filterByName.toLocaleLowerCase())
           )
           .filter((product) =>
             filterByCategory == 0 ? product : product.category == filterByCategory

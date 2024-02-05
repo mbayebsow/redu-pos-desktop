@@ -7,8 +7,8 @@ interface CardNumberProps {
 function CardNumber({ title, content, focus = false }: CardNumberProps) {
   return (
     <div
-      className={`rounded-md w-auto text-white py-2 px-2 ${
-        focus ? "bg-primary-200 text-primary-900" : " bg-primary-700"
+      className={`rounded-md w-auto py-2 px-2 ${
+        focus ? "bg-primary-200 text-primary-800" : " bg-primary-700 text-primary-50"
       }`}
     >
       <div className="text-xs">{title}</div>

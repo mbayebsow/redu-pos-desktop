@@ -33,7 +33,8 @@ export type SalesType = {
   amount: number;
   discount: number;
   advance: number;
-  customer?: number;
+  itemsNumbers: number;
+  customer?: number | null;
 };
 
 export type SaleItemsType = {

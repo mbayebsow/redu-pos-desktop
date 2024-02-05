@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 interface TableProps {
   columns: {
     title: string;
@@ -9,13 +11,14 @@ interface TableProps {
 }
 
 function Table({ columns, data, handleClick }: TableProps) {
+  const [activeRow, setActiveRow] = useState<number>();
   return (
     <div className="relative overflow-x-scroll w-full">
       <table className="w-full relative text-left table-auto">
         <thead className="w-full border-b border-b-primary-light">
           <tr>
             {columns.map((column, i) => (
-              <th key={i} className="px-6 py-3 opacity-50 w-auto font-normal whitespace-nowrap">
+              <th key={i} className="px-3 py-3 opacity-50 w-auto font-normal whitespace-nowrap">
                 {column.title}
               </th>
             ))}
@@ -24,12 +27,17 @@ function Table({ columns, data, handleClick }: TableProps) {
         <tbody>
           {data.map((d, i) => (
             <tr
-              onClick={() => handleClick && handleClick(d)}
+              onClick={() => {
+                if (handleClick) {
+                  handleClick(d);
+                  setActiveRow(i);
+                }
+              }}
               key={i}
-              className={`border-b border-b-primary-light hover:bg-primary-50 cursor-pointer`}
+              className={`${activeRow === i && "bg-primary-100"} ${handleClick && "cursor-pointer"} border-b border-b-primary-light hover:bg-primary-50`}
             >
               {columns.map((column, i) => (
-                <th key={i} className="px-6 py-4 w-auto font-normal">
+                <th key={i} className="pl-3 py-4 w-auto font-normal">
                   {column.render
                     ? column.render(d)
                     : column.dataIndex && (
