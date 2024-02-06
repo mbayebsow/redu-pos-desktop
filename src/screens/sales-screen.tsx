@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Table from "../components/ui/data-table";
 import TextField from "../components/ui/text-field";
 import { SaleProvider, useSale } from "../contexts/sale-context";
@@ -43,14 +43,29 @@ const salesListCulumns: TableColumns = [
 ];
 
 function SalesList({ setSaleSelected }: { setSaleSelected: (sale: SalesType) => void }) {
+  const [filterByClient, setFilterByClient] = useState<string>("");
+  const { clients } = useClient();
   const { sales } = useSale();
+
+  useEffect(() => {
+    const c = clients?.filter((client) =>
+      client.firstName.toLocaleLowerCase().includes(filterByClient?.toLocaleLowerCase())
+    );
+    console.log(c);
+  }, [filterByClient]);
 
   return (
     <div className="w-full h-full flex flex-col gap-2">
       <div className="py-2 flex justify-between gap-2 w-full bg-primary-50 rounded-xl p-2">
-        <TextField label="Recherche" type="text" name="search" />
+        <TextField
+          label="Recherche"
+          type="text"
+          name="search"
+          onChange={(e) => setFilterByClient(e.target.value)}
+        />
         <div className="flex gap-1">
-          <div>add</div>
+          <div>Filter by date</div>
+          <div>Filter by amount</div>
         </div>
       </div>
 
