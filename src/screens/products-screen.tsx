@@ -11,6 +11,7 @@ import CategoryAdd from "../components/category/category-add";
 import { CategoryType } from "../lib/types";
 
 const initialSate = {
+  id: 0,
   name: "",
   color: "#1e8275",
   isActive: true,

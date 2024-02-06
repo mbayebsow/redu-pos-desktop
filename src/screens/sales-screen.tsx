@@ -1,11 +1,13 @@
-import { useEffect, useState } from "react";
-import Table from "../components/ui/data-table";
-import TextField from "../components/ui/text-field";
+import { useState } from "react";
+import { formatISODate } from "../lib";
+import { SalesType, TableColumns } from "../lib/types";
+
 import { SaleProvider, useSale } from "../contexts/sale-context";
 import { ProductProvider, useProduct } from "../contexts/product-context";
-import { SalesType, TableColumns } from "../lib/types";
 import { ClientProvider, useClient } from "../contexts/client-context";
-import { formatISODate } from "../lib";
+
+import SelectField from "../components/ui/select-field";
+import Table from "../components/ui/data-table";
 
 const salesListCulumns: TableColumns = [
   {
@@ -43,35 +45,48 @@ const salesListCulumns: TableColumns = [
 ];
 
 function SalesList({ setSaleSelected }: { setSaleSelected: (sale: SalesType) => void }) {
-  const [filterByClient, setFilterByClient] = useState<string>("");
+  const [filterByClientId, setFilterByClientId] = useState<number>(0);
   const { clients } = useClient();
   const { sales } = useSale();
 
-  useEffect(() => {
-    const c = clients?.filter((client) =>
-      client.firstName.toLocaleLowerCase().includes(filterByClient?.toLocaleLowerCase())
-    );
-    console.log(c);
-  }, [filterByClient]);
-
   return (
     <div className="w-full h-full flex flex-col gap-2">
-      <div className="py-2 flex justify-between gap-2 w-full bg-primary-50 rounded-xl p-2">
-        <TextField
-          label="Recherche"
-          type="text"
-          name="search"
-          onChange={(e) => setFilterByClient(e.target.value)}
+      <div className="py-2 flex gap-2 w-full bg-primary-50 rounded-xl p-2">
+        <SelectField
+          label="Client"
+          name="client"
+          value={filterByClientId.toString()}
+          optionsData={clients}
+          optionsText="firstName"
+          optionsValue="id"
+          defaultText="Tout"
+          defaultTextValue="0"
+          onChange={(e) => setFilterByClientId(Number(e.target.value))}
         />
-        <div className="flex gap-1">
-          <div>Filter by date</div>
-          <div>Filter by amount</div>
-        </div>
+        <SelectField
+          label="Client"
+          name="client"
+          value={filterByClientId.toString()}
+          optionsData={clients}
+          optionsText="firstName"
+          optionsValue="id"
+          defaultText="Tout"
+          defaultTextValue="0"
+          onChange={(e) => setFilterByClientId(Number(e.target.value))}
+        />
       </div>
 
-      <div className="w-full h-full overflow-y-scroll  pr-2">
+      <div className="w-full h-full overflow-y-scroll pr-2">
         <div className="h-fit w-full relative">
-          {sales && <Table data={sales} columns={salesListCulumns} handleClick={setSaleSelected} />}
+          {sales && (
+            <Table
+              data={sales.filter((sale) =>
+                filterByClientId === 0 ? sale : sale.customer === filterByClientId
+              )}
+              columns={salesListCulumns}
+              handleClick={setSaleSelected}
+            />
+          )}
         </div>
       </div>
     </div>
@@ -86,10 +101,10 @@ function ProductsSaleList({ saleSelected }: { saleSelected: SalesType | null }) 
     <div className="w-full h-full flex flex-col">
       <div className="text-xl font-bold border-b pb-5">Produits</div>
       <div className="w-full h-full overflow-y-scroll">
-        <div className="w-fit h-fit text-sm flex flex-col gap-2 py-2">
+        <div className="w-full h-fit text-sm flex flex-col gap-2 py-2">
           {saleSelected &&
             getSaleItems(saleSelected.id).map((item, i) => (
-              <div key={i} className="flex items-center gap-2 border-b pb-2">
+              <div key={i} className="flex items-center gap-2 border-b pb-2 w-full">
                 <img
                   className="aspect-square h-full w-12 rounded-lg"
                   src={getproductById(item.productId)?.image}

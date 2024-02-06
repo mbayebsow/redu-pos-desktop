@@ -31,7 +31,7 @@ function TextField({
         <div className="h-full w-full flex items-center gap-2">
           <label
             htmlFor={name}
-            className="text-gray-500 text-sm whitespace-nowrap border-r border-black/20 pr-2"
+            className="text-gray-500 whitespace-nowrap border-r border-black/20 pr-2"
           >
             {label}
           </label>

@@ -22,7 +22,7 @@ const columns = [
     title: "Code bare",
     dataIndex: "identifier",
     render: (record: ProductType) => (
-      <Barcode className="h-10 w-fit" value={`${record.identifier}`} />
+      <Barcode className="h-10 w-20" value={`${record.identifier}`} />
     ),
   },
   {

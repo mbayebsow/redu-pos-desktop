@@ -1,34 +1,56 @@
 interface SelectFieldProps {
+  variant?: "tonal" | "outlined";
   label: string;
-  placeholder?: string;
   name: string;
-  options: Array<any>;
-  value?: string;
+  optionsData: any[];
+  value: string;
+  optionsValue: string;
+  optionsText: string;
+  defaultText: string;
+  defaultTextValue: string;
   onChange?: (event: any) => void;
 }
 
-function SelectField({ label, placeholder, name, options, value, onChange }: SelectFieldProps) {
+function SelectField({
+  variant = "tonal",
+  label,
+  name,
+  value,
+  optionsData,
+  optionsValue,
+  optionsText,
+  defaultText,
+  defaultTextValue,
+  onChange,
+}: SelectFieldProps) {
   return (
-    <div className="w-full">
-      <label htmlFor="name" className="ml-1 text-sm mb-2">
-        {label}
-      </label>
-      <div className="rounded-lg ">
-        <select
-          onChange={onChange}
-          value={value ? value : "null"}
-          name={name}
-          className="w-full p-2 rounded-lg bg-primary-100 focus:shadow-lg border border-primary-200"
-        >
-          <option disabled value="null">
-            {placeholder}
-          </option>
-          {options.map((option, i) => (
-            <option key={i} value={option}>
-              {option}
-            </option>
-          ))}
-        </select>
+    <div className="p-[2px] h-10 w-fit">
+      <div
+        className={`
+        w-full flex items-center gap-2 px-2 rounded-lg h-full
+        ${variant === "tonal" && "bg-primary-100 border-primary-200"} 
+        ${variant === "outlined" && "bg-primary-50 border-primary-100"} 
+      `}
+      >
+        <label htmlFor={name} className="text-gray-500 border-r border-black/20 pr-2">
+          {label}
+        </label>
+        <div className="rounded-lg">
+          <select
+            onChange={onChange}
+            value={value}
+            name={name}
+            className="w-22 h-full bg-transparent pr-2"
+          >
+            <option value={defaultTextValue}>{defaultText}</option>
+
+            {optionsData.map((option, i) => (
+              <option key={i} value={option[optionsValue]}>
+                {option[optionsText]}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
     </div>
   );

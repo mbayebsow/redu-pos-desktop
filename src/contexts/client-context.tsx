@@ -5,7 +5,7 @@ import { CUSTOMERS_DB } from "../lib/db";
 import toast from "react-hot-toast";
 
 interface DataContextProps {
-  clients: CustomerType[] | undefined;
+  clients: CustomerType[] | [];
   addClient: (client: CustomerType) => void;
   getClientById: (clientId: number) => CustomerType | undefined;
 }
@@ -13,7 +13,7 @@ interface DataContextProps {
 const ClientContext = createContext<DataContextProps | undefined>(undefined);
 
 const ClientProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  const [clients, setClients] = useState<CustomerType[]>();
+  const [clients, setClients] = useState<CustomerType[]>([]);
 
   const getClients = () => {
     const data = CUSTOMERS_DB.getAll();

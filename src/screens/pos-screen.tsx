@@ -130,7 +130,7 @@ function BoxSection({ setReceiptNo, setShowModalReceipt }: BoxSectionProps) {
           />
         </div>
 
-        <div className="w-full h-full flex flex-col mt-[5vh]">
+        <div className="w-full h-full flex flex-col mt-[100px]">
           <div className="w-full flex gap-3 text-white">
             <button
               onClick={() => addDeposit(cartTotal / 3)}
@@ -184,6 +184,7 @@ function Main() {
 
   const beforePrint = () => {
     const sale = {
+      id: 0,
       date: new Date(),
       amount: cartTotal,
       discount: 0,
@@ -193,6 +194,7 @@ function Main() {
     };
 
     const saleItems = cartProducts.map((product) => ({
+      id: 0,
       saleId: 0,
       productId: product.id,
       quantity: product.quantity,
