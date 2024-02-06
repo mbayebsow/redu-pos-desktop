@@ -1,5 +1,7 @@
+import { ReactNode } from "react";
+
 export type ProductType = {
-  id?: number;
+  id: number;
   identifier: number;
   name: string;
   price: number;
@@ -11,14 +13,14 @@ export type ProductType = {
 };
 
 export type CategoryType = {
-  id?: number;
+  id: number;
   name: string;
   color?: string;
   isActive: boolean;
 };
 
 export type CustomerType = {
-  id?: number;
+  id: number;
   firstName: string;
   lastName: string;
   address: string;
@@ -28,7 +30,7 @@ export type CustomerType = {
 };
 
 export type SalesType = {
-  id?: number;
+  id: number;
   date: Date;
   amount: number;
   discount: number;
@@ -38,7 +40,7 @@ export type SalesType = {
 };
 
 export type SaleItemsType = {
-  id?: number;
+  id: number;
   saleId: number;
   productId: number;
   quantity: number;
@@ -46,7 +48,7 @@ export type SaleItemsType = {
 };
 
 export type StockTransactionsType = {
-  id?: number;
+  id: number;
   productId: number;
   transactionType: "in" | "out";
   quantity: number;
@@ -56,3 +58,9 @@ export type StockTransactionsType = {
 export type CartType = Required<ProductType> & {
   quantity: number;
 };
+
+export type TableColumns = {
+  title: string;
+  dataIndex?: string;
+  render?: (record?: any) => ReactNode;
+}[];

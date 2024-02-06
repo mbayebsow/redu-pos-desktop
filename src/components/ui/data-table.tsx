@@ -1,11 +1,8 @@
 import { useState } from "react";
+import { TableColumns } from "../../lib/types";
 
 interface TableProps {
-  columns: {
-    title: string;
-    dataIndex?: string;
-    render?: (record?: any) => any;
-  }[];
+  columns: TableColumns;
   data: any[];
   handleClick?: (p: any) => void;
 }
@@ -42,11 +39,11 @@ function Table({ columns, data, handleClick }: TableProps) {
                     ? column.render(d)
                     : column.dataIndex && (
                         <div>
-                          {d[column.dataIndex].toString() === "false"
+                          {d[column.dataIndex]?.toString() === "false"
                             ? "Non"
-                            : d[column.dataIndex].toString() === "true"
+                            : d[column.dataIndex]?.toString() === "true"
                               ? "Oui"
-                              : d[column.dataIndex].toString()}
+                              : d[column.dataIndex]?.toString()}
                         </div>
                       )}
                 </th>

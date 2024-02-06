@@ -6,6 +6,7 @@ import toast from "react-hot-toast/headless";
 interface DataContextProps {
   sales: SalesType[];
   addSale: (sale: SalesType, saleItems: SaleItemsType[]) => void;
+  getSaleItems: (saleId: number) => SaleItemsType[];
 }
 
 const SaleContext = createContext<DataContextProps | undefined>(undefined);
@@ -21,8 +22,14 @@ const SaleProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }
   };
 
+  const getSaleItems = (saleId: number) => {
+    const items = SALEITEMS_DB.getAll();
+    const saleItems = items.filter((item) => item.saleId === saleId);
+    return saleItems;
+  };
+
   return (
-    <SaleContext.Provider value={{ sales: SALES_DB.getAll(), addSale }}>
+    <SaleContext.Provider value={{ sales: SALES_DB.getAll(), addSale, getSaleItems }}>
       {children}
     </SaleContext.Provider>
   );

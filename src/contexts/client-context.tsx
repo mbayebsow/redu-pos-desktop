@@ -7,6 +7,7 @@ import toast from "react-hot-toast";
 interface DataContextProps {
   clients: CustomerType[] | undefined;
   addClient: (client: CustomerType) => void;
+  getClientById: (clientId: number) => CustomerType | undefined;
 }
 
 const ClientContext = createContext<DataContextProps | undefined>(undefined);
@@ -19,6 +20,11 @@ const ClientProvider: FC<{ children: ReactNode }> = ({ children }) => {
     setClients(data);
   };
 
+  const getClientById = (id: number) => {
+    const client = CUSTOMERS_DB.getById(id);
+    return client;
+  };
+
   const addClient = (client: CustomerType) => {
     const saveClient = CUSTOMERS_DB.add(client);
     if (saveClient?.success) toast.success("Client ajouter avec succes");
@@ -29,7 +35,11 @@ const ClientProvider: FC<{ children: ReactNode }> = ({ children }) => {
     getClients();
   }, []);
 
-  return <ClientContext.Provider value={{ clients, addClient }}>{children}</ClientContext.Provider>;
+  return (
+    <ClientContext.Provider value={{ clients, addClient, getClientById }}>
+      {children}
+    </ClientContext.Provider>
+  );
 };
 
 const useClient = (): DataContextProps => {

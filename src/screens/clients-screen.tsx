@@ -114,13 +114,13 @@ function ClientsScreen() {
   return (
     <>
       <div className="flex gap-2 w-full h-full">
-        <div className="w-2/3 h-full">
+        <div className="w-full h-full">
           <ClientProvider>
             <CLientsList setSelectedClient={setSelectedClient} />
           </ClientProvider>
         </div>
 
-        <div className="w-1/3 h-full bg-primary-50 rounded-xl p-3">
+        <div className="w-96 h-full bg-primary-50 rounded-xl p-3">
           <SaleProvider>
             <ClientSales selectedClient={selectedClient} />
           </SaleProvider>

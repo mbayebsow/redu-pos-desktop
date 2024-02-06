@@ -8,10 +8,12 @@ interface ProductContextPropsType {
   newProductState: any;
   addNewProduct: () => void;
   deleteProduct: (id: number) => void;
+  getproductById: (productId: number) => ProductType | undefined;
   handleNewProductValue: (event: ChangeEvent<HTMLInputElement>) => void;
 }
 
 const INITIAL_PRODUCT = {
+  id: 0,
   name: "",
   price: 0,
   identifier: 0,
@@ -46,6 +48,11 @@ const ProductProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const getproducts = () => {
     const P = PRODUCT_DB.getAll();
     if (P) setProducts(P);
+  };
+
+  const getproductById = (id: number) => {
+    const P = PRODUCT_DB.getById(id);
+    return P;
   };
 
   const handleNewProductValue = (event: ChangeEvent<HTMLInputElement>) => {
@@ -102,7 +109,14 @@ const ProductProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   return (
     <ProductContext.Provider
-      value={{ products, newProductState, handleNewProductValue, addNewProduct, deleteProduct }}
+      value={{
+        products,
+        newProductState,
+        handleNewProductValue,
+        addNewProduct,
+        deleteProduct,
+        getproductById,
+      }}
     >
       {children}
     </ProductContext.Provider>
