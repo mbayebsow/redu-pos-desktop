@@ -9,6 +9,18 @@ import { ClientProvider, useClient } from "../contexts/client-context";
 import SelectField from "../components/ui/select-field";
 import Table from "../components/ui/data-table";
 
+const ClientFullName = ({ record }: { record: SalesType }) => {
+  const { getClientById } = useClient();
+
+  return (
+    record.customer && (
+      <div>
+        {getClientById(record.customer)?.firstName} {getClientById(record.customer)?.lastName}
+      </div>
+    )
+  );
+};
+
 const salesListCulumns: TableColumns = [
   {
     title: "Produits",
@@ -25,17 +37,7 @@ const salesListCulumns: TableColumns = [
   {
     title: "Client",
     dataIndex: "customer",
-    render: (record: SalesType) => {
-      const { getClientById } = useClient();
-      return (
-        record.customer && (
-          <div>
-            <div>{getClientById(record.customer)?.firstName}</div>
-            <div>{getClientById(record.customer)?.lastName}</div>
-          </div>
-        )
-      );
-    },
+    render: (record: SalesType) => <ClientFullName record={record} />,
   },
   {
     title: "Date",
@@ -45,44 +47,76 @@ const salesListCulumns: TableColumns = [
 ];
 
 function SalesList({ setSaleSelected }: { setSaleSelected: (sale: SalesType) => void }) {
-  const [filterByClientId, setFilterByClientId] = useState<number>(0);
   const { clients } = useClient();
   const { sales } = useSale();
 
+  const [filterByClientId, setFilterByClientId] = useState<number>(0);
+  const [filterByDate, setFilterByDate] = useState<{ from: string; to: string }>({
+    from: "0",
+    to: "0",
+  });
+
   return (
     <div className="w-full h-full flex flex-col gap-2">
-      <div className="py-2 flex gap-2 w-full bg-primary-50 rounded-xl p-2">
+      <div className="py-2 flex gap-4 w-full bg-primary-50 rounded-xl p-2">
         <SelectField
           label="Client"
           name="client"
           value={filterByClientId.toString()}
           optionsData={clients}
           optionsText="firstName"
+          optionsText2="lastName"
           optionsValue="id"
           defaultText="Tout"
           defaultTextValue="0"
           onChange={(e) => setFilterByClientId(Number(e.target.value))}
         />
-        <SelectField
-          label="Client"
-          name="client"
-          value={filterByClientId.toString()}
-          optionsData={clients}
-          optionsText="firstName"
-          optionsValue="id"
-          defaultText="Tout"
-          defaultTextValue="0"
-          onChange={(e) => setFilterByClientId(Number(e.target.value))}
-        />
+
+        <div className="flex gap-2 items-center">
+          <SelectField
+            label="Du"
+            name="from"
+            value={filterByDate.from}
+            optionsData={sales.map((sale) => sale.date)}
+            defaultText="Tout"
+            defaultTextValue="0"
+            render={(date) => <div>{formatISODate(date, "date")}</div>}
+            onChange={(e) => setFilterByDate((prev) => ({ ...prev, from: e.target.value }))}
+          />
+
+          <SelectField
+            label="Au"
+            name="to"
+            value={filterByDate.to}
+            optionsData={sales.map((sale) => sale.date)}
+            defaultText="Tout"
+            defaultTextValue="0"
+            render={(date) => <div>{formatISODate(date, "date")}</div>}
+            onChange={(e) => setFilterByDate((prev) => ({ ...prev, to: e.target.value }))}
+          />
+        </div>
       </div>
 
       <div className="w-full h-full overflow-y-scroll pr-2">
         <div className="h-fit w-full relative">
           {sales && (
             <Table
-              data={sales.filter((sale) =>
-                filterByClientId === 0 ? sale : sale.customer === filterByClientId
-              )}
+              data={sales
+                .filter((sale) =>
+                  filterByClientId === 0 ? sale : sale.customer === filterByClientId
+                )
+                .filter((sale) => {
+                  const saleDate = new Date(sale.date);
+                  const fromDate = new Date(filterByDate.from);
+
+                  return filterByDate.from === "0" ? sale : saleDate >= fromDate;
+                })
+                .filter((sale) => {
+                  const saleDate = new Date(sale.date);
+                  const toDate = new Date(filterByDate.to);
+
+                  return filterByDate.to === "0" ? sale : saleDate <= toDate;
+                })}
               columns={salesListCulumns}
               handleClick={setSaleSelected}
             />

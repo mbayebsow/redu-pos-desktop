@@ -130,7 +130,7 @@ function BoxSection({ setReceiptNo, setShowModalReceipt }: BoxSectionProps) {
           />
         </div>
 
-        <div className="w-full h-full flex flex-col mt-[100px]">
+        <div className="w-full h-full flex flex-col mt-16">
           <div className="w-full flex gap-3 text-white">
             <button
               onClick={() => addDeposit(cartTotal / 3)}

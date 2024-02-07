@@ -1,14 +1,18 @@
+import { ChangeEvent, ReactNode } from "react";
+
 interface SelectFieldProps {
   variant?: "tonal" | "outlined";
   label: string;
   name: string;
   optionsData: any[];
   value: string;
-  optionsValue: string;
-  optionsText: string;
+  optionsValue?: string;
+  optionsText?: string;
+  optionsText2?: string;
+  render?: (record?: any) => ReactNode;
   defaultText: string;
   defaultTextValue: string;
-  onChange?: (event: any) => void;
+  onChange?: (event: ChangeEvent<HTMLSelectElement>) => void;
 }
 
 function SelectField({
@@ -19,6 +23,8 @@ function SelectField({
   optionsData,
   optionsValue,
   optionsText,
+  optionsText2,
+  render,
   defaultText,
   defaultTextValue,
   onChange,
@@ -27,9 +33,9 @@ function SelectField({
     <div className="p-[2px] h-10 w-fit">
       <div
         className={`
-        w-full flex items-center gap-2 px-2 rounded-lg h-full
-        ${variant === "tonal" && "bg-primary-100 border-primary-200"} 
-        ${variant === "outlined" && "bg-primary-50 border-primary-100"} 
+        w-fit flex items-center gap-2 px-2 rounded-lg h-full
+        ${variant === "tonal" && "bg-primary-100 border-primary-200"}
+        ${variant === "outlined" && "bg-primary-50 border-primary-100"}
       `}
       >
         <label htmlFor={name} className="text-gray-500 border-r border-black/20 pr-2">
@@ -40,13 +46,14 @@ function SelectField({
             onChange={onChange}
             value={value}
             name={name}
-            className="w-22 h-full bg-transparent pr-2"
+            className="h-full bg-transparent pr-2"
           >
             <option value={defaultTextValue}>{defaultText}</option>
 
             {optionsData.map((option, i) => (
-              <option key={i} value={option[optionsValue]}>
-                {option[optionsText]}
+              <option key={i} value={optionsValue ? option[optionsValue] : option}>
+                {render ? render(option) : optionsText ? option[optionsText] : option}{" "}
+                {optionsText2 && option[optionsText2]}
               </option>
             ))}
           </select>

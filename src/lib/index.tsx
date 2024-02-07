@@ -1,4 +1,4 @@
-export function formatISODate(isoDateStr: Date) {
+export function formatISODate(isoDateStr: Date, view?: "date" | "hour") {
   const dateObj = new Date(isoDateStr);
 
   let day: number | string = dateObj.getDate();
@@ -12,7 +12,11 @@ export function formatISODate(isoDateStr: Date) {
   minutes = minutes < 10 ? "0" + minutes : minutes;
   const year = dateObj.getFullYear().toString().slice(-2);
 
-  return `${day}/${month}/${year} à ${hours}:${minutes}`;
+  return view === "date"
+    ? `${day}-${month}-${year}`
+    : view === "hour"
+      ? `${hours}:${minutes}`
+      : `${day}-${month}-${year} à ${hours}:${minutes}`;
 }
 
 export function numberWithCommas(x: number) {
