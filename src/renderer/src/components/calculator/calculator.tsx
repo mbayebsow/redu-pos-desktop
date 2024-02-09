@@ -153,7 +153,7 @@ function Calculator() {
       <Button
         separator
         roundedBorder="full"
-        variant="tonal"
+        variant="text"
         text="Caculatrice"
         handleClick={() => setOpenCalculator(true)}
         icon={

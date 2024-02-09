@@ -5,7 +5,7 @@ interface ButtonPros {
   icon?: ReactNode;
   separator?: boolean;
   loading?: boolean;
-  variant?: "filled" | "tonal" | "outlined" | "danger";
+  variant?: "filled" | "tonal" | "outlined" | "text" | "danger";
   roundedBorder?: "normal" | "full";
   handleClick?: (params: any | null) => any;
 }
@@ -31,18 +31,17 @@ function Button({
         className={`
         ${(loading && variant) === "filled" && "to-primary-300"} 
         ${(loading && variant) === "tonal" && "to-primary-800"}
+        ${(loading && variant) === "text" && "to-primary-800"}
         ${(loading && variant) === "danger" && "to-red-900"}
-        ${loading && loading && "animate-spin"}
+        ${loading && "animate-spin"}
         bg-gradient-to-r from-transparent via-transparent w-full h-full absolute top-0 bottom-0 left-0 right-0 -z-10`}
       />
 
       <div
         className={`
         ${variant === "filled" && "bg-primary-800 text-primary-50 fill-primary-50"} 
-        ${
-          variant === "tonal" &&
-          "bg-primary-100 border border-primary-100/50 text-primary-800 fill-primary-800"
-        }
+        ${variant === "tonal" && "bg-primary-100 text-primary-800 fill-primary-800"}
+        ${variant === "text" && "bg-transparent text-primary-800"}
         ${variant === "danger" && "bg-red-100 text-red-900 fill-red-900"}
         ${roundedBorder === "normal" && "rounded-lg"}
         ${roundedBorder === "full" && "rounded-full"}

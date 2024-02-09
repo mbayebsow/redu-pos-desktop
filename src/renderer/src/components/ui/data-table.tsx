@@ -34,7 +34,7 @@ function Table({ columns, data, handleClick }: TableProps) {
               className={`${activeRow === i && "bg-primary-100"} ${handleClick && "cursor-pointer"} border-b border-b-primary-light hover:bg-primary-50`}
             >
               {columns.map((column, i) => (
-                <th key={i} className="pl-3 py-4 w-auto font-normal">
+                <th key={i} className="px-2 py-4 w-auto font-normal">
                   {column.render
                     ? column.render(d)
                     : column.dataIndex && (

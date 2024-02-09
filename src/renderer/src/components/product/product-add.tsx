@@ -2,9 +2,11 @@ import SelectField from "../ui/select-field";
 import TextField from "../ui/text-field";
 import UplaodField from "../ui/uplaod-field";
 import { useProduct } from "../../contexts/product-context";
+import { useCategory } from "../../contexts/category-context";
 
 function ProductAdd() {
   const { newProductState, handleNewProductValue } = useProduct();
+  const { categories } = useCategory();
 
   return (
     <div className="gap-5 flex flex-col w-[30vw] p-3">
@@ -42,20 +44,23 @@ function ProductAdd() {
         />
         <SelectField
           label="Categorie"
-          placeholder="Choisir"
           name="category"
+          optionsData={categories}
+          optionsText="name"
+          optionsValue="id"
+          defaultText="Pas de cetegorie"
+          defaultTextValue="null"
           value={newProductState.category}
-          options={["Unité", "Cartons", "Paquets", "Packs", "Bouteilles", "Sacs", "Kg"]}
-          onChange={handleNewProductValue}
+          onChange={(e) => handleNewProductValue(e.target.value)}
         />
-        <SelectField
+        {/*8<SelectField
           label="Fournisseur"
           placeholder="Choisir"
           name="supplier"
           value={newProductState.supplier}
           options={["Unité", "Cartons", "Paquets", "Packs", "Bouteilles", "Sacs", "Kg"]}
           onChange={handleNewProductValue}
-        />
+        />*/}
       </div>
     </div>
   );

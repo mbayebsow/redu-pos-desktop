@@ -9,7 +9,7 @@ interface ProductContextPropsType {
   addNewProduct: () => void;
   deleteProduct: (id: number) => void;
   getproductById: (productId: number) => ProductType | undefined;
-  handleNewProductValue: (event: ChangeEvent<HTMLInputElement>) => void;
+  handleNewProductValue: (event: ChangeEvent<HTMLInputElement>) => any;
 }
 
 const INITIAL_PRODUCT = {

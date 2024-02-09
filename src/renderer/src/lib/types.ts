@@ -7,7 +7,7 @@ export type ProductType = {
   price: number;
   stockQuantity: number;
   supplier: string;
-  category: number;
+  category: number | null;
   isActive: boolean;
   image: string;
 };

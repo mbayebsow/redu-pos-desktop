@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { createHashRouter, RouterProvider } from "react-router-dom";
 import Layout from "./components/layout/Layout.tsx";
 import "./index.css";
 
@@ -11,7 +11,7 @@ import ClientsScreen from "./screens/clients-screen.tsx";
 import SalesScreen from "./screens/sales-screen.tsx";
 import StocksScreen from "./screens/stocks-screen.tsx";
 
-const router = createBrowserRouter([
+const router = createHashRouter([
   {
     path: "/",
     element: <Layout />,

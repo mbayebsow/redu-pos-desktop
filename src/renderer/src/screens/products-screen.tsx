@@ -118,19 +118,19 @@ function ProductSection() {
 
 function ProductsScreen() {
   return (
-    <div className="w-full h-full overflow-hidden flex gap-2">
-      <div className="w-[75%] flex flex-col h-full">
-        <ProductProvider>
-          <ProductSection />
-        </ProductProvider>
-      </div>
+    <CategoryProvider>
+      <div className="w-full h-full overflow-hidden flex gap-2">
+        <div className="w-[75%] flex flex-col h-full">
+          <ProductProvider>
+            <ProductSection />
+          </ProductProvider>
+        </div>
 
-      <div className="h-full w-[25%] bg-primary-50 rounded-xl p-3">
-        <CategoryProvider>
+        <div className="h-full w-[25%] bg-primary-50 rounded-xl p-3">
           <CategorySection />
-        </CategoryProvider>
+        </div>
       </div>
-    </div>
+    </CategoryProvider>
   );
 }
 

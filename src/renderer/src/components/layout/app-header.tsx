@@ -1,7 +1,6 @@
 import Calculator from "../calculator/calculator";
 import LoadSample from "../load-sample";
 import Button from "../ui/button";
-import Chips from "../ui/chips";
 
 function AppHeader() {
   return (
@@ -27,7 +26,7 @@ function AppHeader() {
           <Button
             separator
             roundedBorder="full"
-            variant="tonal"
+            variant="text"
             text="Salut, Babacar"
             icon={
               <svg
@@ -49,7 +48,7 @@ function AppHeader() {
           <Button
             separator
             roundedBorder="full"
-            variant="tonal"
+            variant="text"
             text="Verouiller"
             icon={
               <svg
