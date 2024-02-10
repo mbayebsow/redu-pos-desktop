@@ -8,6 +8,7 @@ import { ClientProvider, useClient } from "../contexts/client-context";
 
 import SelectField from "../components/ui/select-field";
 import Table from "../components/ui/data-table";
+import SectionTitle from "../components/ui/section-title";
 
 const ClientFullName = ({ record }: { record: SalesType }) => {
   const { getClientById } = useClient();
@@ -15,7 +16,8 @@ const ClientFullName = ({ record }: { record: SalesType }) => {
   return (
     record.customer && (
       <div>
-        {getClientById(record.customer)?.data?.firstName} {getClientById(record.customer)?.data?.lastName}
+        {getClientById(record.customer)?.data?.firstName}{" "}
+        {getClientById(record.customer)?.data?.lastName}
       </div>
     )
   );
@@ -51,26 +53,32 @@ function SalesList({ setSaleSelected }: { setSaleSelected: (sale: SalesType) => 
   const { sales } = useSale();
 
   const [filterByClientId, setFilterByClientId] = useState<number>(0);
-  const [filterByDate, setFilterByDate] = useState<{ from: string; to: string }>({
+  const [filterByDate, setFilterByDate] = useState<{
+    from: string;
+    to: string;
+  }>({
     from: "0",
     to: "0",
   });
 
   return (
-    <div className="w-full h-full flex flex-col gap-2">
-      <div className="py-2 flex gap-4 w-full bg-primary-50 rounded-xl p-2">
-        <SelectField
-          label="Client"
-          name="client"
-          value={filterByClientId.toString()}
-          optionsData={clients}
-          optionsText="firstName"
-          optionsText2="lastName"
-          optionsValue="id"
-          defaultText="Tout"
-          defaultTextValue="0"
-          onChange={(e) => setFilterByClientId(Number(e.target.value))}
-        />
+    <div className="w-full h-full flex flex-col">
+      <SectionTitle>Ventes</SectionTitle>
+      <div className="flex gap-4 w-full">
+        <div className="w-60">
+          <SelectField
+            label="Client"
+            name="client"
+            value={filterByClientId.toString()}
+            optionsData={clients}
+            optionsText="firstName"
+            optionsText2="lastName"
+            optionsValue="id"
+            defaultText="Tout"
+            defaultTextValue="0"
+            onChange={(e) => setFilterByClientId(Number(e.target.value))}
+          />
+        </div>
 
         <div className="flex gap-2 items-center">
           <SelectField
@@ -81,7 +89,12 @@ function SalesList({ setSaleSelected }: { setSaleSelected: (sale: SalesType) => 
             defaultText="Tout"
             defaultTextValue="0"
             render={(date) => <div>{formatISODate(date, "date")}</div>}
-            onChange={(e) => setFilterByDate((prev) => ({ ...prev, from: e.target.value }))}
+            onChange={(e) =>
+              setFilterByDate((prev) => ({
+                ...prev,
+                from: e.target.value,
+              }))
+            }
           />
 
           <SelectField
@@ -92,7 +105,12 @@ function SalesList({ setSaleSelected }: { setSaleSelected: (sale: SalesType) => 
             defaultText="Tout"
             defaultTextValue="0"
             render={(date) => <div>{formatISODate(date, "date")}</div>}
-            onChange={(e) => setFilterByDate((prev) => ({ ...prev, to: e.target.value }))}
+            onChange={(e) =>
+              setFilterByDate((prev) => ({
+                ...prev,
+                to: e.target.value,
+              }))
+            }
           />
         </div>
       </div>
@@ -133,7 +151,7 @@ function ProductsSaleList({ saleSelected }: { saleSelected: SalesType | null }) 
 
   return (
     <div className="w-full h-full flex flex-col">
-      <div className="text-xl font-bold border-b pb-5">Produits</div>
+      <SectionTitle>Produits</SectionTitle>
       <div className="w-full h-full overflow-y-scroll">
         <div className="w-full h-fit text-sm flex flex-col gap-2 py-2">
           {saleSelected &&
@@ -162,13 +180,13 @@ function SalesScreen() {
   return (
     <SaleProvider>
       <div className="flex gap-2 w-full h-full">
-        <div className="w-full h-full">
+        <div className="w-full h-full bg-white/60 p-2 rounded-xl">
           <ClientProvider>
             <SalesList setSaleSelected={setSaleSelected} />
           </ClientProvider>
         </div>
 
-        <div className="w-96 h-full bg-primary-50 rounded-xl p-3">
+        <div className="w-96 h-full bg-white/60 p-2 rounded-xl">
           <ProductProvider>
             <ProductsSaleList saleSelected={saleSelected} />
           </ProductProvider>

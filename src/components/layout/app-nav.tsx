@@ -93,19 +93,19 @@ function ApptNav() {
         <div className="text-xl font-bold">REDU</div>
       </div>
 
-      <div className="h-full flex flex-col justify-center items-center gap-5 p-2">
+      <div className="h-full flex flex-col justify-center items-center gap-5">
         {NAVIGATIONS.map((nav, i) => (
           <NavLink
             key={i}
             to={nav.path}
             className={({ isActive }) =>
               `${
-                isActive ? "bg-primary-200 rounded-xl" : "fill-primary-800"
-              } aspect-square p-2  w-full flex flex-col gap-1 justify-center items-center`
+                isActive && "bg-primary-200"
+              } aspect-square p-0 rounded-full fill-primary-600 w-12 flex flex-col gap-1 justify-center items-center`
             }
           >
             {nav.icon}
-            <span className="text-xs"> {nav.name} </span>
+            <span className="text-xs hidden"> {nav.name} </span>
           </NavLink>
         ))}
       </div>

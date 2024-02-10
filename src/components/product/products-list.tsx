@@ -59,7 +59,7 @@ function Product({ handleClick, image, name, price }: ProductProps) {
   return (
     <div
       onClick={handleClick}
-      className="rounded-xl p-1 h-fit w-full  productItem cursor-pointer overflow-hidden bg-primary-50 border-primary-300 hover:border"
+      className="rounded-xl p-1 h-fit w-full  productItem cursor-pointer overflow-hidden hover:border hover:shadow-lg"
     >
       <div className="overflow-hidden aspect-square rounded-lg relative">
         <img src={image} alt={name} className="h-full w-full object-cover" />

@@ -30,7 +30,7 @@ function ProductSection() {
 
   return (
     <div className="w-full h-full flex flex-col gap-2">
-      <div className="p-2 w-full h-fit bg-primary-50 rounded-xl flex flex-col gap-2 relative overflow-hidden">
+      <div className=" w-full h-fit flex flex-col gap-2 relative overflow-hidden">
         <div className="h-fit">
           <TextField
             name="search"
@@ -42,7 +42,7 @@ function ProductSection() {
           />
         </div>
 
-        <div className="overflow-x-scroll overflow-y-hidden relative h-[68px] w-full">
+        <div className="overflow-x-scroll overflow-y-hidden relative h-[48px] w-full">
           <div className="inline-flex gap-1 w-fit h-fit absolute top-0 bottom-0 left-0">
             <Chips
               handleClick={() => setProductFilterByCategory(0)}
@@ -68,7 +68,7 @@ function ProductSection() {
         </div>
       </div>
 
-      <div className="relative w-full h-full overflow-y-scroll pr-2">
+      <div className="relative w-full h-full overflow-y-scroll px-1">
         <div className="grid grid-cols-5 gap-2 h-fit w-full">
           <ProductsList
             display="card"
@@ -235,11 +235,11 @@ function Main() {
         }
       />
 
-      <div className="w-1/2 h-full overflow-hidden">
+      <div className="w-1/2 h-full overflow-hidden bg-white/60 p-2 rounded-xl">
         <ProductSection />
       </div>
 
-      <div className="w-1/4 rounded-xl overflow-hidden bg-primary-50">
+      <div className="w-1/4 rounded-xl overflow-hidden bg-white/60 p-2">
         <Cart />
       </div>
 

@@ -12,9 +12,9 @@ function UplaodField({ label, name, labelDescription, onChange }: UploadFieldPro
         htmlFor="dropzone-file"
         className="flex flex-col items-center justify-center w-full h-full border border-primary-200 border-dashed rounded-lg cursor-pointer bg-primary-100 hover:bg-primary-200"
       >
-        <div className="flex flex-col items-center justify-center pt-5 pb-6">
+        <div className="flex flex-col items-center justify-center">
           <svg
-            className="w-8 h-8 mb-4 text-gray-500"
+            className="w-5 h-5 text-gray-500"
             aria-hidden="true"
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
@@ -28,7 +28,7 @@ function UplaodField({ label, name, labelDescription, onChange }: UploadFieldPro
               d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
             />
           </svg>
-          <p className="mb-2 text-sm text-gray-500">
+          <p className="text-sm text-gray-500">
             <span className="font-semibold"> {label} </span>
           </p>
           <p className="text-xs text-gray-500"> {labelDescription}</p>

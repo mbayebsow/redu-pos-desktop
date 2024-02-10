@@ -5,6 +5,7 @@ import {
   StockTransactionsType,
   SalesType,
   CategoryType,
+  DataBaseResponse,
 } from "./types";
 
 interface DataWithId {
@@ -26,7 +27,7 @@ export default class DB<T extends DataWithId> {
     }
   }
 
-  add(data: T){
+  add(data: T): DataBaseResponse<T> {
     const existingData = localStorage.getItem(this.#tableName);
 
     if (existingData) {
@@ -36,12 +37,12 @@ export default class DB<T extends DataWithId> {
       existData.push(newData);
 
       localStorage.setItem(this.#tableName, JSON.stringify(existData));
-      return { success: true, id: existData.length };
+      return { success: true, data: existData.length };
     }
     return { success: false, message: "No tableName founded" };
   }
 
-  addBatch(data: T[]) {
+  addBatch(data: T[]): DataBaseResponse<T> {
     const existingData = localStorage.getItem(this.#tableName);
 
     if (existingData) {
@@ -63,18 +64,18 @@ export default class DB<T extends DataWithId> {
     return [];
   }
 
-  getById(id: number) : { success: boolean, message?: string, data?: T } {
+  getById(id: number): DataBaseResponse<T> {
     const data = localStorage.getItem(this.#tableName);
     if (data) {
       const existData: T[] = JSON.parse(data);
 
       const filterData: T | undefined = existData.find((v) => v.id === id);
-      return { success: true, data: filterData};
+      return { success: true, data: filterData };
     }
     return { success: false, message: "No tableName founded" };
   }
 
-  update(id: number, newData: T) {
+  update(id: number, newData: T): DataBaseResponse<T> {
     const data = localStorage.getItem(this.#tableName);
 
     if (data) {
@@ -95,7 +96,7 @@ export default class DB<T extends DataWithId> {
     return { success: false, message: "No tableName founded" };
   }
 
-  delete(id: number) {
+  delete(id: number): DataBaseResponse<T> {
     const data = localStorage.getItem(this.#tableName);
 
     if (data) {
@@ -112,6 +113,7 @@ export default class DB<T extends DataWithId> {
 }
 
 export const PRODUCT_DB = new DB<ProductType>("PRODUCTS");
+export const PRODUCTOPTIONS_DB = new DB<ProductType>("PRODUCTOPTIONS");
 export const CUSTOMERS_DB = new DB<CustomerType>("CUSTOMERS");
 export const SALES_DB = new DB<SalesType>("SALES");
 export const CATEGORIES_DB = new DB<CategoryType>("CATEGORIES");

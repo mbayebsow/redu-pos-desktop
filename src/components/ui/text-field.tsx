@@ -4,6 +4,7 @@ interface TextFieldProps {
   type: string;
   value?: string | number;
   variant?: "tonal" | "outlined";
+  roundedBorder?: "lg" | "full";
   placeholder?: string;
   clrearValue?: (arg: any | undefined) => any | void;
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -15,6 +16,7 @@ function TextField({
   type,
   value,
   placeholder,
+  roundedBorder = "full",
   variant = "tonal",
   clrearValue,
   onChange,
@@ -23,15 +25,17 @@ function TextField({
     <div className="p-[2px] h-10 w-full">
       <div
         className={`
-          relative z-0 w-full h-full px-2 pr-3 rounded-lg flex items-center
-          ${variant === "tonal" && "bg-primary-100 border-primary-200"} 
-          ${variant === "outlined" && "bg-primary-50 border-primary-100"} 
+          relative z-0 w-full h-full px-4 pr-3 flex items-center
+          ${roundedBorder === "lg" && "rounded-lg"}
+          ${roundedBorder === "full" && "rounded-full"}
+          ${variant === "tonal" && "bg-primary-100"} 
+          ${variant === "outlined" && "bg-white"} 
         `}
       >
         <div className="h-full w-full flex items-center gap-2">
           <label
             htmlFor={name}
-            className="text-gray-500 whitespace-nowrap border-r border-black/20 pr-2"
+            className="text-gray-500 whitespace-nowrap border-r border-black/20 pr-2 text-xs"
           >
             {label}
           </label>

@@ -11,11 +11,6 @@
     "noEmit": true,
     "composite": true,
     "jsx": "react-jsx",
-    "baseUrl": ".",
-    "paths": {
-      "@renderer/*": [
-        "src/*"
-      ]
-    }
+ 
   }
 }

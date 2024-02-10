@@ -8,6 +8,7 @@ import AddClient from "../components/client/client-add";
 import { ClientProvider, useClient } from "../contexts/client-context";
 import { SaleProvider, useSale } from "../contexts/sale-context";
 import { formatISODate, numberWithCommas } from "../lib";
+import SectionTitle from "../components/ui/section-title";
 
 const clientsColumns = [
   {
@@ -56,7 +57,7 @@ function ClientSales({ selectedClient }: { selectedClient: CustomerType | undefi
   const { sales } = useSale();
   return (
     <div className="w-full h-full flex flex-col">
-      <div className="text-xl font-bold border-b pb-5">Achats du client</div>
+      <SectionTitle>Achats</SectionTitle>
       <div className="w-full h-full overflow-y-scroll">
         <div className="w-fit h-fit text-sm">
           <Table
@@ -77,7 +78,8 @@ function CLientsList({ setSelectedClient }: { setSelectedClient: (client: Custom
 
   return (
     <div className="w-full h-full flex flex-col gap-2">
-      <div className="py-2 flex justify-between gap-2 w-full bg-primary-50 rounded-xl p-2">
+      <SectionTitle>Clients</SectionTitle>
+      <div className="flex justify-between gap-2 w-full">
         <TextField
           label="Recherche"
           type="text"
@@ -114,13 +116,13 @@ function ClientsScreen() {
   return (
     <>
       <div className="flex gap-2 w-full h-full">
-        <div className="w-full h-full">
+        <div className="w-full h-full bg-white/60 p-2 rounded-xl">
           <ClientProvider>
             <CLientsList setSelectedClient={setSelectedClient} />
           </ClientProvider>
         </div>
 
-        <div className="w-96 h-full bg-primary-50 rounded-xl p-3">
+        <div className="w-96 h-full bg-white/60 p-2 rounded-xl">
           <SaleProvider>
             <ClientSales selectedClient={selectedClient} />
           </SaleProvider>

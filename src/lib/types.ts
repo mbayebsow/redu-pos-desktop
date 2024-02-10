@@ -2,14 +2,26 @@ import { ReactNode } from "react";
 
 export type ProductType = {
   id: number;
-  identifier: number;
+  identifier: number; // Code bare
   name: string;
-  price: number;
+  priceCost: number; // Prix d'achat
+  priceSale: number; // Prix de vente null si des options sont disponible
   stockQuantity: number;
-  supplier: string;
+  supplier: string; // Fournisseur
   category: number | null;
   isActive: boolean;
+  unit: string; // Type d'unité
+  type: "standard" | "variable";
   image: string;
+};
+
+export type ProductOptionType = {
+  id: number;
+  ProductID: number;
+  name: string;
+  priceCost: number; // Prix d'achat
+  priceSale: number; // Prix de vente
+  stockQuantity: number;
 };
 
 export type CategoryType = {
@@ -64,3 +76,5 @@ export type TableColumns = {
   dataIndex?: string;
   render?: (record?: any) => ReactNode;
 }[];
+
+export type DataBaseResponse<T> = { success: boolean; message?: string; data?: T };

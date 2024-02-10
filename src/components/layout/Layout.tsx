@@ -10,8 +10,8 @@ function Layout() {
       <ApptNav />
       <div className="flex flex-col h-full w-full">
         <AppHeader />
-        <div className="p-3 pt-0 h-full w-full overflow-hidden ">
-          <div className="h-full w-full overflow-hidden p-2 bg-white rounded-2xl border">
+        <div className="p-3 pt-0 pl-0 h-full w-full overflow-hidden ">
+          <div className="h-full w-full overflow-hidden rounded-2xl">
             <Outlet />
           </div>
         </div>

@@ -6,7 +6,7 @@ import TextField from "../ui/text-field";
 import { useClient } from "../../contexts/client-context";
 
 const initialClient = {
-  id:0,
+  id: 0,
   firstName: "",
   lastName: "",
   address: "",
@@ -90,7 +90,7 @@ function AddClient() {
         }}
         content={<ClientForm clientState={clientState} handleChange={handleChange} />}
       />
-      <Button handleClick={() => setOpenaddModal(true)} text="Ajouter" />
+      <Button roundedBorder="full" handleClick={() => setOpenaddModal(true)} text="Ajouter" />
     </div>
   );
 }

@@ -11,10 +11,10 @@ function Chips({ text, icon, active = false, handleClick }: ChipsProps) {
   return (
     <button
       onClick={handleClick}
-      className={` ${active && "bg-primary-800 text-primary-50"} border border-primary-200 text-sm rounded-full h-9 w-fit flex gap-2 px-3 items-center`}
+      className={` ${active && "bg-primary-200 border-none"} border border-primary-200 text-[10px] rounded-full h-fit w-fit flex gap-2 px-1 py-1 pr-3 items-center`}
     >
       <div className="w-4 h-4 flex items-center justify-center">{icon}</div>
-      <hr className="border-primary-900 w-1" />
+      <hr className="border-primary-500 w-1" />
       <div className="whitespace-nowrap w-fit font-light">{text}</div>
     </button>
   );

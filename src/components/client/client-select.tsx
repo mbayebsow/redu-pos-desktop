@@ -14,7 +14,7 @@ function Main({ value, onChange }: ClientSelectPros) {
       value={value ? value.toString() : "0"}
       name="clientCart"
       id="clientCart"
-      className="w-full rounded-lg p-1 bg-primary-200 h-9 px-2 border border-primary-light"
+      className="w-full rounded-lg p-1 bg-primary-100 h-9 px-2"
     >
       <option disabled value="0">
         Client
