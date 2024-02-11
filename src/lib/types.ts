@@ -2,10 +2,10 @@ import { ReactNode } from "react";
 
 export type ProductType = {
   id: number;
-  identifier: number; // Code bare
+  identifier: string; // Code bare
   name: string;
   priceCost: number; // Prix d'achat
-  priceSale: number; // Prix de vente null si des options sont disponible
+  price: number; // Prix de vente null si des options sont disponible
   stockQuantity: number;
   supplier: string; // Fournisseur
   category: number | null;

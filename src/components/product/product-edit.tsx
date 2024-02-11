@@ -45,7 +45,7 @@ function ProductEdit({ product }: { product: ProductType }) {
           />
           <div className="inline-flex gap-2 items-center">
             <TextField
-            variant="tonal"
+              variant="tonal"
               type="number"
               label="Prix:"
               name="price"
@@ -53,7 +53,7 @@ function ProductEdit({ product }: { product: ProductType }) {
               onChange={getInputData}
             />
             <TextField
-            variant="tonal"
+              variant="tonal"
               type="text"
               label="Unité:"
               name="unite"

@@ -28,7 +28,7 @@ function TextField({
           relative z-0 w-full h-full px-4 pr-3 flex items-center
           ${roundedBorder === "lg" && "rounded-lg"}
           ${roundedBorder === "full" && "rounded-full"}
-          ${variant === "tonal" && "bg-primary-100"} 
+          ${variant === "tonal" && "bg-primary-100/50"} 
           ${variant === "outlined" && "bg-white"} 
         `}
       >

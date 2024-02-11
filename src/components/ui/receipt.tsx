@@ -71,12 +71,9 @@ function Receipt({
               <tbody>
                 {products.map((product) => (
                   <tr key={product.id} className="">
-                    <td className="py-1 px-1 text-center border-b border-r">
-                      {" "}
-                      {product.quantity}{" "}
-                    </td>
+                    <td className="py-1 px-1 text-center border-b border-r">{product.quantity}</td>
                     <td className="py-1 px-1 text-left border-b border-r"> {product.name} </td>
-                    <td className="py-1 px-1 text-center border-b border-r"> {product.price} </td>
+                    <td className="py-1 px-1 text-center border-b border-r">{product.price}</td>
                     <td className="py-1 px-1 text-right border-b">
                       {product.price * product.quantity}
                     </td>

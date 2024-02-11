@@ -38,7 +38,7 @@ function SelectField({
         w-full flex items-center gap-2 px-4 h-full
         ${roundedBorder === "lg" && "rounded-lg"}
         ${roundedBorder === "full" && "rounded-full"}
-        ${variant === "tonal" && "bg-primary-100 border-primary-200"}
+        ${variant === "tonal" && "bg-primary-100/50 border-primary-200"}
         ${variant === "outlined" && "bg-primary-50 border-primary-100"}
       `}
       >

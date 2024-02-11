@@ -1,6 +1,6 @@
 import Barcode from "react-jsbarcode";
 import { useProduct } from "../../contexts/product-context";
-import { ProductType } from "../../lib/types";
+import { ProductType, TableColumns } from "../../lib/types";
 import Table from "../ui/data-table";
 import ProductTableOptions from "./product-table-options";
 
@@ -17,12 +17,21 @@ interface ProductProps {
   handleClick: () => void;
 }
 
-const columns = [
+const columns: TableColumns = [
   {
-    title: "Code bare",
+    title: "Image",
+    dataIndex: "image",
+    render: (record: ProductType) => <img src={record.image} className="w-10 h-10 rounded-md" />,
+  },
+  {
+    title: "Identifiant",
     dataIndex: "identifier",
     render: (record: ProductType) => (
-      <Barcode className="h-10 w-20" value={`${record.identifier}`} />
+      <Barcode
+        options={{ displayValue: true, fontSize: 35 }}
+        className="h-fit w-24"
+        value={`${record.identifier}`}
+      />
     ),
   },
   {
@@ -36,6 +45,10 @@ const columns = [
   {
     title: "Stock",
     dataIndex: "stockQuantity",
+  },
+  {
+    title: "unité",
+    dataIndex: "unit",
   },
   {
     title: "Categorie",

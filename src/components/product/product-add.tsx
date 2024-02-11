@@ -94,7 +94,7 @@ function ProductAdd({
           </div>
 
           <div className="p-[2px] h-10">
-            <div className="flex items-center justify-between rounded-lg bg-primary-100 h-full w-full pl-4 pr-2">
+            <div className="flex items-center justify-between rounded-lg bg-primary-100/50 h-full w-full pl-4 pr-2">
               <div className="text-xs text-gray-500 border-r border-black/20 pr-2">
                 Type de produit:
               </div>
@@ -142,18 +142,18 @@ function ProductAdd({
             <TextField
               roundedBorder="lg"
               label="Prix de vente"
-              name="priceSale"
+              name="price"
               type="number"
-              value={productValue.priceSale === 0 ? "" : productValue.priceSale}
+              value={productValue.price === 0 ? "" : productValue.price}
               onChange={(e) =>
-                handleProductValue({ ...productValue, priceSale: Number(e.target.value) })
+                handleProductValue({ ...productValue, price: Number(e.target.value) })
               }
             />
           </div>
         )}
 
         {productValue.type === "variable" && (
-          <div className="bg-primary-50 p-2 rounded-lg border">
+          <div className="bg-primary-50/50 p-2 rounded-lg border">
             <h3 className="pl-2 mb-2 font-bold">Options:</h3>
             {productOptions.map((option, index) => (
               <div key={index} className="border-t py-2">
@@ -197,7 +197,9 @@ function ProductAdd({
                 />
               </div>
             ))}
-            <Button handleClick={handleAddOption}>Ajouter une option</Button>
+            <Button variant="text" icon={<div>+</div>} handleClick={handleAddOption}>
+              Ajouter une option
+            </Button>
           </div>
         )}
       </div>

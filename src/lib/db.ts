@@ -6,7 +6,13 @@ import {
   SalesType,
   CategoryType,
   DataBaseResponse,
+  ProductOptionType,
 } from "./types";
+
+interface DBType<T> {
+  idLength: 0;
+  data: T[];
+}
 
 interface DataWithId {
   id?: number;
@@ -23,7 +29,7 @@ export default class DB<T extends DataWithId> {
 
   #init(table: string) {
     if (!localStorage.getItem(table)) {
-      localStorage.setItem(table, JSON.stringify([]));
+      localStorage.setItem(table, JSON.stringify({ idLength: 0, data: [] }));
     }
   }
 
@@ -31,26 +37,36 @@ export default class DB<T extends DataWithId> {
     const existingData = localStorage.getItem(this.#tableName);
 
     if (existingData) {
-      const existData = JSON.parse(existingData);
+      const existData: DBType<T> = JSON.parse(existingData);
 
-      const newData = { ...data, id: existData.length + 1 };
-      existData.push(newData);
+      const newData = { ...data, id: existData.idLength + 1 };
+      existData.data.push(newData);
+      existData.idLength += 1;
 
       localStorage.setItem(this.#tableName, JSON.stringify(existData));
-      return { success: true, data: existData.length };
+      return { success: true, data: newData };
     }
     return { success: false, message: "No tableName founded" };
   }
 
   addBatch(data: T[]): DataBaseResponse<T> {
+    console.log("addBatch");
+
     const existingData = localStorage.getItem(this.#tableName);
 
     if (existingData) {
-      const existData: T[] = JSON.parse(existingData);
+      try {
+        const existData: DBType<T> = JSON.parse(existingData);
 
-      const newData = data.map((item, i) => ({ ...item, id: existData.length + 1 + i }));
-      localStorage.setItem(this.#tableName, JSON.stringify(existData.concat(newData)));
-      return { success: true };
+        const newData = data.map((item, i) => ({ ...item, id: existData.idLength + 1 + i }));
+        const newIdLength = existData.idLength + data.length;
+        const fullData = { idLength: newIdLength, data: existData.data.concat(newData) };
+
+        localStorage.setItem(this.#tableName, JSON.stringify(fullData));
+        return { success: true };
+      } catch (error: any) {
+        return { success: false, message: error };
+      }
     }
     return { success: false, message: "No tableName founded" };
   }
@@ -58,8 +74,8 @@ export default class DB<T extends DataWithId> {
   getAll() {
     const data = localStorage.getItem(this.#tableName);
     if (data) {
-      const newData: T[] = JSON.parse(data);
-      return newData;
+      const newData: DBType<T> = JSON.parse(data);
+      return newData.data;
     }
     return [];
   }
@@ -67,9 +83,9 @@ export default class DB<T extends DataWithId> {
   getById(id: number): DataBaseResponse<T> {
     const data = localStorage.getItem(this.#tableName);
     if (data) {
-      const existData: T[] = JSON.parse(data);
+      const existData: DBType<T> = JSON.parse(data);
 
-      const filterData: T | undefined = existData.find((v) => v.id === id);
+      const filterData: T | undefined = existData.data.find((v) => v.id === id);
       return { success: true, data: filterData };
     }
     return { success: false, message: "No tableName founded" };
@@ -79,15 +95,15 @@ export default class DB<T extends DataWithId> {
     const data = localStorage.getItem(this.#tableName);
 
     if (data) {
-      const existingData: DataWithId[] = JSON.parse(data);
+      const existingData: DBType<T> = JSON.parse(data);
 
       if (existingData) {
-        const index = existingData.findIndex((d) => d.id === id);
+        const index = existingData.data.findIndex((d) => d.id === id);
 
         if (index !== -1) {
-          existingData[index] = { ...existingData[index], newData };
+          existingData.data[index] = { ...existingData.data[index], newData };
         } else {
-          existingData.push(newData);
+          existingData.data.push(newData);
         }
         localStorage.setItem(this.#tableName, JSON.stringify(existingData));
         return { success: true };
@@ -100,11 +116,14 @@ export default class DB<T extends DataWithId> {
     const data = localStorage.getItem(this.#tableName);
 
     if (data) {
-      const existingData: DataWithId[] = JSON.parse(data);
+      const existingData: DBType<T> = JSON.parse(data);
 
       if (existingData) {
-        const filteredData = existingData.filter((d) => d.id !== id);
-        localStorage.setItem(this.#tableName, JSON.stringify(filteredData));
+        const filteredData = existingData.data.filter((d) => d.id !== id);
+        localStorage.setItem(
+          this.#tableName,
+          JSON.stringify({ ...existingData, data: filteredData })
+        );
         return { success: true };
       }
     }
@@ -113,7 +132,7 @@ export default class DB<T extends DataWithId> {
 }
 
 export const PRODUCT_DB = new DB<ProductType>("PRODUCTS");
-export const PRODUCTOPTIONS_DB = new DB<ProductType>("PRODUCTOPTIONS");
+export const PRODUCTOPTIONS_DB = new DB<ProductOptionType>("PRODUCTOPTIONS");
 export const CUSTOMERS_DB = new DB<CustomerType>("CUSTOMERS");
 export const SALES_DB = new DB<SalesType>("SALES");
 export const CATEGORIES_DB = new DB<CategoryType>("CATEGORIES");

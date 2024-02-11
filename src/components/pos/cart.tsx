@@ -1,3 +1,4 @@
+import { Minus, Plus, ShoppingBag, ShoppingCart, Trash2 } from "lucide-react";
 import { useCart } from "../../contexts/cart-context";
 import ClientSelect from "../client/client-select";
 
@@ -7,64 +8,25 @@ export default function Cart() {
   return (
     <>
       <div className="w-full flex flex-col h-full overflow-hidden">
-        <div className="h-fit px-2 text-center flex justify-between border-b border-primary-light mb-3">
-          <div className="text-left text-lg py-4 relative">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 inline-block"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
-              />
-            </svg>
-            <div className="text-center absolute bg-primary-200 rounded-full w-5 h-5 text-xs p-0 leading-5 -right-2 top-3">
+        <div className="h-fit p-2 text-center flex justify-between border-b border-primary-50 mb-3">
+          <div className="relative flex items-center gap-1">
+            <ShoppingBag size={20} />
+            <div className="text-center bg-primary-100 rounded-full w-5 h-5 text-xs p-0 leading-5">
               {cartProducts.length}
             </div>
           </div>
 
-          <div onClick={clearCart} className="flex-grow text-right text-lg py-4 relative">
+          <div onClick={clearCart} className="relative">
             <button className="text-blue-gray-300 hover:text-pink-500 focus:outline-none">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6 inline-block"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                />
-              </svg>
+              <Trash2 size={20} />
             </button>
           </div>
         </div>
 
-        <div className="flex-1 flex flex-col gap-1 overflow-auto px-2">
+        <div className="flex-1 flex flex-col gap-1 overflow-auto">
           {cartProducts.length === 0 && (
-            <div className="flex-1 w-full p-4 opacity-25 select-none flex flex-col flex-wrap content-center justify-center">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-16 inline-block"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
-                />
-              </svg>
+            <div className="h-full w-full p-4 opacity-25 select-none flex items-center justify-center">
+              <ShoppingCart size={100} />
             </div>
           )}
 
@@ -72,7 +34,7 @@ export default function Cart() {
             {cartProducts.map((product) => (
               <div
                 key={product.id}
-                className="select-none w-full flex justify-center py-2 border-b"
+                className="select-none w-full flex items-center justify-between py-2 border-b"
               >
                 <img
                   src={product.image}
@@ -86,45 +48,19 @@ export default function Cart() {
                   </p>
                 </div>
 
-                <div className="py-1">
+                <div className="py-1 h-fit">
                   <div className="flex flex-row gap-2">
                     <button
                       onClick={() => adjustQuantity(product, "de")}
-                      className="h-7 w-7 rounded-md flex justify-center items-center bg-primary-200"
+                      className="h-5 w-5 rounded-full flex justify-center items-center bg-primary-100"
                     >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-4 w-4 inline-block"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="3"
-                          d="M20 12H4"
-                        />
-                      </svg>
+                      <Minus size={12} />
                     </button>
                     <button
                       onClick={() => adjustQuantity(product, "in")}
-                      className="h-7 w-7 rounded-md flex justify-center items-center bg-primary-200"
+                      className="h-5 w-5 rounded-full flex justify-center items-center bg-primary-100"
                     >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-4 w-4 inline-block"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="3"
-                          d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                        />
-                      </svg>
+                      <Plus size={12} />
                     </button>
                   </div>
                 </div>
@@ -132,7 +68,7 @@ export default function Cart() {
             ))}
           </div>
 
-          <div className="py-2">
+          <div className="">
             <ClientSelect value={cartClient?.id} onChange={addClient} />
           </div>
         </div>

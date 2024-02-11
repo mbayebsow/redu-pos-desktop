@@ -3,7 +3,7 @@ interface ModalProps {
   content: JSX.Element;
   actionButtonText?: string;
   actionButtonShow?: boolean;
-  actionButtonOnClick?: (params: any) => void;
+  actionButtonOnClick?: (arg: any) => any;
   setShowModal: (p: boolean) => void;
 }
 
@@ -26,7 +26,7 @@ function Modal({
             />
 
             <div className="flex flex-col gap-2 justify-between max-h-full h-fit w-fit mx-auto z-10 bg-primary-50 rounded-2xl overflow-hidden  p-2">
-              <div className="h-full w-auto min-h-80 min-w-72 overflow-y-auto rounded-xl overflow-hidden shadow border bg-white/60">
+              <div className="h-full w-auto min-h-80 min-w-72 overflow-y-auto rounded-xl overflow-hidden border bg-white/60">
                 {content}
               </div>
 

@@ -11,7 +11,7 @@ function Layout() {
       <div className="flex flex-col h-full w-full">
         <AppHeader />
         <div className="p-3 pt-0 pl-0 h-full w-full overflow-hidden ">
-          <div className="h-full w-full overflow-hidden rounded-2xl">
+          <div className="h-full w-full overflow-hidden">
             <Outlet />
           </div>
         </div>

@@ -22,3 +22,15 @@ export function formatISODate(isoDateStr: Date, view?: "date" | "hour") {
 export function numberWithCommas(x: number) {
   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 }
+
+export const genererUIDProduit = (): string => {
+  const currentDate = new Date();
+  const year = currentDate.getFullYear().toString();
+  const month = (currentDate.getMonth() + 1).toString().padStart(2, "0");
+  const day = currentDate.getDate().toString().padStart(2, "0");
+
+  const randomDigits = Math.floor(Math.random() * 900) + 100;
+  const uid = `${randomDigits}-${year.slice(2)}${month}${day}`;
+
+  return uid;
+};

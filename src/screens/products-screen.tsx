@@ -1,16 +1,17 @@
 import { ChangeEvent, useState } from "react";
+import { CategoryType, ProductOptionType, ProductType } from "../lib/types";
+
 import { ProductProvider, useProduct } from "../contexts/product-context";
 import { CategoryProvider, useCategory } from "../contexts/category-context";
 
+import Modal from "../components/ui/modal";
+import Button from "../components/ui/button";
 import TextField from "../components/ui/text-field";
 import ProductAdd from "../components/product/product-add";
-import ProductsList from "../components/product/products-list";
-import Button from "../components/ui/button";
-import Modal from "../components/ui/modal";
 import CategoryAdd from "../components/category/category-add";
-import { CategoryType, ProductOptionType, ProductType } from "../lib/types";
+import ProductsList from "../components/product/products-list";
 import SectionTitle from "../components/ui/section-title";
-import toast from "react-hot-toast";
+import { Plus } from "lucide-react";
 
 const INITIAL_CATEGORY = {
   id: 0,
@@ -26,7 +27,7 @@ const INITIAL_PRODUCT: ProductType = {
   supplier: "",
   type: "standard",
   priceCost: 0,
-  priceSale: 0,
+  price: 0,
   identifier: 0,
   stockQuantity: 0,
   category: 0,
@@ -44,21 +45,6 @@ const INITIAL_PRODUCT_OPTIONS: ProductOptionType[] = [
     stockQuantity: 0,
   },
 ];
-
-const genererUIDProduit = (): number => {
-  const currentDate = new Date();
-  const year = currentDate.getFullYear();
-  const month = (currentDate.getMonth() + 1).toString().padStart(2, "0");
-  const day = currentDate.getDate().toString().padStart(2, "0");
-  const hours = currentDate.getHours().toString().padStart(2, "0");
-  const minutes = currentDate.getMinutes().toString().padStart(2, "0");
-  const seconds = currentDate.getSeconds().toString().padStart(2, "0");
-
-  const randomDigits = Math.floor(Math.random() * 90000) + 10000;
-  const uid = Number(randomDigits + year + month + day + hours + minutes + seconds);
-
-  return uid;
-};
 
 function CategorySection() {
   const { categories, addCategory } = useCategory();
@@ -122,40 +108,10 @@ function ProductSection() {
   const [searchByName, setSearchByName] = useState("");
   const { addProduct } = useProduct();
 
-  const handleNewProduct = (event: ProductType) => {
-    console.log(event);
-    setNewProduct(event);
-
-    // const { name, value, files, checked } = event.target;
-
-    // let VALUE;
-
-    // if (value) VALUE = value;
-    // if (!value && !files) VALUE = checked;
-    // if (files) {
-    //   var fReader = new FileReader();
-    //   fReader.readAsDataURL(files[0]);
-    //   fReader.onloadend = function () {
-    //     VALUE = fReader.result;
-    //     setNewProduct({
-    //       ...newProduct,
-    //       [name]: name === "price" || name === "stockQuantity" ? Number(VALUE) : VALUE,
-    //     });
-    //     return;
-    //   };
-    // }
-    // setNewProduct({
-    //   ...newProduct,
-    //   [name]: name === "price" || name === "stockQuantity" ? Number(VALUE) : VALUE,
-    // });
-  };
-
   const handleOptionChange = (index: number, event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     const updatedOptions = [...productOptions];
     updatedOptions[index][name] = name === "name" ? value : Number(value);
-    console.log(updatedOptions);
-
     setProductOptions(updatedOptions);
   };
 
@@ -173,24 +129,18 @@ function ProductSection() {
     ]);
   };
 
-  const addNewProduct = () => {
-    console.log(newProduct, productOptions);
-    return;
-
-    if (newProduct.name === "") {
-      toast.error("Le nom du produit est obligatoir");
-      return;
-    }
-
-    if (newProduct.type === "standard" && newProduct.priceSale === 0) {
-      toast.error("Le prix est obligatoir");
-      return;
-    }
-    const identifier = genererUIDProduit();
-
-    addProduct({ ...newProduct, identifier });
-    toast.success("Produit enregistrer.");
+  const resetValue = () => {
     setNewProduct(INITIAL_PRODUCT);
+    setProductOptions([
+      {
+        id: 0,
+        ProductID: 0,
+        name: "",
+        priceCost: 0,
+        priceSale: 0,
+        stockQuantity: 0,
+      },
+    ]);
   };
 
   return (
@@ -202,14 +152,14 @@ function ProductSection() {
           <ProductAdd
             productValue={newProduct}
             productOptions={productOptions}
-            handleProductValue={handleNewProduct}
+            handleProductValue={setNewProduct}
             handleAddOption={handleAddOption}
             handleOptionChange={handleOptionChange}
           />
         }
         actionButtonShow
         actionButtonText="AJOUTER"
-        actionButtonOnClick={addNewProduct}
+        actionButtonOnClick={() => addProduct(newProduct, productOptions, resetValue)}
       />
       <div className="w-full flex flex-col h-full">
         <SectionTitle>Produits</SectionTitle>
@@ -239,6 +189,7 @@ function ProductSection() {
             <Button
               roundedBorder="full"
               text="Ajouter"
+              icon={<Plus />}
               handleClick={() => setOpentAddModal(true)}
             />
           </div>
@@ -256,7 +207,7 @@ function ProductsScreen() {
   return (
     <CategoryProvider>
       <div className="w-full h-full overflow-hidden flex gap-2 ">
-        <div className="w-[75%] flex flex-col h-full bg-white/60 p-2 rounded-xl">
+        <div className="w-[75%] h-full bg-white/60 p-2 rounded-xl">
           <ProductProvider>
             <ProductSection />
           </ProductProvider>

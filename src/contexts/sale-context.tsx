@@ -15,8 +15,9 @@ const SaleProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const addSale = (sale: SalesType, saleItems: SaleItemsType[]) => {
     const saveSale = SALES_DB.add(sale);
 
-    if (saveSale?.success) {
-      const itemsWithSaleid = saleItems.map((sale) => ({ ...sale, saleId: saveSale.id }));
+    if (saveSale?.data) {
+      const saleId = saveSale.data.id;
+      const itemsWithSaleid = saleItems.map((sale) => ({ ...sale, saleId }));
       const saveSaleItems = SALEITEMS_DB.addBatch(itemsWithSaleid);
       if (saveSaleItems?.success) toast.success("Vente enregistrer.");
     }
