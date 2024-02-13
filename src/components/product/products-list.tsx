@@ -1,35 +1,44 @@
 import Barcode from "react-jsbarcode";
+import { CategoryType, ProductType, ProductsWithOptionsType, TableColumns } from "../../lib/types";
+import { getMinMax, numberWithCommas } from "../../lib";
+
+import { useCategory } from "../../contexts/category-context";
 import { useProduct } from "../../contexts/product-context";
-import { ProductType, TableColumns } from "../../lib/types";
-import Table from "../ui/data-table";
+
 import ProductTableOptions from "./product-table-options";
+import ProductCard from "./product-card";
+import Table from "../ui/data-table";
 
 interface ProductListProps {
   display?: "list" | "card";
   filterByName?: string;
   filterByCategory?: number | null;
-  handleClick?: (product: ProductType) => void;
+  handleClick?: (product: ProductsWithOptionsType) => void;
 }
-interface ProductProps {
-  image: string;
-  name: string;
-  price: number;
-  handleClick: () => void;
-}
+
+const Category = ({ record }: { record: ProductType }) => {
+  const { categories } = useCategory();
+
+  return record.category === 0
+    ? "-"
+    : categories.map((cat: CategoryType) => cat.id === record.category && cat.name);
+};
 
 const columns: TableColumns = [
   {
     title: "Image",
     dataIndex: "image",
-    render: (record: ProductType) => <img src={record.image} className="w-10 h-10 rounded-md" />,
+    render: (record: ProductsWithOptionsType) => (
+      <img src={record.image} className="w-10 h-10 rounded-md" />
+    ),
   },
   {
     title: "Identifiant",
     dataIndex: "identifier",
-    render: (record: ProductType) => (
+    render: (record: ProductsWithOptionsType) => (
       <Barcode
         options={{ displayValue: true, fontSize: 35 }}
-        className="h-fit w-24"
+        className="h-fit w-20"
         value={`${record.identifier}`}
       />
     ),
@@ -37,10 +46,30 @@ const columns: TableColumns = [
   {
     title: "Nom",
     dataIndex: "name",
+    width: 150,
   },
   {
     title: "Prix",
     dataIndex: "price",
+    render: (record: ProductsWithOptionsType) => (
+      <div className="">
+        {record.type === "standard"
+          ? numberWithCommas(record.price)
+          : record.type === "variable" &&
+            record.options && (
+              <div>
+                <div className="whitespace-nowrap flex items-center gap-1">
+                  {numberWithCommas(getMinMax(record.options, "priceSale", "min"))}
+                  <div className="text-xs">Min</div>
+                </div>
+                <div className="whitespace-nowrap flex items-center gap-1">
+                  {numberWithCommas(getMinMax(record.options, "priceSale", "max"))}
+                  <div className="text-xs">Max</div>
+                </div>
+              </div>
+            )}
+      </div>
+    ),
   },
   {
     title: "Stock",
@@ -53,6 +82,7 @@ const columns: TableColumns = [
   {
     title: "Categorie",
     dataIndex: "category",
+    render: (record) => <Category record={record} />,
   },
   {
     title: "Fournisseur",
@@ -64,29 +94,9 @@ const columns: TableColumns = [
   },
   {
     title: "Options",
-    render: (record: ProductType) => <ProductTableOptions id={record.id} />,
+    render: (record: ProductsWithOptionsType) => <ProductTableOptions id={record.id} />,
   },
 ];
-
-function Product({ handleClick, image, name, price }: ProductProps) {
-  return (
-    <div
-      onClick={handleClick}
-      className="rounded-xl p-1 h-fit w-full  productItem cursor-pointer overflow-hidden hover:border hover:shadow-lg"
-    >
-      <div className="overflow-hidden aspect-square rounded-lg relative">
-        <img src={image} alt={name} className="h-full w-full object-cover" />
-        <p className="nowrap font-semibold text-xs absolute bottom-0 px-2 py-1 bg-primary-50/50 w-full">
-          {price}
-        </p>
-      </div>
-
-      <div className="p-2">
-        <p className="flex-grow truncate mr-1 text-xs">{name}</p>
-      </div>
-    </div>
-  );
-}
 
 function ProductsList({
   display = "list",
@@ -94,14 +104,25 @@ function ProductsList({
   filterByCategory = 0,
   handleClick,
 }: ProductListProps) {
-  const { products } = useProduct();
+  const { products, productOptions } = useProduct();
+
+  const standardProducts = products.filter((product) => product.type === "standard");
+  const variableProducts = products.filter((product) => product.type === "variable");
+  const variableProductsWithOptions = variableProducts.map((product) => {
+    const options = productOptions.filter((option) => option.ProductID === product.id);
+    return { ...product, options };
+  });
+
+  const finalProducts: ProductsWithOptionsType[] = standardProducts
+    .concat(variableProductsWithOptions)
+    .sort((a, b) => a.id - b.id);
 
   return products ? (
     display === "list" ? (
       <Table
         handleClick={handleClick}
         columns={columns}
-        data={products
+        data={finalProducts
           .filter((product) =>
             product.name.toLocaleLowerCase().includes(filterByName.toLocaleLowerCase())
           )
@@ -110,7 +131,7 @@ function ProductsList({
           )}
       />
     ) : (
-      products
+      finalProducts
         .filter((product) =>
           product.name.toLocaleLowerCase().includes(filterByName.toLocaleLowerCase())
         )
@@ -118,12 +139,10 @@ function ProductsList({
           filterByCategory == 0 ? product : product.category == filterByCategory
         )
         .map((product) => (
-          <Product
+          <ProductCard
             key={product.id}
             handleClick={() => (handleClick ? handleClick(product) : null)}
-            name={product.name}
-            price={product.price}
-            image={product.image}
+            values={product}
           />
         ))
     )

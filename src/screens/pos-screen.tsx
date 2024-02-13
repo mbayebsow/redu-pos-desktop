@@ -1,9 +1,13 @@
 import { useRef, useState } from "react";
 import { useReactToPrint } from "react-to-print";
 
+import { numberWithCommas } from "../lib";
+import { ProductOptionType, ProductsWithOptionsType } from "../lib/types";
+
 import { ProductProvider } from "../contexts/product-context";
 import { CartProvider, useCart } from "../contexts/cart-context";
 import { CategoryProvider, useCategory } from "../contexts/category-context";
+import { SaleProvider, useSale } from "../contexts/sale-context";
 
 import Cart from "../components/pos/cart";
 import NumericPad from "../components/pos/numeric-pad";
@@ -14,22 +18,55 @@ import CardNumber from "../components/ui/card-number";
 import useSound from "../hooks/useSound";
 import TextField from "../components/ui/text-field";
 import Chips from "../components/ui/chips";
-import { SaleProvider, useSale } from "../contexts/sale-context";
-import { numberWithCommas } from "../lib";
+import Popup from "../components/ui/popup";
 
 interface BoxSectionProps {
   setReceiptNo: (no: string) => void;
   setShowModalReceipt: (show: boolean) => void;
 }
 
+function SelectOption({ options }: { options: ProductOptionType[] | null }) {
+  return (
+    <div className="relative w-full h-full overflow-y-scroll">
+      <div className="grid grid-cols-2 gap-2 h-fit w-full">
+        {options &&
+          options.map((option) => (
+            <div className="p-2 border-primary-200 bg-primary-100 w-full rounded-lg">
+              <div>{option.name}</div>
+              <div className="text-sm">{numberWithCommas(option.priceSale)}</div>
+            </div>
+          ))}
+      </div>
+    </div>
+  );
+}
+
 function ProductSection() {
   const [productFilterByName, setProductFilterByName] = useState("");
   const [productFilterByCategory, setProductFilterByCategory] = useState(0);
+  const [showSelectPopup, setShowSelectPopup] = useState(false);
+  const [selectedProductOptions, setSelectedProductOptions] = useState<ProductOptionType[] | null>(
+    null
+  );
   const { addProduct } = useCart();
   const { categories } = useCategory();
 
+  const handleAddProduct = (product: ProductsWithOptionsType) => {
+    if (product.options && product.type === "variable") {
+      setSelectedProductOptions(product.options);
+      setShowSelectPopup(true);
+    }
+  };
+
   return (
     <div className="w-full h-full flex flex-col gap-2">
+      <Popup
+        title="Choisir une option"
+        showPopup={showSelectPopup}
+        setShowPopup={setShowSelectPopup}
+        content={<SelectOption options={selectedProductOptions} />}
+      />
+
       <div className=" w-full h-fit flex flex-col gap-2 relative overflow-hidden">
         <div className="h-fit">
           <TextField
@@ -72,7 +109,7 @@ function ProductSection() {
         <div className="grid grid-cols-5 gap-2 h-fit w-full">
           <ProductsList
             display="card"
-            handleClick={addProduct}
+            handleClick={handleAddProduct}
             filterByName={productFilterByName}
             filterByCategory={productFilterByCategory}
           />
@@ -111,6 +148,8 @@ function BoxSection({ setReceiptNo, setShowModalReceipt }: BoxSectionProps) {
     addDeposit(Number(newDeposit));
   };
 
+  const { innerHeight: height } = window;
+
   return (
     <div className="w-full h-full gap-2 flex flex-col justify-between ">
       <div className="h-full w-full flex flex-col justify-between ">
@@ -130,7 +169,7 @@ function BoxSection({ setReceiptNo, setShowModalReceipt }: BoxSectionProps) {
           />
         </div>
 
-        <div className="w-full h-full flex flex-col mt-16">
+        <div style={{ height: `${height / 20}%` }} className="w-full flex flex-col">
           <div className="w-full flex gap-3 text-white">
             <button
               onClick={() => addDeposit(cartTotal / 3)}

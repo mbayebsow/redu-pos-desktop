@@ -24,6 +24,10 @@ export type ProductOptionType = {
   stockQuantity: number;
 };
 
+export type ProductsWithOptionsType = ProductType & {
+  options?: ProductOptionType[];
+};
+
 export type CategoryType = {
   id: number;
   name: string;
@@ -74,6 +78,7 @@ export type CartType = Required<ProductType> & {
 export type TableColumns = {
   title: string;
   dataIndex?: string;
+  width?: number;
   render?: (record?: any) => ReactNode;
 }[];
 

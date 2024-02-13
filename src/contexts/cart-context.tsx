@@ -1,5 +1,5 @@
 import React, { createContext, useContext, ReactNode, useState, useEffect } from "react";
-import { ProductType, CartType, CustomerType } from "../lib/types";
+import { ProductType, CartType, CustomerType, ProductsWithOptionsType } from "../lib/types";
 import useSound from "../hooks/useSound";
 import { CUSTOMERS_DB } from "../lib/db";
 // import clientsMock from "../mockdata/clients.json";
@@ -10,7 +10,7 @@ interface DataContextProps {
   cartTotal: number;
   cartDeposit: number;
   addClient: (id: number) => void;
-  addProduct: (product: ProductType) => void;
+  addProduct: (product: ProductsWithOptionsType) => void;
   clearCart: () => void;
   adjustQuantity: (product: ProductType, type: "in" | "de") => void;
   addDeposit: (price: number) => void;
@@ -26,7 +26,7 @@ const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
 
   const { playBeep, playClear } = useSound();
 
-  const addProduct = (product: ProductType) => {
+  const addProduct = (product: ProductsWithOptionsType) => {
     playBeep();
     const existIndex = cartProducts.findIndex((p) => p.id === product.id);
 

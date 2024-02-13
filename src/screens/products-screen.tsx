@@ -28,7 +28,7 @@ const INITIAL_PRODUCT: ProductType = {
   type: "standard",
   priceCost: 0,
   price: 0,
-  identifier: 0,
+  identifier: "",
   stockQuantity: 0,
   category: 0,
   isActive: true,

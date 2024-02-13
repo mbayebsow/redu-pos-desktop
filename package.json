@@ -6,9 +6,9 @@
   "author": "Mbaye Babacar",
   "homepage": "https://redupos.com",
   "scripts": {
-    "vite-dev": "vite --host --debug",
+    "vite-dev": "vite --host",
     "vite-build": "npm run typecheck && tsc && vite build",
-    "vite-preview": "vite preview --host --debug",
+    "vite-preview": "vite preview --host",
     "electron-preview": "electron-vite preview",
     "electron-dev": "electron-vite dev",
     "electron-build": "npm run typecheck && electron-vite build",

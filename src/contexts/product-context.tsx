@@ -1,11 +1,12 @@
+import toast from "react-hot-toast";
 import { FC, createContext, useContext, ReactNode, useState, useEffect } from "react";
 import { ProductOptionType, ProductType } from "../lib/types";
 import { PRODUCTOPTIONS_DB, PRODUCT_DB } from "../lib/db";
-import toast from "react-hot-toast";
 import { genererUIDProduit } from "../lib";
 
 interface ProductContextPropsType {
-  products: ProductType[] | null;
+  products: ProductType[] | [];
+  productOptions: ProductOptionType[] | [];
   addProduct: (
     product: ProductType,
     productOptions: ProductOptionType[],
@@ -22,11 +23,17 @@ interface ProductContextPropsType {
 const ProductContext = createContext<ProductContextPropsType | undefined>(undefined);
 
 const ProductProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  const [products, setProducts] = useState<ProductType[] | null>(null);
+  const [products, setProducts] = useState<ProductType[] | []>([]);
+  const [productOptions, setProductOptions] = useState<ProductOptionType[] | []>([]);
 
   const getproducts = () => {
     const P = PRODUCT_DB.getAll();
     if (P) setProducts(P);
+  };
+
+  const getproductOptions = () => {
+    const P = PRODUCTOPTIONS_DB.getAll();
+    if (P) setProductOptions(P);
   };
 
   const getproductById = (id: number) => {
@@ -71,18 +78,21 @@ const ProductProvider: FC<{ children: ReactNode }> = ({ children }) => {
       if (!saveProductOptions.success)
         toast.error("Une erreur c'est produite lors de l'enregistrement des options!");
     }
+    toast.success("Produit ajouter avec succes!");
     getproducts();
     callback && callback();
   };
 
   useEffect(() => {
     getproducts();
+    getproductOptions();
   }, []);
 
   return (
     <ProductContext.Provider
       value={{
         products,
+        productOptions,
         addProduct,
         deleteProduct,
         getproductById,

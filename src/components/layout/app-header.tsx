@@ -24,8 +24,8 @@ function AppHeader() {
         <div className="flex items-center gap-3">
           <LoadSample />
           <Calculator />
-          <Button roundedBorder="full" variant="text" icon={<User />} />
-          <Button roundedBorder="full" variant="text" icon={<Fullscreen />} />
+          <Button roundedBorder="full" variant="icon" icon={<User />} />
+          <Button roundedBorder="full" variant="icon" icon={<Fullscreen />} />
         </div>
       </div>
     </div>

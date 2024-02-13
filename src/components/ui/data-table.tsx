@@ -38,7 +38,7 @@ function Table({ columns, data, handleClick }: TableProps) {
                   {column.render
                     ? column.render(d)
                     : column.dataIndex && (
-                        <div>
+                        <div style={{ width: column.width }}>
                           {d[column.dataIndex]?.toString() === "false"
                             ? "Non"
                             : d[column.dataIndex]?.toString() === "true"

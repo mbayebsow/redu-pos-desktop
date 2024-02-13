@@ -23,6 +23,15 @@ function ProductAdd({
 }: ProductAddProps) {
   const { categories } = useCategory();
 
+  const getUriImage = (files) => {
+    var fReader = new FileReader();
+    fReader.readAsDataURL(files[0]);
+    fReader.onloadend = function () {
+      const image = fReader.result;
+      if (typeof image === "string") handleProductValue({ ...productValue, image });
+    };
+  };
+
   return (
     <div className="gap-5 flex flex-col w-[35vw] p-2">
       <div className="inline-flex gap-2 h-20">
@@ -34,7 +43,7 @@ function ProductAdd({
             label="Televerser une image"
             labelDescription="PNG ou JPG"
             name="image"
-            onChange={(e) => handleProductValue({ ...productValue, image: e.target.value })}
+            onChange={(e) => getUriImage(e.target.files)}
           />
         </div>
       </div>

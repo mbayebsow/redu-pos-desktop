@@ -153,7 +153,7 @@ function Calculator() {
       />
       <Button
         roundedBorder="full"
-        variant="text"
+        variant="icon"
         handleClick={() => setOpenCalculator(true)}
         icon={<CalculatorIcon />}
       />
