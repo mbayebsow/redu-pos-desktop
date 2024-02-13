@@ -104,25 +104,14 @@ function ProductsList({
   filterByCategory = 0,
   handleClick,
 }: ProductListProps) {
-  const { products, productOptions } = useProduct();
-
-  const standardProducts = products.filter((product) => product.type === "standard");
-  const variableProducts = products.filter((product) => product.type === "variable");
-  const variableProductsWithOptions = variableProducts.map((product) => {
-    const options = productOptions.filter((option) => option.ProductID === product.id);
-    return { ...product, options };
-  });
-
-  const finalProducts: ProductsWithOptionsType[] = standardProducts
-    .concat(variableProductsWithOptions)
-    .sort((a, b) => a.id - b.id);
+  const { products } = useProduct();
 
   return products ? (
     display === "list" ? (
       <Table
         handleClick={handleClick}
         columns={columns}
-        data={finalProducts
+        data={products
           .filter((product) =>
             product.name.toLocaleLowerCase().includes(filterByName.toLocaleLowerCase())
           )
@@ -131,7 +120,7 @@ function ProductsList({
           )}
       />
     ) : (
-      finalProducts
+      products
         .filter((product) =>
           product.name.toLocaleLowerCase().includes(filterByName.toLocaleLowerCase())
         )

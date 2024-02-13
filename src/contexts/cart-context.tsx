@@ -1,7 +1,7 @@
 import React, { createContext, useContext, ReactNode, useState, useEffect } from "react";
 import { ProductType, CartType, CustomerType, ProductsWithOptionsType } from "../lib/types";
 import useSound from "../hooks/useSound";
-import { CUSTOMERS_DB } from "../lib/db";
+import { CUSTOMERS_DB, PRODUCT_DB, PRODUCTOPTIONS_DB } from "../lib/db";
 // import clientsMock from "../mockdata/clients.json";
 
 interface DataContextProps {
@@ -10,9 +10,9 @@ interface DataContextProps {
   cartTotal: number;
   cartDeposit: number;
   addClient: (id: number) => void;
-  addProduct: (product: ProductsWithOptionsType) => void;
+  addProduct: (identifier: string, callBack?: () => void) => void;
   clearCart: () => void;
-  adjustQuantity: (product: ProductType, type: "in" | "de") => void;
+  adjustQuantity: (product: CartType, type: "in" | "de") => void;
   addDeposit: (price: number) => void;
 }
 
@@ -26,21 +26,63 @@ const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
 
   const { playBeep, playClear } = useSound();
 
-  const addProduct = (product: ProductsWithOptionsType) => {
-    playBeep();
-    const existIndex = cartProducts.findIndex((p) => p.id === product.id);
+  const addToCart = (newProductCart: CartType, identifier: string) => {
+    const existIndex = cartProducts.findIndex((p) => p.identifier === identifier);
 
     if (existIndex === -1) {
-      setCartProduct((prevData) => prevData.concat({ ...product, quantity: 1 }));
+      setCartProduct((prevData) => [...prevData, newProductCart]);
     } else {
       cartProducts[existIndex].quantity++;
       setCartProduct([...cartProducts]);
     }
+    playBeep();
   };
 
-  const adjustQuantity = (product: ProductType, type: "in" | "de") => {
+  const addProduct = (identifier: string, callBack?: () => void) => {
+    const regexAvecChiffre = /^\d{3}-\d{6}-\d$/;
+    const regexSansChiffre = /^\d{3}-\d{6}$/;
+
+    if (regexAvecChiffre.test(identifier)) {
+      const option = PRODUCTOPTIONS_DB.getAll().filter(
+        (option) => option.identifier === identifier
+      )[0];
+      const product = PRODUCT_DB.getById(option.ProductID).data;
+
+      if (!product) return;
+
+      const newProductCart = {
+        productName: product.name,
+        productImage: product.image,
+        productUnit: product.unit,
+        identifier: identifier,
+        price: option.priceSale,
+        optionName: option.name,
+        quantity: 1,
+      };
+      addToCart(newProductCart, identifier);
+      callBack && callBack();
+    } else if (regexSansChiffre.test(identifier)) {
+      const product = PRODUCT_DB.getAll().filter((product) => product.identifier === identifier)[0];
+
+      const newProductCart = {
+        productName: product.name,
+        productImage: product.image,
+        productUnit: product.unit,
+        identifier: identifier,
+        price: product.price,
+        optionName: null,
+        quantity: 1,
+      };
+      addToCart(newProductCart, identifier);
+      callBack && callBack();
+    } else {
+      alert("Format d'identifiant non reconnu");
+    }
+  };
+
+  const adjustQuantity = (product: CartType, type: "in" | "de") => {
     playBeep();
-    const existIndex = cartProducts.findIndex((p) => p.id === product.id);
+    const existIndex = cartProducts.findIndex((p) => p.identifier === product.identifier);
     if (type === "in") cartProducts[existIndex].quantity++;
     if (type === "de" && cartProducts[existIndex].quantity > 1) cartProducts[existIndex].quantity--;
     setCartProduct([...cartProducts]);

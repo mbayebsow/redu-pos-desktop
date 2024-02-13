@@ -33,17 +33,20 @@ export default function Cart() {
           <div className="flex-1 w-full overflow-auto ">
             {cartProducts.map((product) => (
               <div
-                key={product.id}
+                key={product.identifier}
                 className="select-none w-full flex items-center justify-between py-2 border-b"
               >
                 <img
-                  src={product.image}
-                  alt={product.name}
+                  src={product.productImage}
+                  alt={product.productName}
                   className="h-10 w-10 bg-white mr-2 rounded-md"
                 />
                 <div className="flex-grow">
-                  <h5 className="text-xs text-blue-gray-900 line-clamp-1">{product.name}</h5>
-                  <p className="text-sm block text-blue-gray-900">
+                  <div className="text-xs line-clamp-1">{product.productName}</div>
+                  {product.optionName && (
+                    <div className="text-[10px] opacity-70 line-clamp-1">{product.optionName}</div>
+                  )}
+                  <p className="text-xs block text-blue-gray-900">
                     {product.quantity} * {product.price}
                   </p>
                 </div>

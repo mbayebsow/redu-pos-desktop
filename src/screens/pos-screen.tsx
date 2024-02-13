@@ -25,13 +25,22 @@ interface BoxSectionProps {
   setShowModalReceipt: (show: boolean) => void;
 }
 
-function SelectOption({ options }: { options: ProductOptionType[] | null }) {
+interface SelectOptionProps {
+  options: ProductOptionType[] | null;
+  onSelectOption: (identifier: string) => void;
+}
+
+function SelectOption({ options, onSelectOption }: SelectOptionProps) {
   return (
     <div className="relative w-full h-full overflow-y-scroll">
       <div className="grid grid-cols-2 gap-2 h-fit w-full">
         {options &&
-          options.map((option) => (
-            <div className="p-2 border-primary-200 bg-primary-100 w-full rounded-lg">
+          options.map((option, i) => (
+            <div
+              key={i}
+              onClick={() => onSelectOption(option.identifier)}
+              className="p-2 border-primary-200 bg-primary-100 w-full rounded-lg cursor-pointer"
+            >
               <div>{option.name}</div>
               <div className="text-sm">{numberWithCommas(option.priceSale)}</div>
             </div>
@@ -45,17 +54,22 @@ function ProductSection() {
   const [productFilterByName, setProductFilterByName] = useState("");
   const [productFilterByCategory, setProductFilterByCategory] = useState(0);
   const [showSelectPopup, setShowSelectPopup] = useState(false);
-  const [selectedProductOptions, setSelectedProductOptions] = useState<ProductOptionType[] | null>(
-    null
-  );
+  const [productOptions, setProductOptions] = useState<ProductOptionType[] | null>(null);
   const { addProduct } = useCart();
   const { categories } = useCategory();
 
+  const reset = () => {
+    setShowSelectPopup(false);
+    setProductOptions(null);
+  };
+
   const handleAddProduct = (product: ProductsWithOptionsType) => {
     if (product.options && product.type === "variable") {
-      setSelectedProductOptions(product.options);
+      setProductOptions(product.options);
       setShowSelectPopup(true);
+      return;
     }
+    addProduct(product.identifier);
   };
 
   return (
@@ -64,7 +78,12 @@ function ProductSection() {
         title="Choisir une option"
         showPopup={showSelectPopup}
         setShowPopup={setShowSelectPopup}
-        content={<SelectOption options={selectedProductOptions} />}
+        content={
+          <SelectOption
+            options={productOptions}
+            onSelectOption={(idenfier) => addProduct(idenfier, reset)}
+          />
+        }
       />
 
       <div className=" w-full h-fit flex flex-col gap-2 relative overflow-hidden">
@@ -169,7 +188,7 @@ function BoxSection({ setReceiptNo, setShowModalReceipt }: BoxSectionProps) {
           />
         </div>
 
-        <div style={{ height: `${height / 20}%` }} className="w-full flex flex-col">
+        <div style={{ height: `${height / 15}%` }} className="w-full flex flex-col">
           <div className="w-full flex gap-3 text-white">
             <button
               onClick={() => addDeposit(cartTotal / 3)}
@@ -235,7 +254,7 @@ function Main() {
     const saleItems = cartProducts.map((product) => ({
       id: 0,
       saleId: 0,
-      productId: product.id,
+      identifier: product.identifier,
       quantity: product.quantity,
       price: product.price,
     }));

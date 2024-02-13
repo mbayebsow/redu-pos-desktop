@@ -1,6 +1,6 @@
 import toast from "react-hot-toast";
 import { FC, createContext, useContext, ReactNode, useState, useEffect } from "react";
-import { ProductOptionType, ProductType } from "../lib/types";
+import { CartType, ProductOptionType, ProductType, ProductsWithOptionsType } from "../lib/types";
 import { PRODUCTOPTIONS_DB, PRODUCT_DB } from "../lib/db";
 import { genererUIDProduit } from "../lib";
 
@@ -13,11 +13,7 @@ interface ProductContextPropsType {
     callback?: () => void
   ) => any;
   deleteProduct: (id: number) => void;
-  getproductById: (productId: number) => {
-    success: boolean;
-    message?: string;
-    data?: ProductType | undefined;
-  };
+  getproductById: (identifier: string) => CartType | undefined;
 }
 
 const ProductContext = createContext<ProductContextPropsType | undefined>(undefined);
@@ -28,7 +24,19 @@ const ProductProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   const getproducts = () => {
     const P = PRODUCT_DB.getAll();
-    if (P) setProducts(P);
+    const PWOption = PRODUCTOPTIONS_DB.getAll();
+    const standardProducts = P.filter((product) => product.type === "standard");
+    const variableProducts = P.filter((product) => product.type === "variable");
+    const variableProductsWithOptions = variableProducts.map((product) => {
+      const options = PWOption.filter((option) => option.ProductID === product.id);
+      return { ...product, options };
+    });
+
+    const finalProducts: ProductsWithOptionsType[] = standardProducts
+      .concat(variableProductsWithOptions)
+      .sort((a, b) => a.id - b.id);
+
+    setProducts(finalProducts);
   };
 
   const getproductOptions = () => {
@@ -36,13 +44,52 @@ const ProductProvider: FC<{ children: ReactNode }> = ({ children }) => {
     if (P) setProductOptions(P);
   };
 
-  const getproductById = (id: number) => {
-    const P = PRODUCT_DB.getById(id);
-    return P;
+  const getproductById = (identifier: string) => {
+    const regexAvecChiffre = /^\d{3}-\d{6}-\d$/;
+    const regexSansChiffre = /^\d{3}-\d{6}$/;
+
+    if (regexAvecChiffre.test(identifier)) {
+      const option = PRODUCTOPTIONS_DB.getAll().filter(
+        (option) => option.identifier === identifier
+      )[0];
+      const product = PRODUCT_DB.getById(option.ProductID).data;
+      if (!product) return;
+      const productCart = {
+        productName: product.name,
+        productImage: product.image,
+        productUnit: product.unit,
+        identifier: identifier,
+        price: option.priceSale,
+        optionName: option.name,
+        quantity: 1,
+      };
+
+      return productCart;
+    } else if (regexSansChiffre.test(identifier)) {
+      const product = PRODUCT_DB.getAll().filter((product) => product.identifier === identifier)[0];
+
+      const productCart = {
+        productName: product?.name,
+        productImage: product?.image,
+        productUnit: product?.unit,
+        identifier: identifier,
+        price: product?.price,
+        optionName: null,
+        quantity: 1,
+      };
+
+      return productCart;
+    } else {
+      return undefined;
+    }
   };
 
   const deleteProduct = (id: number) => {
     PRODUCT_DB.delete(id);
+    const options = PRODUCTOPTIONS_DB.getAll();
+    options.map((option) => {
+      if (option.ProductID === id) PRODUCTOPTIONS_DB.delete(option.id);
+    });
     getproducts();
   };
 
@@ -72,7 +119,11 @@ const ProductProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
     if (newProduct.data && product.type === "variable") {
       const ProductID = newProduct.data.id;
-      const optionWithProductID = productOptions.map((option) => ({ ...option, ProductID }));
+      const optionWithProductID = productOptions.map((option, i) => ({
+        ...option,
+        identifier: `${identifier}-${i + 1}`,
+        ProductID,
+      }));
 
       const saveProductOptions = PRODUCTOPTIONS_DB.addBatch(optionWithProductID);
       if (!saveProductOptions.success)

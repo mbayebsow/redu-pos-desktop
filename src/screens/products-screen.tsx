@@ -38,6 +38,7 @@ const INITIAL_PRODUCT: ProductType = {
 const INITIAL_PRODUCT_OPTIONS: ProductOptionType[] = [
   {
     id: 0,
+    identifier: "",
     ProductID: 0,
     name: "",
     priceCost: 0,
@@ -120,6 +121,7 @@ function ProductSection() {
       ...productOptions,
       {
         id: 0,
+        identifier: "",
         ProductID: 0,
         name: "",
         priceCost: 0,
@@ -134,6 +136,7 @@ function ProductSection() {
     setProductOptions([
       {
         id: 0,
+        identifier: "",
         ProductID: 0,
         name: "",
         priceCost: 0,

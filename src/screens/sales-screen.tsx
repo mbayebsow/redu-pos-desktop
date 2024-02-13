@@ -159,12 +159,21 @@ function ProductsSaleList({ saleSelected }: { saleSelected: SalesType | null }) 
               <div key={i} className="flex items-center gap-2 border-b pb-2 w-full">
                 <img
                   className="aspect-square h-full w-12 rounded-lg"
-                  src={getproductById(item.productId)?.data?.image}
+                  src={getproductById(item.identifier)?.productImage}
                 />
-                <div className="hidden">{getproductById(item.productId)?.data?.identifier}</div>
+                <div className="hidden">{item.identifier}</div>
                 <div>
-                  <div>{getproductById(item.productId)?.data?.name}</div>
-                  <div>{getproductById(item.productId)?.data?.price}</div>
+                  <div>
+                    <div>{getproductById(item.identifier)?.productName}</div>
+                    {getproductById(item.identifier)?.optionName && (
+                      <div className="text-[12px] opacity-50">
+                        {getproductById(item.identifier)?.optionName}
+                      </div>
+                    )}
+                  </div>
+                  <div className="text-xs">
+                    {getproductById(item.identifier)?.price} * {item.quantity}
+                  </div>
                 </div>
               </div>
             ))}

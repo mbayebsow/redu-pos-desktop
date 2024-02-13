@@ -17,6 +17,7 @@ export type ProductType = {
 
 export type ProductOptionType = {
   id: number;
+  identifier: string; // Code bare
   ProductID: number;
   name: string;
   priceCost: number; // Prix d'achat
@@ -58,7 +59,7 @@ export type SalesType = {
 export type SaleItemsType = {
   id: number;
   saleId: number;
-  productId: number;
+  identifier: string;
   quantity: number;
   price: number;
 };
@@ -71,7 +72,13 @@ export type StockTransactionsType = {
   date: Date;
 };
 
-export type CartType = Required<ProductType> & {
+export type CartType = {
+  productName: string;
+  productImage: string;
+  productUnit: string;
+  identifier: string;
+  price: number;
+  optionName?: string | null;
   quantity: number;
 };
 

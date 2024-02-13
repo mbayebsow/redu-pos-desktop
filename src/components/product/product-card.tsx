@@ -24,7 +24,7 @@ function ProductCard({ handleClick, values }: ProductCardProps) {
       </div>
 
       <div className="p-2">
-        <p className="flex-grow truncate mr-1 text-xs">{name}</p>
+        <p className="line-clamp-2 text-xs">{name}</p>
       </div>
     </div>
   );

@@ -16,7 +16,7 @@ function Popup({ title, content, showPopup, setShowPopup }: PopupProps) {
           className="w-full h-full bg-black/80 absolute top-0 bottom-0 left-0 right-0 z-0"
         />
 
-        <div className="h-fit w-fit flex flex-col gap-2 mx-auto z-10 bg-primary-200 rounded-2xl overflow-hidden p-3">
+        <div className="h-fit w-fit min-w-60 flex flex-col gap-2 mx-auto z-10 bg-primary-200 rounded-2xl overflow-hidden p-3">
           <div className="w-full flex items-center justify-between py-1">
             <div className="font-semibold text-primary-600">{title}</div>
             <div>
@@ -25,7 +25,7 @@ function Popup({ title, content, showPopup, setShowPopup }: PopupProps) {
               </button>
             </div>
           </div>
-          <div className="h-fit w-fit overflow-y-auto rounded-xl overflow-hidden bg-primary-50 p-2">
+          <div className="h-full w-full overflow-y-auto rounded-xl overflow-hidden bg-primary-50 p-2">
             {content}
           </div>
         </div>
