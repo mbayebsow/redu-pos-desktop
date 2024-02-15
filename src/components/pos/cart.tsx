@@ -55,15 +55,15 @@ export default function Cart() {
                   <div className="flex flex-row gap-2">
                     <button
                       onClick={() => adjustQuantity(product, "de")}
-                      className="h-5 w-5 rounded-full flex justify-center items-center bg-primary-100"
+                      className="h-7 w-7 rounded-full flex justify-center items-center bg-primary-100"
                     >
-                      <Minus size={12} />
+                      <Minus size={20} />
                     </button>
                     <button
                       onClick={() => adjustQuantity(product, "in")}
-                      className="h-5 w-5 rounded-full flex justify-center items-center bg-primary-100"
+                      className="h-7 w-7 rounded-full flex justify-center items-center bg-primary-100"
                     >
-                      <Plus size={12} />
+                      <Plus size={20} />
                     </button>
                   </div>
                 </div>

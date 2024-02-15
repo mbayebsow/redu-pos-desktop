@@ -46,7 +46,7 @@ const columns: TableColumns = [
   {
     title: "Nom",
     dataIndex: "name",
-    width: 150,
+    width: 100,
   },
   {
     title: "Prix",
@@ -56,18 +56,18 @@ const columns: TableColumns = [
         {record.type === "standard"
           ? numberWithCommas(record.price)
           : record.type === "variable" &&
-            record.options && (
-              <div>
-                <div className="whitespace-nowrap flex items-center gap-1">
-                  {numberWithCommas(getMinMax(record.options, "priceSale", "min"))}
-                  <div className="text-xs">Min</div>
-                </div>
-                <div className="whitespace-nowrap flex items-center gap-1">
-                  {numberWithCommas(getMinMax(record.options, "priceSale", "max"))}
-                  <div className="text-xs">Max</div>
-                </div>
+          record.options && (
+            <div>
+              <div className="whitespace-nowrap flex items-center gap-1">
+                {numberWithCommas(getMinMax(record.options, "priceSale", "min"))}
+                <div className="text-xs">Min</div>
               </div>
-            )}
+              <div className="whitespace-nowrap flex items-center gap-1">
+                {numberWithCommas(getMinMax(record.options, "priceSale", "max"))}
+                <div className="text-xs">Max</div>
+              </div>
+            </div>
+          )}
       </div>
     ),
   },

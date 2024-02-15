@@ -1,8 +1,10 @@
 import { useRef, useState } from "react";
 import { useReactToPrint } from "react-to-print";
+import { genererUIDProduit, numberWithCommas } from "../lib";
 
-import { numberWithCommas } from "../lib";
 import { ProductOptionType, ProductsWithOptionsType } from "../lib/types";
+
+import useSound from "../hooks/useSound";
 
 import { ProductProvider } from "../contexts/product-context";
 import { CartProvider, useCart } from "../contexts/cart-context";
@@ -11,11 +13,10 @@ import { SaleProvider, useSale } from "../contexts/sale-context";
 
 import Cart from "../components/pos/cart";
 import NumericPad from "../components/pos/numeric-pad";
+import ProductsList from "../components/product/products-list";
 import Modal from "../components/ui/modal";
 import Receipt from "../components/ui/receipt";
-import ProductsList from "../components/product/products-list";
 import CardNumber from "../components/ui/card-number";
-import useSound from "../hooks/useSound";
 import TextField from "../components/ui/text-field";
 import Chips from "../components/ui/chips";
 import Popup from "../components/ui/popup";
@@ -103,7 +104,7 @@ function ProductSection() {
             <Chips
               handleClick={() => setProductFilterByCategory(0)}
               active={productFilterByCategory === 0}
-              text={"Toutes le catégories"}
+              text={"Tout"}
               icon={<div className="w-4 h-4 rounded-full bg-primary-500" />}
             />
             {categories.map((category, i) => (
@@ -125,7 +126,7 @@ function ProductSection() {
       </div>
 
       <div className="relative w-full h-full overflow-y-scroll px-1">
-        <div className="grid grid-cols-5 gap-2 h-fit w-full">
+        <div className="grid grid-cols-5 gap-1 h-fit w-full">
           <ProductsList
             display="card"
             handleClick={handleAddProduct}
@@ -139,30 +140,18 @@ function ProductSection() {
 }
 
 function BoxSection({ setReceiptNo, setShowModalReceipt }: BoxSectionProps) {
-  const { playSwitchClicked, playPhoneKeypad } = useSound();
-  const { cartTotal, cartDeposit, cartClient, addDeposit } = useCart();
-
-  const getRandomId = (min = 0, max = 500000) => {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    const num = Math.floor(Math.random() * (max - min + 1)) + min;
-    const NO =
-      "RP/" +
-      `${cartClient ? cartClient.firstName[0] + cartClient.lastName[0] : "NC"}` +
-      "/" +
-      num.toString().padStart(6, "0");
-    return NO;
-  };
+  const { playSwitchClicked, playButtonPress, playBeep } = useSound();
+  const { cartTotal, cartDeposit, addDeposit } = useCart();
 
   const viewReceipt = () => {
-    playSwitchClicked();
+    playBeep();
     setShowModalReceipt(true);
-    const NO = getRandomId();
-    setReceiptNo(NO);
+    const NO = genererUIDProduit();
+    setReceiptNo(`R-${NO}`);
   };
 
   const handleNumeric = (e: any) => {
-    playPhoneKeypad();
+    playBeep();
     const newDeposit = cartDeposit.toString() + e.target.value;
     addDeposit(Number(newDeposit));
   };
@@ -191,19 +180,28 @@ function BoxSection({ setReceiptNo, setShowModalReceipt }: BoxSectionProps) {
         <div style={{ height: `${height / 15}%` }} className="w-full flex flex-col">
           <div className="w-full flex gap-3 text-white">
             <button
-              onClick={() => addDeposit(cartTotal / 3)}
+              onClick={() => {
+                addDeposit(cartTotal / 3);
+                playButtonPress();
+              }}
               className="w-full p-1 bg-primary-700 rounded-md"
             >
               {Number((cartTotal / 3).toPrecision(4))}
             </button>
             <button
-              onClick={() => addDeposit(cartTotal / 2)}
+              onClick={() => {
+                addDeposit(cartTotal / 2);
+                playButtonPress();
+              }}
               className="w-full p-1 bg-primary-700 rounded-md"
             >
               {Number((cartTotal / 2).toPrecision(4))}
             </button>
             <button
-              onClick={() => addDeposit(cartTotal)}
+              onClick={() => {
+                addDeposit(cartTotal);
+                playButtonPress();
+              }}
               className="w-full p-1 bg-primary-200 text-primary-900 rounded-md"
             >
               {Number(cartTotal.toPrecision(4))}
@@ -214,7 +212,10 @@ function BoxSection({ setReceiptNo, setShowModalReceipt }: BoxSectionProps) {
 
           <NumericPad
             handleNumeric={handleNumeric}
-            handleClear={() => addDeposit(0)}
+            handleClear={() => {
+              addDeposit(0);
+              playSwitchClicked();
+            }}
             variant="dark"
           />
         </div>

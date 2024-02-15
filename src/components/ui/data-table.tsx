@@ -15,7 +15,7 @@ function Table({ columns, data, handleClick }: TableProps) {
         <thead className="w-full border-b border-b-primary-light">
           <tr>
             {columns.map((column, i) => (
-              <th key={i} className="px-3 py-3 opacity-50 w-auto font-normal whitespace-nowrap">
+              <th key={i} className="px-2 py-3 opacity-50 w-auto font-normal whitespace-nowrap">
                 {column.title}
               </th>
             ))}
@@ -38,14 +38,14 @@ function Table({ columns, data, handleClick }: TableProps) {
                   {column.render
                     ? column.render(d)
                     : column.dataIndex && (
-                        <div style={{ width: column.width }}>
-                          {d[column.dataIndex]?.toString() === "false"
-                            ? "Non"
-                            : d[column.dataIndex]?.toString() === "true"
-                              ? "Oui"
-                              : d[column.dataIndex]?.toString()}
-                        </div>
-                      )}
+                      <div style={{ width: column.width }}>
+                        {d[column.dataIndex]?.toString() === "false"
+                          ? "Non"
+                          : d[column.dataIndex]?.toString() === "true"
+                            ? "Oui"
+                            : d[column.dataIndex]?.toString()}
+                      </div>
+                    )}
                 </th>
               ))}
             </tr>

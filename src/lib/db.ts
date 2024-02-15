@@ -129,6 +129,21 @@ export default class DB<T extends DataWithId> {
     }
     return { success: false, message: "No tableName founded" };
   }
+
+  deleteAll(): DataBaseResponse<T> {
+    const data = localStorage.getItem(this.#tableName);
+
+    if (data) {
+      const existingData: DBType<T> = JSON.parse(data);
+
+      if (existingData) {
+        localStorage.setItem(this.#tableName, JSON.stringify({ ...existingData, data: [] }));
+        return { success: true };
+      }
+    }
+    return { success: false, message: "No tableName founded" };
+
+  }
 }
 
 export const PRODUCT_DB = new DB<ProductType>("PRODUCTS");
