@@ -2,12 +2,12 @@ import Barcode from "react-jsbarcode";
 import { CategoryType, ProductType, ProductsWithOptionsType, TableColumns } from "../../lib/types";
 import { getMinMax, numberWithCommas } from "../../lib";
 
-import { useCategory } from "../../contexts/category-context";
 import { useProduct } from "../../contexts/product-context";
 
 import ProductTableOptions from "./product-table-options";
 import ProductCard from "./product-card";
 import Table from "../ui/data-table";
+import { getCategories } from "../../services/category-services";
 
 interface ProductListProps {
   display?: "list" | "card";
@@ -15,14 +15,6 @@ interface ProductListProps {
   filterByCategory?: number | null;
   handleClick?: (product: ProductsWithOptionsType) => void;
 }
-
-const Category = ({ record }: { record: ProductType }) => {
-  const { categories } = useCategory();
-
-  return record.category === 0
-    ? "-"
-    : categories.map((cat: CategoryType) => cat.id === record.category && cat.name);
-};
 
 const columns: TableColumns = [
   {
@@ -33,41 +25,30 @@ const columns: TableColumns = [
     ),
   },
   {
-    title: "Identifiant",
-    dataIndex: "identifier",
-    render: (record: ProductsWithOptionsType) => (
-      <Barcode
-        options={{ displayValue: true, fontSize: 35 }}
-        className="h-fit w-20"
-        value={`${record.identifier}`}
-      />
-    ),
-  },
-  {
     title: "Nom",
     dataIndex: "name",
     width: 100,
   },
   {
     title: "Prix",
-    dataIndex: "price",
+    dataIndex: "priceSale",
     render: (record: ProductsWithOptionsType) => (
       <div className="">
         {record.type === "standard"
-          ? numberWithCommas(record.price)
+          ? numberWithCommas(record.priceSale)
           : record.type === "variable" &&
-          record.options && (
-            <div>
-              <div className="whitespace-nowrap flex items-center gap-1">
-                {numberWithCommas(getMinMax(record.options, "priceSale", "min"))}
-                <div className="text-xs">Min</div>
+            record.options && (
+              <div>
+                <div className="whitespace-nowrap flex items-center gap-1">
+                  {numberWithCommas(getMinMax(record.options, "priceSale", "min"))}
+                  <div className="text-xs">Min</div>
+                </div>
+                <div className="whitespace-nowrap flex items-center gap-1">
+                  {numberWithCommas(getMinMax(record.options, "priceSale", "max"))}
+                  <div className="text-xs">Max</div>
+                </div>
               </div>
-              <div className="whitespace-nowrap flex items-center gap-1">
-                {numberWithCommas(getMinMax(record.options, "priceSale", "max"))}
-                <div className="text-xs">Max</div>
-              </div>
-            </div>
-          )}
+            )}
       </div>
     ),
   },
@@ -82,7 +63,9 @@ const columns: TableColumns = [
   {
     title: "Categorie",
     dataIndex: "category",
-    render: (record) => <Category record={record} />,
+    render(record: ProductType) {
+      return getCategories().map((cat: CategoryType) => cat.id === record.category && cat.name);
+    },
   },
   {
     title: "Fournisseur",

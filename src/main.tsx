@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { createHashRouter, RouterProvider } from "react-router-dom";
-import Layout from "./components/layout/Layout.tsx";
+import Layout from "./components/layout/app-layout.tsx";
 import "./index.css";
 
 import ProductScreen from "./screens/products-screen.tsx";

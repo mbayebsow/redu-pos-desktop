@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactNode, memo } from "react";
 
 interface ButtonPros {
   text?: string;
@@ -28,7 +28,7 @@ function Button({
         ${roundedBorder === "normal" && "rounded-lg"}
         ${roundedBorder === "full" && "rounded-full"}
         ${variant === "icon" ? "w-10" : "w-fit"}
-        p-[2px] overflow-hidden relative z-10  flex  h-10  items-center gap-2 justify-center`}
+        p-[2px] overflow-hidden relative z-10  flex w-full h-10  items-center gap-2 justify-center`}
     >
       {loading && (
         <div
@@ -58,4 +58,4 @@ function Button({
   );
 }
 
-export default Button;
+export default memo(Button);

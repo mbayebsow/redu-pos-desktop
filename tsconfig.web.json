@@ -4,6 +4,7 @@
     "src/env.d.ts",
     "src/**/*",
     "src/**/*.tsx",
+    "src/**/*.json",
     "src-electron/preload/*.d.ts"
   ],
   "compilerOptions": {

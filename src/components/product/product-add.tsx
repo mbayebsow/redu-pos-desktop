@@ -98,7 +98,7 @@ function ProductAdd({
               name="supplier"
               optionsData={[""]}
               value=""
-              onChange={(e) => handleProductValue({ ...productValue, supplier: e.target.value })}
+              onChange={(e) => handleProductValue({ ...productValue, supplier: null })}
             />
           </div>
 

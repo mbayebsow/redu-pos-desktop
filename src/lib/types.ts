@@ -5,10 +5,10 @@ export type ProductType = {
   identifier: string; // Code bare
   name: string;
   priceCost: number; // Prix d'achat
-  price: number; // Prix de vente null si des options sont disponible
+  priceSale: number; // Prix de vente null si des options sont disponible
   stockQuantity: number;
-  supplier: string; // Fournisseur
   category: number | null;
+  supplier: number | null;
   isActive: boolean;
   unit: string; // Type d'unité
   type: "standard" | "variable";
@@ -17,9 +17,10 @@ export type ProductType = {
 
 export type ProductOptionType = {
   id: number;
+  name: string;
   identifier: string; // Code bare
   ProductID: number;
-  name: string;
+  supplier: number | null;
   priceCost: number; // Prix d'achat
   priceSale: number; // Prix de vente
   stockQuantity: number;
@@ -46,6 +47,14 @@ export type CustomerType = {
   isActive: boolean;
 };
 
+export type SupplierType = {
+  id: number;
+  name: string;
+  address: string;
+  phone: number;
+  isActive: boolean;
+};
+
 export type SalesType = {
   id: number;
   date: Date;
@@ -64,11 +73,34 @@ export type SaleItemsType = {
   price: number;
 };
 
-export type StockTransactionsType = {
+export type StockReplenishmentType = {
   id: number;
-  productId: number;
-  transactionType: "in" | "out";
-  quantity: number;
+  supplier: number | null;
+  totalAmountOrder: number;
+  payAmount: number;
+  status: string; // "pending" | "in progress" | "completed"
+  date: Date;
+};
+
+export type StockReplenishmentItemsType = {
+  id: number;
+  stockId: number;
+  productIdentifier: string; // Identification du produit ou de l'option du produit
+  initialtQuantity: number;
+  newQuantity: number;
+  priceCost: number; // Prix d'achat
+  priceSale: number; // Prix de vente
+  date: Date;
+};
+
+export type PriceHistoryType = {
+  id: number;
+  productIdentifier: string; // Identification du produit ou de l'option du produit
+  oldPriceCost: number; // Ancien Prix d'achat
+  oldPriceSale: number; // Ancien Prix de vente
+  newPriceCost: number; // Nouveau Prix d'achat
+  newPriceSale: number; // Nouveau Prix de vente
+  supplier: number | null; // Fournisseur
   date: Date;
 };
 
@@ -89,4 +121,8 @@ export type TableColumns = {
   render?: (record?: any) => ReactNode;
 }[];
 
-export type DataBaseResponse<T> = { success: boolean; message?: string; data?: T };
+export type DataBaseResponse<T> = {
+  success: boolean;
+  message?: string;
+  data?: T;
+};

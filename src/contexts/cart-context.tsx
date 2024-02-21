@@ -39,8 +39,8 @@ const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   };
 
   const addProduct = (identifier: string, callBack?: () => void) => {
-    const regexAvecChiffre = /^\d{3}-\d{6}-\d$/;
-    const regexSansChiffre = /^\d{3}-\d{6}$/;
+    const regexAvecChiffre = /^\d{6}-\d{6}-\d$/;
+    const regexSansChiffre = /^\d{6}-\d{6}$/;
 
     if (regexAvecChiffre.test(identifier)) {
       const option = PRODUCTOPTIONS_DB.getAll().filter(

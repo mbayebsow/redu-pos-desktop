@@ -1,11 +1,11 @@
 import toast from "react-hot-toast";
 import { FC, createContext, useContext, ReactNode, useState, useEffect } from "react";
-import { CartType, ProductOptionType, ProductType, ProductsWithOptionsType } from "../lib/types";
+import { ProductOptionType, ProductType, ProductsWithOptionsType } from "../lib/types";
 import { PRODUCTOPTIONS_DB, PRODUCT_DB } from "../lib/db";
-import { genererUIDProduit } from "../lib";
+import { generateIdentifier } from "../lib";
 
 interface ProductContextPropsType {
-  products: ProductType[] | [];
+  products: ProductsWithOptionsType[] | [];
   productOptions: ProductOptionType[] | [];
   addProduct: (
     product: ProductType,
@@ -13,13 +13,13 @@ interface ProductContextPropsType {
     callback?: () => void
   ) => any;
   deleteProduct: (id: number) => void;
-  getproductById: (identifier: string) => CartType | undefined;
+  getproductById: (identifier: string) => ProductType | undefined;
 }
 
 const ProductContext = createContext<ProductContextPropsType | undefined>(undefined);
 
 const ProductProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  const [products, setProducts] = useState<ProductType[] | []>([]);
+  const [products, setProducts] = useState<ProductsWithOptionsType[] | []>([]);
   const [productOptions, setProductOptions] = useState<ProductOptionType[] | []>([]);
 
   const getproducts = () => {
@@ -45,37 +45,45 @@ const ProductProvider: FC<{ children: ReactNode }> = ({ children }) => {
   };
 
   const getproductById = (identifier: string) => {
-    const regexAvecChiffre = /^\d{3}-\d{6}-\d$/;
-    const regexSansChiffre = /^\d{3}-\d{6}$/;
+    const regexProductOption = /^\d{6}-\d{6}-\d$/;
+    const regexProduct = /^\d{6}-\d{6}$/;
 
-    if (regexAvecChiffre.test(identifier)) {
+    if (regexProductOption.test(identifier)) {
       const option = PRODUCTOPTIONS_DB.getAll().filter(
         (option) => option.identifier === identifier
       )[0];
       const product = PRODUCT_DB.getById(option.ProductID).data;
       if (!product) return;
       const productCart = {
-        productName: product.name,
-        productImage: product.image,
-        productUnit: product.unit,
+        id: product.id,
         identifier: identifier,
+        name: product.name + "*" + option.name,
+        priceCost: option.priceCost,
         price: option.priceSale,
-        optionName: option.name,
-        quantity: 1,
+        stockQuantity: option.stockQuantity,
+        category: product.category,
+        isActive: product.isActive,
+        unit: product.unit,
+        type: product.type,
+        image: product.image,
       };
 
       return productCart;
-    } else if (regexSansChiffre.test(identifier)) {
+    } else if (regexProduct.test(identifier)) {
       const product = PRODUCT_DB.getAll().filter((product) => product.identifier === identifier)[0];
 
       const productCart = {
-        productName: product?.name,
-        productImage: product?.image,
-        productUnit: product?.unit,
+        id: product.id,
         identifier: identifier,
-        price: product?.price,
-        optionName: null,
-        quantity: 1,
+        name: product.name,
+        priceCost: product.priceCost,
+        price: product.price,
+        stockQuantity: product.stockQuantity,
+        category: product.category,
+        isActive: product.isActive,
+        unit: product.unit,
+        type: product.type,
+        image: product.image,
       };
 
       return productCart;
@@ -108,7 +116,7 @@ const ProductProvider: FC<{ children: ReactNode }> = ({ children }) => {
       return;
     }
 
-    const identifier = genererUIDProduit();
+    const identifier = generateIdentifier();
 
     const newProduct = PRODUCT_DB.add({ ...product, identifier });
 

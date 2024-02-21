@@ -24,7 +24,7 @@ const INITIAL_PRODUCT: ProductType = {
   id: 0,
   unit: "Piece",
   name: "",
-  supplier: "",
+  supplier: null,
   type: "standard",
   priceCost: 0,
   price: 0,
@@ -78,13 +78,13 @@ function CategorySection() {
             onChange={(e) => setCategorySearchName(e.target.value)}
           />
         </div>
-        <div className="h-full w-full overflow-y-scroll flex flex-col gap-2 pr-2">
+        <div className="h-full w-full overflow-y-scroll">
           {categories
             .filter((category) =>
               category.name.toLocaleLowerCase().includes(categorySearchName.toLocaleLowerCase())
             )
             .map((category, i) => (
-              <div key={i} className=" bg-primary-100/50 p-2 rounded-lg flex gap-2">
+              <div key={i} className="border-b py-2 flex gap-2">
                 <div
                   style={{ backgroundColor: category.color }}
                   className="h-7 w-7 bg-primary-50 rounded-full overflow-hidden"

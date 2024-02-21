@@ -1,7 +1,6 @@
 {
   "name": "redu-pos",
   "version": "1.0.0",
-  "description": "An Electron application with React and TypeScript",
   "main": "./out/main/index.js",
   "author": "Mbaye Babacar",
   "homepage": "https://redupos.com",
@@ -24,10 +23,14 @@
     "build:linux": "electron-vite build && electron-builder --linux"
   },
   "dependencies": {
+    "@capacitor/android": "^5.7.0",
+    "@capacitor/core": "^5.7.0",
     "@electron-toolkit/preload": "^3.0.0",
-    "@electron-toolkit/utils": "^3.0.0"
+    "@electron-toolkit/utils": "^3.0.0",
+    "tailwind-datepicker-react": "^1.4.3"
   },
   "devDependencies": {
+    "@capacitor/cli": "^5.7.0",
     "@electron-toolkit/eslint-config-prettier": "^2.0.0",
     "@electron-toolkit/eslint-config-ts": "^1.0.1",
     "@electron-toolkit/tsconfig": "^1.0.1",

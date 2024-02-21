@@ -19,14 +19,14 @@ function Modal({
     <>
       {showModal ? (
         <>
-          <div className="h-full inline-flex justify-center items-center overflow-x-hidden overflow-y-auto fixed inset-0 z-50 p-3">
+          <div className="h-full inline-flex justify-center items-center overflow-x-hidden overflow-y-auto fixed inset-0 z-50 p-2">
             <div
               onClick={() => setShowModal(false)}
-              className="w-full h-full bg-black/80 absolute top-0 bottom-0 left-0 right-0 z-0"
+              className="w-full h-full bg-black/70 absolute top-0 bottom-0 left-0 right-0 z-0"
             />
 
-            <div className="flex flex-col gap-3 justify-between max-h-full h-fit w-fit mx-auto z-10 bg-primary-200 rounded-2xl overflow-hidden p-3">
-              <div className="h-full w-auto min-h-80 min-w-72 overflow-y-auto rounded-xl overflow-hidden bg-primary-50">
+            <div className="flex flex-col gap-3 justify-between h-full w-fit  min-h-80 min-w-72 mx-auto z-10 bg-primary-200 rounded-2xl p-2">
+              <div className="relative h-full w-full rounded-xl bg-primary-50 overflow-hidden">
                 {content}
               </div>
 

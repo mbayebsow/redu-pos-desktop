@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">redu-pos</string>
+    <string name="title_activity_main">redu-pos</string>
+    <string name="package_name">com.redupos.app</string>
+    <string name="custom_url_scheme">com.redupos.app</string>
+</resources>

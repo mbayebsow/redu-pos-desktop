@@ -1,10 +1,8 @@
 import toast from "react-hot-toast";
-import Button from "./ui/button";
-import { PRODUCT_DB, CUSTOMERS_DB, CATEGORIES_DB } from "../lib/db";
+import Button from "../ui/button";
 import { useState } from "react";
 import { DownloadCloud } from "lucide-react";
-import generateData from "../lib/generateData";
-
+import generateData from "../../lib/generateData";
 
 function LoadSample() {
   const [loading, setLoading] = useState<boolean>(false);
@@ -12,7 +10,7 @@ function LoadSample() {
   const loadsampleData = async () => {
     setLoading(true);
 
-    generateData()
+    generateData();
 
     toast.success("Succès");
     window.location.reload();
@@ -21,15 +19,17 @@ function LoadSample() {
   };
 
   return (
-    <Button
-      loading={loading}
-      separator
-      roundedBorder="full"
-      variant="danger"
-      text="Load sample"
-      handleClick={loadsampleData}
-      icon={<DownloadCloud />}
-    />
+    <div className="w-fit">
+      <Button
+        loading={loading}
+        separator
+        roundedBorder="full"
+        variant="danger"
+        text="Load sample"
+        handleClick={loadsampleData}
+        icon={<DownloadCloud />}
+      />
+    </div>
   );
 }
 

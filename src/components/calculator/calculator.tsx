@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Button from "../ui/button";
 import Modal from "../ui/modal";
 import useSound from "../../hooks/useSound";
-import NumericPad from "../pos/numeric-pad";
+import NumericPad from "../numeric-pad";
 import { CalculatorIcon } from "lucide-react";
 
 interface CalculatorContentProps {

@@ -81,3 +81,32 @@ Requirements for POS
 - Provide web-based or mobile access for remote management
 
 Image recognition and weight calculation-
+
+
+Creact context ---
+
+import { FC, createContext, useContext, ReactNode } from "react";
+
+interface DataContextProps {
+}
+
+const StockContext = createContext<DataContextProps | undefined>(undefined);
+
+const StockProvider: FC<{ children: ReactNode }> = ({ children }) => {
+
+  return (
+    <StockContext.Provider value={{  }}>
+      {children}
+    </StockContext.Provider>
+  );
+};
+
+const useStock = (): DataContextProps => {
+  const context = useContext(StockContext);
+  if (!context) {
+    throw new Error("useStock doit être utilisé à l'intérieur de SupplierProvider");
+  }
+  return context;
+};
+
+export { StockProvider, useStock };

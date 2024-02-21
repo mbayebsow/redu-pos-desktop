@@ -39,7 +39,7 @@ function SelectField({
         ${roundedBorder === "lg" && "rounded-lg"}
         ${roundedBorder === "full" && "rounded-full"}
         ${variant === "tonal" && "bg-primary-100/50 border-primary-200"}
-        ${variant === "outlined" && "bg-primary-50 border-primary-100"}
+        ${variant === "outlined" && "bg-white border-primary-100"}
       `}
       >
         <label htmlFor={name} className="text-gray-500 border-r border-black/20 pr-2 text-xs">
@@ -50,7 +50,7 @@ function SelectField({
             onChange={onChange}
             value={value ? value : ""}
             name={name}
-            className="h-full w-full bg-transparent pr-2"
+            className="h-full w-full bg-transparent pr-2 appearance-none focus:outline-none focus:ring-0"
           >
             {defaultText && <option value={defaultTextValue}>{defaultText}</option>}
 

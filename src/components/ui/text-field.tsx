@@ -1,5 +1,7 @@
+import { ReactNode } from "react";
+
 interface TextFieldProps {
-  label?: string;
+  label?: string | ReactNode;
   name: string;
   type: string;
   value?: string | number;

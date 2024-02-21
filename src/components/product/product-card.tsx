@@ -7,7 +7,7 @@ interface ProductCardProps {
 }
 
 function ProductCard({ handleClick, values }: ProductCardProps) {
-  const { name, price, type, options, image } = values;
+  const { name, priceSale, type, options, image } = values;
 
   return (
     <div
@@ -17,10 +17,10 @@ function ProductCard({ handleClick, values }: ProductCardProps) {
       <div className="overflow-hidden aspect-square relative">
         <img src={image} alt={name} className="h-full w-full object-cover bg-primary-100" />
         <div className="absolute bottom-0 px-2 py-1 bg-primary-50/50 w-full">
-          <p className="line-clamp-2 text-xs">{name}</p>
+          <p className="line-clamp-2 text-xs text-black">{name}</p>
           <p className="text-xs font-semibold hidden">
             {type === "standard"
-              ? numberWithCommas(price)
+              ? numberWithCommas(priceSale)
               : type === "variable" && options && getMinMax(options, "priceSale", null, true)}
           </p>
         </div>
