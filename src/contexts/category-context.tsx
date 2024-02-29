@@ -1,7 +1,7 @@
 import { FC, createContext, useContext, ReactNode, useState, useEffect } from "react";
-import { CategoryType } from "../lib/types";
+import { CategoryType } from "../utils/types";
 import toast from "react-hot-toast";
-import { CATEGORIES_DB } from "../lib/db";
+import { CATEGORIES_DB } from "../db/db";
 
 interface CategoryContextPropsType {
   categories: CategoryType[] | [];
@@ -33,11 +33,7 @@ const CategoryProvider: FC<{ children: ReactNode }> = ({ children }) => {
     getCategories();
   }, []);
 
-  return (
-    <CategoryContext.Provider value={{ categories, addCategory }}>
-      {children}
-    </CategoryContext.Provider>
-  );
+  return <CategoryContext.Provider value={{ categories, addCategory }}>{children}</CategoryContext.Provider>;
 };
 
 const useCategory = (): CategoryContextPropsType => {

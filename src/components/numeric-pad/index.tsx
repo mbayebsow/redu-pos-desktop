@@ -5,14 +5,9 @@ interface NumericPadProps {
   handleClear?: (arg: any) => any;
 }
 
-function NumericPad({
-  variant = "light",
-  handleNumeric,
-  handleDecimal,
-  handleClear,
-}: NumericPadProps) {
+function NumericPad({ variant = "light", handleNumeric, handleDecimal, handleClear }: NumericPadProps) {
   return (
-    <div className="grid grid-cols-3 h-full w-full gap-2">
+    <div className="grid grid-cols-3 h-full w-full gap-2 font-bold">
       <button
         onClick={handleNumeric}
         value="7"

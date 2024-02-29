@@ -1,16 +1,15 @@
 import { useEffect, useState } from "react";
 import Button from "../ui/button";
 import Modal from "../ui/modal";
-import useSound from "../../hooks/useSound";
 import NumericPad from "../numeric-pad";
 import { CalculatorIcon } from "lucide-react";
+import { playButtonPress, playClear, playPhoneKeypad } from "../../utils/interactive-sound";
 
 interface CalculatorContentProps {
   shouldEval: boolean;
   setShouldEval: (sate: boolean) => any;
 }
 function CalculatorContent({ shouldEval, setShouldEval }: CalculatorContentProps) {
-  const { playPhoneKeypad, playClear, playButtonPress } = useSound();
   const [input, setInput] = useState("0");
   const [formula, setFormula] = useState("0");
   const [sign, setSign] = useState<string | null>(null);
@@ -91,44 +90,20 @@ function CalculatorContent({ shouldEval, setShouldEval }: CalculatorContentProps
 
       <div className="w-full h-full flex gap-2">
         <div className="h-full w-3/4">
-          <NumericPad
-            handleClear={handleClear}
-            handleDecimal={handleDecimal}
-            handleNumeric={handleNumeric}
-          />
+          <NumericPad handleClear={handleClear} handleDecimal={handleDecimal} handleNumeric={handleNumeric} />
         </div>
 
         <div className="h-auto w-1/4 flex flex-col gap-2">
-          <button
-            onClick={handleSign}
-            id="multiply"
-            value="*"
-            className="w-full h-1/4 rounded-lg bg-primary-200"
-          >
+          <button onClick={handleSign} id="multiply" value="*" className="w-full h-1/4 rounded-lg bg-primary-200">
             x
           </button>
-          <button
-            onClick={handleSign}
-            id="subtract"
-            value="-"
-            className="w-full h-1/4 rounded-lg bg-primary-200"
-          >
+          <button onClick={handleSign} id="subtract" value="-" className="w-full h-1/4 rounded-lg bg-primary-200">
             -
           </button>
-          <button
-            onClick={handleSign}
-            id="add"
-            value="+"
-            className="w-full h-1/4 rounded-lg bg-primary-200"
-          >
+          <button onClick={handleSign} id="add" value="+" className="w-full h-1/4 rounded-lg bg-primary-200">
             +
           </button>
-          <button
-            onClick={handleSign}
-            id="divide"
-            value="/"
-            className="w-full h-1/4 rounded-lg bg-primary-200"
-          >
+          <button onClick={handleSign} id="divide" value="/" className="w-full h-1/4 rounded-lg bg-primary-200">
             /
           </button>
         </div>
@@ -151,12 +126,7 @@ function Calculator() {
         actionButtonText="Calculer"
         actionButtonOnClick={() => setShouldEval(true)}
       />
-      <Button
-        roundedBorder="full"
-        variant="icon"
-        handleClick={() => setOpenCalculator(true)}
-        icon={<CalculatorIcon />}
-      />
+      <Button roundedBorder="full" variant="icon" handleClick={() => setOpenCalculator(true)} icon={<CalculatorIcon />} />
     </div>
   );
 }

@@ -1,17 +1,13 @@
 import toast from "react-hot-toast";
 import { FC, createContext, useContext, ReactNode, useState, useEffect } from "react";
-import { ProductOptionType, ProductType, ProductsWithOptionsType } from "../lib/types";
-import { PRODUCTOPTIONS_DB, PRODUCT_DB } from "../lib/db";
-import { generateIdentifier } from "../lib";
+import { ProductOptionType, ProductType, ProductsWithOptionsType } from "../utils/types";
+import { PRODUCTOPTIONS_DB, PRODUCT_DB } from "../db/db";
+import { generateIdentifier } from "../utils";
 
 interface ProductContextPropsType {
   products: ProductsWithOptionsType[] | [];
   productOptions: ProductOptionType[] | [];
-  addProduct: (
-    product: ProductType,
-    productOptions: ProductOptionType[],
-    callback?: () => void
-  ) => any;
+  addProduct: (product: ProductType, productOptions: ProductOptionType[], callback?: () => void) => any;
   deleteProduct: (id: number) => void;
   getproductById: (identifier: string) => ProductType | undefined;
 }
@@ -32,9 +28,7 @@ const ProductProvider: FC<{ children: ReactNode }> = ({ children }) => {
       return { ...product, options };
     });
 
-    const finalProducts: ProductsWithOptionsType[] = standardProducts
-      .concat(variableProductsWithOptions)
-      .sort((a, b) => a.id - b.id);
+    const finalProducts: ProductsWithOptionsType[] = standardProducts.concat(variableProductsWithOptions).sort((a, b) => a.id - b.id);
 
     setProducts(finalProducts);
   };
@@ -49,20 +43,19 @@ const ProductProvider: FC<{ children: ReactNode }> = ({ children }) => {
     const regexProduct = /^\d{6}-\d{6}$/;
 
     if (regexProductOption.test(identifier)) {
-      const option = PRODUCTOPTIONS_DB.getAll().filter(
-        (option) => option.identifier === identifier
-      )[0];
+      const option = PRODUCTOPTIONS_DB.getAll().filter((option) => option.identifier === identifier)[0];
       const product = PRODUCT_DB.getById(option.ProductID).data;
       if (!product) return;
-      const productCart = {
+      const productCart: ProductType = {
         id: product.id,
         identifier: identifier,
         name: product.name + "*" + option.name,
         priceCost: option.priceCost,
-        price: option.priceSale,
+        priceSale: option.priceSale,
         stockQuantity: option.stockQuantity,
         category: product.category,
         isActive: product.isActive,
+        supplier: option.supplier,
         unit: product.unit,
         type: product.type,
         image: product.image,
@@ -72,15 +65,16 @@ const ProductProvider: FC<{ children: ReactNode }> = ({ children }) => {
     } else if (regexProduct.test(identifier)) {
       const product = PRODUCT_DB.getAll().filter((product) => product.identifier === identifier)[0];
 
-      const productCart = {
+      const productCart: ProductType = {
         id: product.id,
         identifier: identifier,
         name: product.name,
         priceCost: product.priceCost,
-        price: product.price,
+        priceSale: product.priceSale,
         stockQuantity: product.stockQuantity,
         category: product.category,
         isActive: product.isActive,
+        supplier: product.supplier,
         unit: product.unit,
         type: product.type,
         image: product.image,
@@ -101,17 +95,13 @@ const ProductProvider: FC<{ children: ReactNode }> = ({ children }) => {
     getproducts();
   };
 
-  const addProduct = (
-    product: ProductType,
-    productOptions: ProductOptionType[],
-    callback?: () => void
-  ) => {
+  const addProduct = (product: ProductType, productOptions: ProductOptionType[], callback?: () => void) => {
     if (product.name === "") {
       toast.error("Le nom du produit est obligatoir");
       return;
     }
 
-    if (product.type === "standard" && product.price === 0) {
+    if (product.type === "standard" && product.priceSale === 0) {
       toast.error("Le prix est obligatoir");
       return;
     }
@@ -134,8 +124,7 @@ const ProductProvider: FC<{ children: ReactNode }> = ({ children }) => {
       }));
 
       const saveProductOptions = PRODUCTOPTIONS_DB.addBatch(optionWithProductID);
-      if (!saveProductOptions.success)
-        toast.error("Une erreur c'est produite lors de l'enregistrement des options!");
+      if (!saveProductOptions.success) toast.error("Une erreur c'est produite lors de l'enregistrement des options!");
     }
     toast.success("Produit ajouter avec succes!");
     getproducts();

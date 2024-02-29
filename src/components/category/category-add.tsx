@@ -1,4 +1,4 @@
-import { CategoryType } from "../../lib/types";
+import { CategoryType } from "../../utils/types";
 import TextField from "../ui/text-field";
 
 interface CategoryAddProps {
@@ -57,9 +57,7 @@ function CategoryAdd({ categorySate, setCategoryState }: CategoryAddProps) {
           <div
             key={i}
             onClick={() => setCategoryState((prev: any) => ({ ...prev, color: color }))}
-            className={`w-9 h-9  rounded-full p-1 ${
-              categorySate.color === color && "border-2 border-red-500"
-            }`}
+            className={`w-9 h-9  rounded-full p-1 ${categorySate.color === color && "border-2 border-red-500"}`}
           >
             <div style={{ backgroundColor: color }} className="w-full h-full rounded-full" />
           </div>

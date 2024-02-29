@@ -1,6 +1,6 @@
 import { FC, ReactNode, createContext, useContext } from "react";
-import { SalesType, SaleItemsType } from "../lib/types";
-import { SALES_DB, SALEITEMS_DB } from "../lib/db";
+import { SalesType, SaleItemsType } from "../utils/types";
+import { SALES_DB, SALEITEMS_DB } from "../db/db";
 import toast from "react-hot-toast/headless";
 
 interface DataContextProps {
@@ -29,11 +29,7 @@ const SaleProvider: FC<{ children: ReactNode }> = ({ children }) => {
     return saleItems;
   };
 
-  return (
-    <SaleContext.Provider value={{ sales: SALES_DB.getAll(), addSale, getSaleItems }}>
-      {children}
-    </SaleContext.Provider>
-  );
+  return <SaleContext.Provider value={{ sales: SALES_DB.getAll(), addSale, getSaleItems }}>{children}</SaleContext.Provider>;
 };
 
 const useSale = (): DataContextProps => {

@@ -1,24 +1,20 @@
 import { Plus, Search, X } from "lucide-react";
-import { Dispatch, SetStateAction, memo, useCallback, useRef, useState } from "react";
+import { Dispatch, SetStateAction, memo, useState } from "react";
 
-import {
-  ProductOptionType,
-  StockReplenishmentItemsType,
-  StockReplenishmentType,
-} from "../../lib/types";
-import { useProduct } from "../../contexts/product-context";
-import SelectOption from "../shared/select-option";
+import { ProductOptionType, StockReplenishmentItemsType, StockReplenishmentType } from "../../utils/types";
+import SelectOption from "../product/select-option";
 
 import SelectField from "../ui/select-field";
 import TextField from "../ui/text-field";
 import Popup from "../ui/popup";
 import Button from "../ui/button";
-import { getSuppliers } from "../../services/supplier-services";
 import DateField from "../ui/date-field";
-import { useStock } from "../../contexts/stock-context";
 import Drawer from "../ui/drawer";
-import ProductsList from "../product/products-list";
-import useSound from "../../hooks/useSound";
+import useStockStore from "../../stores/stock";
+import useProductStore from "../../stores/product";
+import useSupplierStore from "../../stores/supplier";
+import ProductCard from "../product/product-card";
+import { playBeep } from "../../utils/interactive-sound";
 
 // interface StockAddProps {
 //   stocks: StockTransactionsType[];
@@ -47,6 +43,13 @@ const INITIAL_STOCK: StockReplenishmentType = {
   status: "completed",
   date: new Date(),
 };
+
+function ProductsList({ filterByName, handleClick }) {
+  const products = useProductStore((state) => state.products);
+  return products
+    .filter((product) => product.name.toLocaleLowerCase().includes(filterByName.toLocaleLowerCase()))
+    .map((product) => <ProductCard values={product} handleClick={handleClick} />);
+}
 
 function ProductSection({ handleAddStock }: ProductSectionProps) {
   const [filterProduct, setFilterProduct] = useState("");
@@ -85,7 +88,6 @@ function ProductSection({ handleAddStock }: ProductSectionProps) {
         <div className="overflow-y-scroll w-full">
           <div className="grid grid-cols-4 gap-2">
             <ProductsList
-              display="card"
               filterByName={filterProduct}
               handleClick={(product) => {
                 if (product.type === "variable" && product.options) {
@@ -103,15 +105,10 @@ function ProductSection({ handleAddStock }: ProductSectionProps) {
   );
 }
 
-function StockSection({
-  stockHead,
-  stockItems,
-  setStockHead,
-  handleSetStock,
-  handleRemoveItem,
-  saveStockReplenishment,
-}: StockSectionProps) {
-  const { getproductById } = useProduct();
+function StockSection({ stockHead, stockItems, setStockHead, handleSetStock, handleRemoveItem, saveStockReplenishment }: StockSectionProps) {
+  const getproductByIdentifierAction = useProductStore((state) => state.getproductByIdentifier);
+  const suppliers = useSupplierStore((state) => state.suppliers);
+
   return (
     <div className="py-2 h-full w-1/2 bg-primary-100 rounded-xl border border-primary-200 flex flex-col gap-2">
       <div className="h-full w-full flex flex-col px-2 overflow-hidden gap-2">
@@ -140,7 +137,7 @@ function StockSection({
             optionsText="name"
             defaultText="- - -"
             defaultTextValue="null"
-            optionsData={getSuppliers()}
+            optionsData={suppliers}
             onChange={(e) => setStockHead({ ...stockHead, supplier: Number(e.target.value) })}
           />
           <TextField
@@ -148,9 +145,7 @@ function StockSection({
             label="Montant total du commande"
             type="number"
             value={stockHead.totalAmountOrder === 0 ? "" : stockHead.totalAmountOrder}
-            onChange={(e) =>
-              setStockHead({ ...stockHead, totalAmountOrder: Number(e.target.value) })
-            }
+            onChange={(e) => setStockHead({ ...stockHead, totalAmountOrder: Number(e.target.value) })}
           />
           <TextField
             name="payAmount"
@@ -167,22 +162,16 @@ function StockSection({
               <div key={i} className="py-2">
                 <div className="flex items-center justify-between p-2 px-3 bg-white rounded-lg mb-1 text-sm">
                   <div className="w-full">
-                    <div className="font-semibold">
-                      {getproductById(stock.productIdentifier)?.name}
-                    </div>
+                    <div className="font-semibold">{getproductByIdentifierAction(stock.productIdentifier)?.name}</div>
                     <div className="font-semibold">
                       <span className="font-normal">Identifinat:</span> {stock.productIdentifier}
                     </div>
                     <div className="font-semibold">
-                      <span className="font-normal">Quantité actuelle:</span>{" "}
-                      {stock.initialtQuantity}
+                      <span className="font-normal">Quantité actuelle:</span> {stock.initialtQuantity}
                     </div>
                   </div>
                   <div>
-                    <button
-                      onClick={() => handleRemoveItem(i)}
-                      className="p-1 w-fit h-fit rounded-full bg-red-100"
-                    >
+                    <button onClick={() => handleRemoveItem(i)} className="p-1 w-fit h-fit rounded-full bg-red-100">
                       <X color="red" size={12} />
                     </button>
                   </div>
@@ -235,9 +224,8 @@ function StockSection({
 }
 
 function StockAddScreen() {
-  const { playBeep } = useSound();
-  const { addStock } = useStock();
-  const { getproductById } = useProduct();
+  const addStock = useStockStore((state) => state.addStock);
+  const getproductByIdentifierAction = useProductStore((state) => state.getproductByIdentifier);
   const [stockItems, setStockItems] = useState<StockReplenishmentItemsType[] | []>([]);
   const [stockHead, setStockHead] = useState<StockReplenishmentType>(INITIAL_STOCK);
 
@@ -253,7 +241,7 @@ function StockAddScreen() {
     if (index > -1) {
       handleSetStockItem(index, "newQuantity", stockItems[index].newQuantity + 1);
     } else {
-      const product = getproductById(identifier);
+      const product = getproductByIdentifierAction(identifier);
       if (product) {
         setStockItems([
           ...stockItems,
@@ -305,11 +293,7 @@ function StockAdd() {
   const [opentAddModal, setOpentAddModal] = useState(false);
   return (
     <>
-      <Drawer
-        showDrawer={opentAddModal}
-        setShowDrawer={setOpentAddModal}
-        content={<StockAddScreen />}
-      />
+      <Drawer showDrawer={opentAddModal} setShowDrawer={setOpentAddModal} content={<StockAddScreen />} />
       <div className="w-fit">
         <Button roundedBorder="full" icon={<Plus />} handleClick={() => setOpentAddModal(true)}>
           Ajouter

@@ -1,8 +1,8 @@
 import { FC, createContext, useContext, ReactNode, useState, useEffect } from "react";
-import { StockReplenishmentItemsType, StockReplenishmentType } from "../lib/types";
-import { STOCKITEMS_DB, STOCK_DB } from "../lib/db";
-import { updateProduct } from "../services/prodcut-services";
+import { StockReplenishmentItemsType, StockReplenishmentType } from "../utils/types";
+import { STOCKITEMS_DB, STOCK_DB } from "../db/db";
 import toast from "react-hot-toast";
+import { updateProductAction } from "../stores/product";
 
 interface DataContextProps {
   stocks: StockReplenishmentType[] | [];
@@ -38,7 +38,7 @@ const StockProvider: FC<{ children: ReactNode }> = ({ children }) => {
         if (item.priceCost > 0) newPrice.priceCost = item.priceCost;
         if (item.priceSale > 0) newPrice.priceSale = item.priceSale;
 
-        const updateEntry = updateProduct(item.productIdentifier, {
+        const updateEntry = updateProductAction(item.productIdentifier, {
           ...newPrice,
           stockQuantity: item.newQuantity,
           supplier: stockHead.supplier,

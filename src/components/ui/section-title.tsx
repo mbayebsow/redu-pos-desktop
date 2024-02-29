@@ -1,5 +1,7 @@
+import { memo } from "react";
+
 function SectionTitle({ children }: { children: string }) {
-  return <div className="text-3xl font-bold pl-2 mb-2">{children}</div>;
+  return <div className="text-3xl font-bold p-2">{children}</div>;
 }
 
-export default SectionTitle;
+export default memo(SectionTitle);

@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction } from "react";
-import { SupplierType } from "../../lib/types";
+import { SupplierType } from "../../utils/types";
 import TextField from "../ui/text-field";
 
 interface SupplierAddProps {

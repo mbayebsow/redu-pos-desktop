@@ -2,7 +2,7 @@ import toast from "react-hot-toast";
 import Button from "../ui/button";
 import { useState } from "react";
 import { DownloadCloud } from "lucide-react";
-import generateData from "../../lib/generateData";
+import generateData from "../../utils/helpers/generate-demo-data";
 
 function LoadSample() {
   const [loading, setLoading] = useState<boolean>(false);
@@ -24,7 +24,7 @@ function LoadSample() {
         loading={loading}
         separator
         roundedBorder="full"
-        variant="danger"
+        variant="tonal"
         text="Load sample"
         handleClick={loadsampleData}
         icon={<DownloadCloud />}

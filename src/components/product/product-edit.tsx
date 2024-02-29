@@ -1,13 +1,12 @@
 import { useEffect, useState } from "react";
-import { ProductType } from "../../lib/types";
-import useSound from "../../hooks/useSound";
+import { ProductType } from "../../utils/types";
 
 import TextField from "../../components/ui/text-field";
 import SwitchField from "../../components/ui/switch-field";
 import Button from "../../components/ui/button";
+import { playBeep } from "../../utils/interactive-sound";
 
 function ProductEdit({ product }: { product: ProductType }) {
-  const { playBeep } = useSound();
   const [productSelected, setProductSelected] = useState<ProductType>(product);
 
   const getInputData = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -35,39 +34,12 @@ function ProductEdit({ product }: { product: ProductType }) {
         </div>
 
         <div className="gap-3 flex-col flex h-fit">
-          <TextField
-            variant="tonal"
-            type="text"
-            label="Nom:"
-            name="name"
-            value={productSelected?.name}
-            onChange={getInputData}
-          />
+          <TextField variant="tonal" type="text" label="Nom:" name="name" value={productSelected?.name} onChange={getInputData} />
           <div className="inline-flex gap-2 items-center">
-            <TextField
-              variant="tonal"
-              type="number"
-              label="Prix:"
-              name="price"
-              value={productSelected?.price}
-              onChange={getInputData}
-            />
-            <TextField
-              variant="tonal"
-              type="text"
-              label="Unité:"
-              name="unite"
-              value={productSelected?.stockQuantity}
-              onChange={getInputData}
-            />
+            <TextField variant="tonal" type="number" label="Prix:" name="price" value={productSelected?.priceSale} onChange={getInputData} />
+            <TextField variant="tonal" type="text" label="Unité:" name="unite" value={productSelected?.stockQuantity} onChange={getInputData} />
           </div>
-          <SwitchField
-            style={2}
-            label="Afficher le produit"
-            name="isActive"
-            onChange={getInputData}
-            checked={productSelected?.isActive}
-          />
+          <SwitchField style={2} label="Afficher le produit" name="isActive" onChange={getInputData} checked={productSelected?.isActive} />
         </div>
       </div>
 

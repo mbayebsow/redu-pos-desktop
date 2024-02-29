@@ -1,5 +1,5 @@
-import { getMinMax, numberWithCommas } from "../../lib";
-import { ProductsWithOptionsType } from "../../lib/types";
+import { getMinMax, numberWithCommas } from "../../utils";
+import { ProductsWithOptionsType } from "../../utils/types";
 
 interface ProductCardProps {
   values: ProductsWithOptionsType;
@@ -19,9 +19,7 @@ function ProductCard({ handleClick, values }: ProductCardProps) {
         <div className="absolute bottom-0 px-2 py-1 bg-primary-50/50 w-full">
           <p className="line-clamp-2 text-xs text-black">{name}</p>
           <p className="text-xs font-semibold hidden">
-            {type === "standard"
-              ? numberWithCommas(priceSale)
-              : type === "variable" && options && getMinMax(options, "priceSale", null, true)}
+            {type === "standard" ? numberWithCommas(priceSale) : type === "variable" && options && getMinMax(options, "priceSale", null, true)}
           </p>
         </div>
       </div>

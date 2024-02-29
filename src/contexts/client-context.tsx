@@ -1,13 +1,13 @@
 import { FC, createContext, useContext, ReactNode, useState, useEffect } from "react";
-import { CustomerType } from "../lib/types";
+import { CustomerType } from "../utils/types";
 
-import { CUSTOMERS_DB } from "../lib/db";
+import { CUSTOMERS_DB } from "../db/db";
 import toast from "react-hot-toast";
 
 interface DataContextProps {
   clients: CustomerType[] | [];
   addClient: (client: CustomerType) => void;
-  getClientById: (clientId: number) => { success: boolean, message?: string, data?: CustomerType | undefined};
+  getClientById: (clientId: number) => { success: boolean; message?: string; data?: CustomerType | undefined };
 }
 
 const ClientContext = createContext<DataContextProps | undefined>(undefined);
@@ -35,11 +35,7 @@ const ClientProvider: FC<{ children: ReactNode }> = ({ children }) => {
     getClients();
   }, []);
 
-  return (
-    <ClientContext.Provider value={{ clients, addClient, getClientById }}>
-      {children}
-    </ClientContext.Provider>
-  );
+  return <ClientContext.Provider value={{ clients, addClient, getClientById }}>{children}</ClientContext.Provider>;
 };
 
 const useClient = (): DataContextProps => {

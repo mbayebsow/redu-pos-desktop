@@ -1,7 +1,7 @@
 import { FC, createContext, useContext, ReactNode, useState, useEffect } from "react";
-import { DataBaseResponse, SupplierType } from "../lib/types";
+import { DataBaseResponse, SupplierType } from "../utils/types";
 
-import { SUPPLIERS_DB } from "../lib/db";
+import { SUPPLIERS_DB } from "../db/db";
 import toast from "react-hot-toast";
 
 interface DataContextProps {
@@ -35,11 +35,7 @@ const SupplierProvider: FC<{ children: ReactNode }> = ({ children }) => {
     getSuppliers();
   }, []);
 
-  return (
-    <SupplierContext.Provider value={{ suppliers, addSupplier, getSupplierById }}>
-      {children}
-    </SupplierContext.Provider>
-  );
+  return <SupplierContext.Provider value={{ suppliers, addSupplier, getSupplierById }}>{children}</SupplierContext.Provider>;
 };
 
 const useSupplier = (): DataContextProps => {

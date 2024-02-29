@@ -1,7 +1,7 @@
 import React, { createContext, useContext, ReactNode, useState, useEffect } from "react";
-import { ProductType, CartType, CustomerType, ProductsWithOptionsType } from "../lib/types";
-import useSound from "../hooks/useSound";
-import { CUSTOMERS_DB, PRODUCT_DB, PRODUCTOPTIONS_DB } from "../lib/db";
+import { CartType, CustomerType } from "../utils/types";
+import { CUSTOMERS_DB, PRODUCT_DB, PRODUCTOPTIONS_DB } from "../db/db";
+import { playBeep, playClear } from "../utils/interactive-sound";
 // import clientsMock from "../mockdata/clients.json";
 
 interface DataContextProps {
@@ -24,8 +24,6 @@ const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [cartTotal, setCartTotal] = useState<number>(0);
   const [cartDeposit, setCartDeposit] = useState<number>(0);
 
-  const { playBeep, playClear } = useSound();
-
   const addToCart = (newProductCart: CartType, identifier: string) => {
     const existIndex = cartProducts.findIndex((p) => p.identifier === identifier);
 
@@ -43,9 +41,7 @@ const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const regexSansChiffre = /^\d{6}-\d{6}$/;
 
     if (regexAvecChiffre.test(identifier)) {
-      const option = PRODUCTOPTIONS_DB.getAll().filter(
-        (option) => option.identifier === identifier
-      )[0];
+      const option = PRODUCTOPTIONS_DB.getAll().filter((option) => option.identifier === identifier)[0];
       const product = PRODUCT_DB.getById(option.ProductID).data;
 
       if (!product) return;
@@ -69,7 +65,7 @@ const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
         productImage: product.image,
         productUnit: product.unit,
         identifier: identifier,
-        price: product.price,
+        price: product.priceSale,
         optionName: null,
         quantity: 1,
       };
