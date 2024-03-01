@@ -1,6 +1,9 @@
-import { formatISODate } from "../../../utils";
-import { SalesType, TableColumns } from "../../../utils/types";
-import useUserStore from "../../../stores/users";
+import { formatISODate } from "../../utils";
+import { SalesType, TableColumns } from "../../utils/types";
+import useUserStore from "../../stores/users";
+import { memo } from "react";
+import Button from "../ui/button";
+import { LayoutList, Pen } from "lucide-react";
 
 const ClientFullName = ({ record }: { record: SalesType }) => {
   const getUserById = useUserStore((state) => state.getUserById);
@@ -14,7 +17,16 @@ const ClientFullName = ({ record }: { record: SalesType }) => {
   );
 };
 
-export const salesListCulumns: TableColumns = [
+const SaleOptions = memo<{ identifier: string }>(({ identifier }) => {
+  return (
+    <div className="w-fit inline-flex gap-2 items-center">
+      <Button variant="icon" icon={<Pen />} />
+      <Button variant="icon" icon={<LayoutList />} />
+    </div>
+  );
+});
+
+export const salePageCulumns: TableColumns = [
   {
     title: "Produits",
     dataIndex: "itemsNumbers",
@@ -36,5 +48,10 @@ export const salesListCulumns: TableColumns = [
     title: "Date",
     dataIndex: "date",
     render: (record: SalesType) => <div>{formatISODate(record.date)}</div>,
+  },
+  {
+    title: "Options",
+    dataIndex: "date",
+    render: (record) => <SaleOptions identifier={record.identifier} />,
   },
 ];

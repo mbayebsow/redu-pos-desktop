@@ -44,7 +44,11 @@ function Shortcuts() {
           <div className="opacity-50">Pages</div>
           <div className="pl-2 mt-1">
             {SHORTCUTS.map((shortcut, i) => (
-              <button key={i} onClick={() => navigate(shortcut.action)} className="whitespace-nowrap py-1 px-2 rounded-md hover:bg-primary-50">
+              <button
+                key={i}
+                onClick={() => navigate(shortcut.action)}
+                className="text-left w-full whitespace-nowrap py-1 px-2 rounded-md hover:bg-primary-50"
+              >
                 {shortcut.name}
               </button>
             ))}

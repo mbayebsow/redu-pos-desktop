@@ -4,7 +4,7 @@ import Modal from "../ui/modal";
 import ProductFields from "./product-fields";
 import { memo, useCallback, useState } from "react";
 import useProductStore from "../../stores/product";
-import { INITIAL_PRODUCT, INITIAL_PRODUCT_OPTIONS } from "../shared/initials-state";
+import { INITIAL_PRODUCT, INITIAL_PRODUCT_OPTIONS } from "../../utils/constants/initials-state";
 import { ProductOptionType, ProductType } from "../../utils/types";
 
 const AddProductButton = memo(() => {

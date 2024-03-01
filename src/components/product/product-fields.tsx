@@ -2,7 +2,7 @@ import { Dispatch, SetStateAction, memo, useEffect, useState } from "react";
 import { Plus, RotateCcw, Scan, X } from "lucide-react";
 import ReactBarcode from "react-jsbarcode";
 
-import { INITIAL_PRODUCT, INITIAL_PRODUCT_OPTIONS } from "../shared/initials-state";
+import { INITIAL_PRODUCT, INITIAL_PRODUCT_OPTIONS } from "../../utils/constants/initials-state";
 import { ProductOptionType, ProductType } from "../../utils/types";
 import { generateIdentifier } from "../../utils";
 

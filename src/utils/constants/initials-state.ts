@@ -1,4 +1,4 @@
-import { ProductOptionType, ProductType } from "../../../utils/types";
+import { ProductOptionType, ProductType } from "../types";
 
 export const INITIAL_CATEGORY = {
   id: 0,

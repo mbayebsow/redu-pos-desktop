@@ -1,15 +1,16 @@
 import ReactBarcode from "react-jsbarcode";
 import { CartType, CustomerType } from "../../utils/types";
-import { LegacyRef } from "react";
+import { LegacyRef, useEffect, useState } from "react";
 import reduIcon from "../../assets/logo-black.png";
 import { ArrowDown, ArrowUp } from "lucide-react";
+import useUserStore from "../../stores/users";
 
 interface ReceiptProps {
   receiptRef?: LegacyRef<HTMLDivElement> | null;
   totalPrice: number;
   deposit: number;
   receiptNo: string;
-  client: CustomerType | null;
+  clientId: number | null | undefined;
   products: CartType[];
 }
 
@@ -91,7 +92,17 @@ interface ReceiptProps {
 //   );
 // }
 
-function ReceiptV2({ receiptRef = null, totalPrice, deposit, receiptNo, client, products }: ReceiptProps) {
+function ReceiptV2({ receiptRef = null, totalPrice, deposit, receiptNo, clientId, products }: ReceiptProps) {
+  const [client, setClient] = useState<CustomerType | null>(null);
+  const getUserById = useUserStore((state) => state.getUserById);
+
+  useEffect(() => {
+    if (clientId) {
+      const client = getUserById(clientId).data;
+      if (client) setClient(client);
+    }
+  }, [clientId]);
+
   return (
     <div ref={receiptRef} className="text-black relative flex flex-col min-w-[27vw] h-full py-2 px-4 mx-auto bg-white overflow-scroll text-xs">
       <div className="h-fit text-center  justify-center items-start gap-2 w-full">
@@ -198,7 +209,7 @@ function ReceiptV2({ receiptRef = null, totalPrice, deposit, receiptNo, client, 
       <div className="border-b border-dashed border-black my-2"></div>
 
       <div className="w-full h-fit">
-        <ReactBarcode className="w-52 h-fit mx-auto" value={receiptNo} />
+        <ReactBarcode className="w-fit h-20 mx-auto" value={receiptNo} />
       </div>
     </div>
   );

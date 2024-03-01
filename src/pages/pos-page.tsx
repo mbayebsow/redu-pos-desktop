@@ -100,7 +100,7 @@ function PayButton() {
       discount: 0,
       advance: cartDeposit,
       itemsNumbers: cartProducts.length,
-      customer: cartClient ? cartClient.id : null,
+      customer: cartClient,
     };
 
     const saleItems: SaleItemsType[] = cartProducts.map((product) => ({
@@ -146,7 +146,7 @@ function PayButton() {
             totalPrice={cartTotal}
             deposit={cartDeposit}
             receiptNo={receiptNo}
-            client={cartClient}
+            clientId={cartClient}
             products={cartProducts}
           />
         }

@@ -33,17 +33,21 @@ const Button = memo(
         <div
           className={`
         ${variant === "filled" && "bg-primary-800 text-primary-50 fill-primary-50 px-4 py-2"} 
-        ${variant === "tonal" && "bg-primary-100/50 text-primary-800 fill-primary-800 px-4 py-2"}
+        ${variant === "tonal" && "bg-primary-100/50 text-primary-800 fill-primary-800 px-4 py-2 border border-primary-200"}
         ${variant === "text" && "bg-transparent p-2"}
         ${variant === "icon" && "bg-transparent p-2 rounded-full"}
         ${roundedBorder === "normal" && "rounded-lg"}
         ${roundedBorder === "full" && "rounded-full"}
-        w-full h-full flex items-center gap-2 justify-center z-10`}
+        w-full h-full flex justify-between items-center z-10`}
         >
-          {icon && <div className={` w-5 h-5 flex items-center justify-center`}>{icon}</div>}
-          {separator && <div className="border-l border-gray-200 h-full p-0" />}
+          <div className="flex items-center gap-3 h-full">
+            {icon && <div className={` w-5 h-5 flex items-center justify-center`}>{icon}</div>}
+            {separator && (
+              <div className={`border-l ${variant === "filled" ? "border-primary-500" : variant === "tonal" && "border-primary-200"} h-full p-1`} />
+            )}
+          </div>
 
-          {(text || children) && <div className={`whitespace-nowrap w-fit`}>{children ? children : text}</div>}
+          {(text || children) && <div className={`whitespace-nowrap w-full`}>{children ? children : text}</div>}
         </div>
       </button>
     );

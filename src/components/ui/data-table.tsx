@@ -32,7 +32,7 @@ function Table({ columns, data, handleClick }: TableProps) {
                 }
               }}
               key={i}
-              className={`${activeRow === i && "bg-primary-100"} ${handleClick && "cursor-pointer"} border-b border-b-gray-100 hover:bg-primary-50`}
+              className={`${activeRow === i && "bg-primary-100"} ${handleClick && "cursor-pointer"} border-b border-b-gray-100 hover:bg-white`}
             >
               {columns.map((column, i) => (
                 <th key={i} className="px-2 py-2 w-auto font-normal">

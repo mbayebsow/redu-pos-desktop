@@ -1,15 +1,18 @@
 import { useEffect, useState } from "react";
 import { formatISODate } from "../utils";
-import { SalesType } from "../utils/types";
+import { SaleDetails, SalesType } from "../utils/types";
 
 import useUserStore from "../stores/users";
-import useSaleStore from "../stores/sale";
+import useSaleStore, { getSaleDatailsAction } from "../stores/sale";
 import useProductStore from "../stores/product";
 
 import SelectField from "../components/ui/select-field";
 import Table from "../components/ui/data-table";
 import SectionTitle from "../components/ui/section-title";
-import { salesListCulumns } from "../components/shared/table-columns/sale-screen-culumns";
+import { salePageCulumns } from "../components/sale/sale-page-culumns";
+import Receipt from "../components/ui/receipt";
+import Button from "../components/ui/button";
+import { Printer, Send } from "lucide-react";
 
 function SalesList({ setSaleSelected }: { setSaleSelected: (sale: SalesType) => void }) {
   const users = useUserStore((state) => state.users);
@@ -101,7 +104,7 @@ function SalesList({ setSaleSelected }: { setSaleSelected: (sale: SalesType) => 
 
                   return filterByDate.to === "0" ? sale : saleDate <= toDate;
                 })}
-              columns={salesListCulumns}
+              columns={salePageCulumns}
               handleClick={setSaleSelected}
             />
           )}
@@ -111,8 +114,44 @@ function SalesList({ setSaleSelected }: { setSaleSelected: (sale: SalesType) => 
   );
 }
 
+function ReceiptSection({ saleSelected }: { saleSelected: SalesType | null }) {
+  const [saleDetails, setSaleDetails] = useState<SaleDetails | null>(null);
+
+  useEffect(() => {
+    if (saleSelected) {
+      const details = getSaleDatailsAction(saleSelected?.id);
+      setSaleDetails(details);
+    }
+  }, [saleSelected]);
+
+  return (
+    <div className="w-full h-full flex flex-col">
+      <div className="w-full h-full overflow-y-scroll">
+        {saleDetails && (
+          <Receipt
+            receiptRef={null}
+            totalPrice={saleDetails.amount}
+            deposit={saleDetails.advance}
+            receiptNo={saleDetails.id.toString()}
+            clientId={saleDetails.customer}
+            products={saleDetails.saleItems}
+          />
+        )}
+      </div>
+      <div className="flex gap-2 items-center">
+        <Button separator variant="tonal" icon={<Send />}>
+          Envoyer
+        </Button>
+        <Button separator icon={<Printer />}>
+          Imprimer
+        </Button>
+      </div>
+    </div>
+  );
+}
+
 function ProductsSaleList({ saleSelected }: { saleSelected: SalesType | null }) {
-  const getSaleById = useSaleStore((state) => state.getSaleById);
+  const getSaleItemsBySaleId = useSaleStore((state) => state.getSaleItemsBySaleId);
   const getproductByIdentifierAction = useProductStore((state) => state.getproductByIdentifier);
 
   return (
@@ -121,7 +160,7 @@ function ProductsSaleList({ saleSelected }: { saleSelected: SalesType | null }) 
       <div className="w-full h-full overflow-y-scroll">
         <div className="w-full h-fit text-sm flex flex-col gap-2 py-2">
           {saleSelected &&
-            getSaleById(saleSelected.id).map((item, i) => (
+            getSaleItemsBySaleId(saleSelected.id).map((item, i) => (
               <div key={i} className="flex items-center gap-2 border-b border-gray-100 pb-2 w-full">
                 <img className="aspect-square h-full w-12 rounded-lg" src={getproductByIdentifierAction(item.identifier)?.image} />
                 <div className="hidden">{item.identifier}</div>
@@ -141,17 +180,19 @@ function ProductsSaleList({ saleSelected }: { saleSelected: SalesType | null }) 
   );
 }
 
+// <ProductsSaleList saleSelected={saleSelected} />
+
 function SalesPage() {
   const [saleSelected, setSaleSelected] = useState<SalesType | null>(null);
 
   return (
     <div className="flex gap-2 w-full h-full">
-      <div className="w-full h-full bg-white/60 border border-primary-100/50 p-2 rounded-xl">
+      <div className="w-2/3 h-full bg-white/60 border border-primary-100/50 p-2 rounded-xl">
         <SalesList setSaleSelected={setSaleSelected} />
       </div>
 
-      <div className="w-96 h-full bg-white/60 border border-primary-100/50 p-2 rounded-xl">
-        <ProductsSaleList saleSelected={saleSelected} />
+      <div className="w-1/3 h-full bg-white/60 border border-primary-100/50 p-2 rounded-xl">
+        <ReceiptSection saleSelected={saleSelected} />
       </div>
     </div>
   );

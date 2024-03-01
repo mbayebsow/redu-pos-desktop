@@ -74,6 +74,10 @@ export type SaleItemsType = {
   discount: 0;
 };
 
+export type SaleDetails = SalesType & {
+  saleItems: CartType[];
+};
+
 export type StockReplenishmentType = {
   id: number;
   supplier: number | null;

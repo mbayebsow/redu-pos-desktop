@@ -2,8 +2,8 @@ import { useState } from "react";
 
 import { CategoryType } from "../utils/types";
 
-import { productScreenColumns } from "../components/shared/table-columns/product-screen-columns";
-import { INITIAL_CATEGORY } from "../components/shared/initials-state";
+import { productPageColumns } from "../components/product/product-page-columns";
+import { INITIAL_CATEGORY } from "../utils/constants/initials-state";
 
 import Modal from "../components/ui/modal";
 import Button from "../components/ui/button";
@@ -21,7 +21,7 @@ const ProductsList = ({ filterByName }) => {
     <div>
       <Table
         // handleClick={handleClick}
-        columns={productScreenColumns}
+        columns={productPageColumns}
         data={products.filter((product) => product.name.toLocaleLowerCase().includes(filterByName.toLocaleLowerCase()))}
       />
     </div>

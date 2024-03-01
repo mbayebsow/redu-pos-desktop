@@ -1,12 +1,11 @@
 import { create } from "zustand";
-import { CUSTOMERS_DB } from "../../db/db";
-import { CartType, CustomerType, ProductType } from "../../utils/types";
+import { CartType, ProductType } from "../../utils/types";
 import { getproductByIdentifierAction } from "../product";
 import { playBeep, playClear } from "../../utils/interactive-sound";
 
 interface DataContextProps {
   cartProducts: CartType[];
-  cartClient: CustomerType | null;
+  cartClient: number | null;
   cartTotal: number;
   cartDeposit: number;
   addClient: (id: number) => void;
@@ -17,7 +16,7 @@ interface DataContextProps {
   addDeposit: (price: number) => void;
 }
 
-const convertProductToCartType = (product: ProductType) => {
+export const convertProductToCartType = (product: ProductType) => {
   const newProductCart = {
     productName: product.name,
     productImage: product.image,
@@ -41,8 +40,7 @@ const useCartStore = create<DataContextProps>((set, get) => ({
     set(() => ({ cartTotal: Number(tPrice.toPrecision(4)) }));
   },
   addClient: (id: number) => {
-    const client = CUSTOMERS_DB.getById(id);
-    if (client.data) set(() => ({ cartClient: client.data }));
+    set(() => ({ cartClient: id }));
     playBeep();
   },
   addProduct: (identifier: string, callBack?: () => void) => {

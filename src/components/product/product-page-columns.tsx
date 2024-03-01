@@ -1,9 +1,9 @@
 import { memo } from "react";
-import { getMinMax, numberWithCommas } from "../../../utils";
-import { CategoryType, ProductType, ProductsWithOptionsType, TableColumns } from "../../../utils/types";
-import { getCategoriesAction } from "../../../stores/category";
-import EditProductButton from "../../product/product-edit-button";
-import DeleteProductButton from "../../product/product-delete-button";
+import { getMinMax, numberWithCommas } from "../../utils";
+import { CategoryType, ProductType, ProductsWithOptionsType, TableColumns } from "../../utils/types";
+import { getCategoriesAction } from "../../stores/category";
+import EditProductButton from "./product-edit-button";
+import DeleteProductButton from "./product-delete-button";
 
 const ProductTableOptions = memo<{ identifier: string }>(({ identifier }) => {
   return (
@@ -14,7 +14,7 @@ const ProductTableOptions = memo<{ identifier: string }>(({ identifier }) => {
   );
 });
 
-export const productScreenColumns: TableColumns = [
+export const productPageColumns: TableColumns = [
   {
     title: "Image",
     dataIndex: "image",
