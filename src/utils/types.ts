@@ -62,6 +62,7 @@ export type SalesType = {
   discount: number;
   advance: number;
   itemsNumbers: number;
+  receiptNo: string;
   customer?: number | null;
 };
 
@@ -76,6 +77,10 @@ export type SaleItemsType = {
 
 export type SaleDetails = SalesType & {
   saleItems: CartType[];
+};
+
+export type SaleItemsDetails = SaleItemsType & {
+  product: ProductType;
 };
 
 export type StockReplenishmentType = {

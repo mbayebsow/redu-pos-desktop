@@ -106,7 +106,7 @@ function ReceiptV2({ receiptRef = null, totalPrice, deposit, receiptNo, clientId
   return (
     <div ref={receiptRef} className="text-black relative flex flex-col min-w-[27vw] h-full py-2 px-4 mx-auto bg-white overflow-scroll text-xs">
       <div className="h-fit text-center  justify-center items-start gap-2 w-full">
-        <div className="h-10 w-fit mx-auto mb-1">
+        <div className="h-6 w-fit mx-auto mb-1">
           <img src={reduIcon} className="h-full" />
         </div>
         <div className="text-xs">
@@ -177,7 +177,21 @@ function ReceiptV2({ receiptRef = null, totalPrice, deposit, receiptNo, clientId
         <div className="flex items-center justify-between w-full">
           <div>Difference</div>
           <div className="flex items-center gap-1">
-            <div>{totalPrice - deposit < 0 ? <ArrowUp size={15} /> : totalPrice - deposit > 0 && <ArrowDown size={15} />}</div>
+            <div>
+              {totalPrice - deposit < 0 ? (
+                <div className="flex items-center gap-2">
+                  <div className="text-gray-600">(Monaie)</div>
+                  <ArrowUp size={15} color="blue" />
+                </div>
+              ) : (
+                totalPrice - deposit > 0 && (
+                  <div className="flex items-center gap-2">
+                    <div className="text-gray-600">(A completé)</div>
+                    <ArrowDown size={15} color="red" />
+                  </div>
+                )
+              )}
+            </div>
             <div>{totalPrice - deposit}</div>
           </div>
         </div>

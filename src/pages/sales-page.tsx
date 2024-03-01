@@ -1,10 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { formatISODate } from "../utils";
 import { SaleDetails, SalesType } from "../utils/types";
 
 import useUserStore from "../stores/users";
 import useSaleStore, { getSaleDatailsAction } from "../stores/sale";
-import useProductStore from "../stores/product";
 
 import SelectField from "../components/ui/select-field";
 import Table from "../components/ui/data-table";
@@ -12,7 +11,9 @@ import SectionTitle from "../components/ui/section-title";
 import { salePageCulumns } from "../components/sale/sale-page-culumns";
 import Receipt from "../components/ui/receipt";
 import Button from "../components/ui/button";
-import { Printer, Send } from "lucide-react";
+import { Printer, ReceiptText, Send } from "lucide-react";
+import { useReactToPrint } from "react-to-print";
+import TextField from "../components/ui/text-field";
 
 function SalesList({ setSaleSelected }: { setSaleSelected: (sale: SalesType) => void }) {
   const users = useUserStore((state) => state.users);
@@ -20,6 +21,7 @@ function SalesList({ setSaleSelected }: { setSaleSelected: (sale: SalesType) => 
   const fetchSales = useSaleStore((state) => state.fetchSales);
 
   const [filterByClientId, setFilterByClientId] = useState<number>(0);
+  const [filterByReceiptNo, setFilterByReceiptNo] = useState("");
   const [filterByDate, setFilterByDate] = useState<{
     from: string;
     to: string;
@@ -35,6 +37,16 @@ function SalesList({ setSaleSelected }: { setSaleSelected: (sale: SalesType) => 
       <div className="w-full">
         <SectionTitle>Ventes</SectionTitle>
         <div className="w-full flex gap-4">
+          <div>
+            <TextField
+              type="text"
+              label="No "
+              name="searchNo"
+              value={filterByReceiptNo}
+              onChange={(e) => setFilterByReceiptNo(e.target.value)}
+              clrearValue={() => setFilterByReceiptNo("")}
+            />
+          </div>
           <div className="w-60">
             <SelectField
               label="Client"
@@ -50,7 +62,7 @@ function SalesList({ setSaleSelected }: { setSaleSelected: (sale: SalesType) => 
             />
           </div>
 
-          <div className="flex gap-2 items-center">
+          <div className="flex gap-0 items-center">
             <SelectField
               label="Du"
               name="from"
@@ -58,7 +70,7 @@ function SalesList({ setSaleSelected }: { setSaleSelected: (sale: SalesType) => 
               optionsData={sales.map((sale) => sale.date)}
               defaultText="Tout"
               defaultTextValue="0"
-              render={(date) => <div>{formatISODate(date, "date")}</div>}
+              render={(date) => formatISODate(date, "date")}
               onChange={(e) =>
                 setFilterByDate((prev) => ({
                   ...prev,
@@ -74,7 +86,7 @@ function SalesList({ setSaleSelected }: { setSaleSelected: (sale: SalesType) => 
               optionsData={sales.map((sale) => sale.date)}
               defaultText="Tout"
               defaultTextValue="0"
-              render={(date) => <div>{formatISODate(date, "date")}</div>}
+              render={(date) => formatISODate(date, "date")}
               onChange={(e) =>
                 setFilterByDate((prev) => ({
                   ...prev,
@@ -91,6 +103,7 @@ function SalesList({ setSaleSelected }: { setSaleSelected: (sale: SalesType) => 
           {sales && (
             <Table
               data={sales
+                .filter((sale) => sale.receiptNo.toLocaleLowerCase().includes(filterByReceiptNo.toLocaleLowerCase()))
                 .filter((sale) => (filterByClientId === 0 ? sale : sale.customer === filterByClientId))
                 .filter((sale) => {
                   const saleDate = new Date(sale.date);
@@ -115,7 +128,15 @@ function SalesList({ setSaleSelected }: { setSaleSelected: (sale: SalesType) => 
 }
 
 function ReceiptSection({ saleSelected }: { saleSelected: SalesType | null }) {
+  const receiptRef = useRef<HTMLDivElement | null>(null);
   const [saleDetails, setSaleDetails] = useState<SaleDetails | null>(null);
+
+  const handlePrint = useReactToPrint({
+    content: () => receiptRef.current,
+    // onBeforePrint: () => null,
+    // onAfterPrint: () => null,
+    onPrintError: () => alert("Erreur d'impression."),
+  });
 
   useEffect(() => {
     if (saleSelected) {
@@ -124,63 +145,33 @@ function ReceiptSection({ saleSelected }: { saleSelected: SalesType | null }) {
     }
   }, [saleSelected]);
 
-  return (
+  return saleDetails ? (
     <div className="w-full h-full flex flex-col">
       <div className="w-full h-full overflow-y-scroll">
-        {saleDetails && (
-          <Receipt
-            receiptRef={null}
-            totalPrice={saleDetails.amount}
-            deposit={saleDetails.advance}
-            receiptNo={saleDetails.id.toString()}
-            clientId={saleDetails.customer}
-            products={saleDetails.saleItems}
-          />
-        )}
+        <Receipt
+          receiptRef={receiptRef}
+          totalPrice={saleDetails.amount}
+          deposit={saleDetails.advance}
+          receiptNo={saleDetails.receiptNo}
+          clientId={saleDetails.customer}
+          products={saleDetails.saleItems}
+        />
       </div>
       <div className="flex gap-2 items-center">
         <Button separator variant="tonal" icon={<Send />}>
           Envoyer
         </Button>
-        <Button separator icon={<Printer />}>
+        <Button separator icon={<Printer />} handleClick={() => handlePrint()}>
           Imprimer
         </Button>
       </div>
     </div>
-  );
-}
-
-function ProductsSaleList({ saleSelected }: { saleSelected: SalesType | null }) {
-  const getSaleItemsBySaleId = useSaleStore((state) => state.getSaleItemsBySaleId);
-  const getproductByIdentifierAction = useProductStore((state) => state.getproductByIdentifier);
-
-  return (
-    <div className="w-full h-full flex flex-col">
-      <SectionTitle>Produits</SectionTitle>
-      <div className="w-full h-full overflow-y-scroll">
-        <div className="w-full h-fit text-sm flex flex-col gap-2 py-2">
-          {saleSelected &&
-            getSaleItemsBySaleId(saleSelected.id).map((item, i) => (
-              <div key={i} className="flex items-center gap-2 border-b border-gray-100 pb-2 w-full">
-                <img className="aspect-square h-full w-12 rounded-lg" src={getproductByIdentifierAction(item.identifier)?.image} />
-                <div className="hidden">{item.identifier}</div>
-                <div>
-                  <div>
-                    <div>{getproductByIdentifierAction(item.identifier)?.name}</div>
-                  </div>
-                  <div className="text-xs">
-                    {getproductByIdentifierAction(item.identifier)?.priceSale} x {item.quantity}
-                  </div>
-                </div>
-              </div>
-            ))}
-        </div>
-      </div>
+  ) : (
+    <div className="w-full h-full flex flex-col items-center justify-center text-primary-100/50">
+      <ReceiptText size={200} />
     </div>
   );
 }
-
-// <ProductsSaleList saleSelected={saleSelected} />
 
 function SalesPage() {
   const [saleSelected, setSaleSelected] = useState<SalesType | null>(null);

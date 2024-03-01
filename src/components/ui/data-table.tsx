@@ -1,5 +1,6 @@
 import { memo, useState } from "react";
 import { TableColumns } from "../../utils/types";
+import { playBeep } from "../../utils/interactive-sound";
 
 interface TableProps {
   columns: TableColumns;
@@ -13,7 +14,7 @@ function Table({ columns, data, handleClick }: TableProps) {
     <div className="relative">
       <table className="w-full text-left table-auto">
         <thead className="w-full sticky top-0 z-20 bg-white">
-          <tr className=" bg-primary-100/50 shadow-sm">
+          <tr className=" bg-primary-100/50 shadow-sm [&>*:last-child]:text-right">
             {columns.map((column, i) => (
               <th key={i} className="px-2 py-2 w-auto font-normal whitespace-nowrap text-primary-400">
                 {column.title}
@@ -23,19 +24,24 @@ function Table({ columns, data, handleClick }: TableProps) {
         </thead>
 
         <tbody>
-          {data.map((d, i) => (
+          {data.map((d, index) => (
             <tr
-              onClick={() => {
-                if (handleClick) {
-                  handleClick(d);
-                  setActiveRow(i);
-                }
-              }}
-              key={i}
-              className={`${activeRow === i && "bg-primary-100"} ${handleClick && "cursor-pointer"} border-b border-b-gray-100 hover:bg-white`}
+              key={index}
+              className={`${activeRow === index && "bg-primary-100"} [&>*:last-child]:text-right border-b border-b-gray-100 hover:bg-white`}
             >
               {columns.map((column, i) => (
-                <th key={i} className="px-2 py-2 w-auto font-normal">
+                <th
+                  key={i}
+                  onClick={() => {
+                    if (handleClick && columns.length !== i + 1) {
+                      playBeep();
+                      handleClick(d);
+                      setActiveRow(index);
+                    }
+                  }}
+                  className="px-2 py-2 w-auto font-normal"
+                  style={{ cursor: columns.length !== i + 1 ? "pointer" : "default" }}
+                >
                   {column.render
                     ? column.render(d)
                     : column.dataIndex && (

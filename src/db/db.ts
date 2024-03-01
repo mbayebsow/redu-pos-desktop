@@ -148,6 +148,15 @@ export default class DB<T extends DataWithId> {
     }
     return { success: false, message: "No tableName founded" };
   }
+
+  getIdLength(): number {
+    const data = localStorage.getItem(this.#tableName);
+    if (data) {
+      const newData: DBType<T> = JSON.parse(data);
+      return newData.idLength;
+    }
+    return 0;
+  }
 }
 
 export const SALES_DB = new DB<SalesType>("SALES");

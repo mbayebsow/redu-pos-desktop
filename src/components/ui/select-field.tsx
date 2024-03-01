@@ -12,7 +12,7 @@ interface SelectFieldProps {
   optionsText2?: string;
   defaultText?: string;
   defaultTextValue?: string;
-  render?: (record?: any) => ReactNode;
+  render?: (record?: any) => string | number;
   onChange?: (event: ChangeEvent<HTMLSelectElement>) => void;
 }
 

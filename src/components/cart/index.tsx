@@ -27,13 +27,12 @@ function CartClear() {
 const ClientSelectClient = memo(function ClientSelectClient() {
   const clients = useUserStore((state) => state.users);
   const cartClient = useCartStore((state) => state.cartClient);
-  const addClient = useCartStore((state) => state.addClient);
-  const handleAddClient = useCallback(addClient, []);
+  const addClient = useCartStore(useCallback((state) => state.addClient, []));
 
   return (
     <select
-      onChange={(v) => handleAddClient(Number(v.target.value))}
-      value={cartClient?.id ? cartClient?.id.toString() : "0"}
+      onChange={(v) => addClient(Number(v.target.value))}
+      value={cartClient ? cartClient : "0"}
       name="clientCart"
       id="clientCart"
       className="w-full rounded-lg p-1 bg-primary-100 h-9 px-2"

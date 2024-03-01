@@ -3,7 +3,8 @@ import { SalesType, TableColumns } from "../../utils/types";
 import useUserStore from "../../stores/users";
 import { memo } from "react";
 import Button from "../ui/button";
-import { LayoutList, Pen } from "lucide-react";
+import { Pen } from "lucide-react";
+import ProductsListButton from "./products-list-button";
 
 const ClientFullName = ({ record }: { record: SalesType }) => {
   const getUserById = useUserStore((state) => state.getUserById);
@@ -17,27 +18,41 @@ const ClientFullName = ({ record }: { record: SalesType }) => {
   );
 };
 
-const SaleOptions = memo<{ identifier: string }>(({ identifier }) => {
+const SaleOptions = memo<{ saleId: number }>(({ saleId }) => {
   return (
     <div className="w-fit inline-flex gap-2 items-center">
       <Button variant="icon" icon={<Pen />} />
-      <Button variant="icon" icon={<LayoutList />} />
+      <ProductsListButton saleId={saleId} />
     </div>
   );
 });
 
 export const salePageCulumns: TableColumns = [
   {
+    title: "NO",
+    dataIndex: "receiptNo",
+  },
+  {
     title: "Produits",
     dataIndex: "itemsNumbers",
   },
   {
-    title: "Montant total",
+    title: "Montant",
     dataIndex: "amount",
   },
   {
-    title: "Montant reçu",
+    title: "Status",
     dataIndex: "advance",
+    render(record: SalesType) {
+      return (
+        <div className="flex items-center gap-2">
+          <div
+            className={`${record.amount - record.advance > 0 ? "bg-red-500" : record.amount - record.advance <= 0 && "bg-green-500"} rounded-full w-3 h-3`}
+          />
+          <div>{record.amount - record.advance > 0 ? "Partiel" : record.amount - record.advance <= 0 && "Complet"}</div>
+        </div>
+      );
+    },
   },
   {
     title: "Client",
@@ -52,6 +67,6 @@ export const salePageCulumns: TableColumns = [
   {
     title: "Options",
     dataIndex: "date",
-    render: (record) => <SaleOptions identifier={record.identifier} />,
+    render: (record: SalesType) => <SaleOptions saleId={record.id} />,
   },
 ];

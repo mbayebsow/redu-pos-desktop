@@ -1,6 +1,6 @@
 import toast from "react-hot-toast";
 import { SALEITEMS_DB, SALES_DB } from "../../db/db";
-import { CartType, SaleDetails, SaleItemsType, SalesType } from "../../utils/types";
+import { CartType, SaleDetails, SaleItemsDetails, SaleItemsType, SalesType } from "../../utils/types";
 import { create } from "zustand";
 import { getproductByIdentifierAction } from "../product";
 import { convertProductToCartType } from "../cart";
@@ -9,7 +9,7 @@ interface DataContextProps {
   sales: SalesType[];
   fetchSales: () => void;
   addSale: (sale: SalesType, saleItems: SaleItemsType[]) => void;
-  getSaleItemsBySaleId: (saleId: number) => SaleItemsType[];
+  getSaleItemsBySaleId: (saleId: number) => SaleItemsDetails[];
 }
 
 export const getSalesAction = () => {
@@ -29,9 +29,17 @@ export const addSaleAction = (sale: SalesType, saleItems: SaleItemsType[]) => {
 };
 
 export const getSaleItemsBySaleIdAction = (saleId: number) => {
+  let saleItemsDetails: SaleItemsDetails[] = [];
+
   const items = SALEITEMS_DB.getAll();
   const saleItems = items.filter((item) => item.saleId === saleId);
-  return saleItems;
+  saleItems.map((item) => {
+    const product = getproductByIdentifierAction(item.identifier);
+    if (product) {
+      saleItemsDetails.push({ ...item, product });
+    }
+  });
+  return saleItemsDetails;
 };
 
 export const getSaleDatailsAction = (saleId: number): SaleDetails | null => {

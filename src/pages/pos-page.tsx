@@ -1,6 +1,6 @@
 import { memo, useCallback, useRef, useState } from "react";
 import { useReactToPrint } from "react-to-print";
-import { genererUIDProduit, numberWithCommas } from "../utils";
+import { numberWithCommas } from "../utils";
 
 import { ProductOptionType, ProductsWithOptionsType, SaleItemsType, SalesType } from "../utils/types";
 
@@ -18,23 +18,8 @@ import useSaleStore from "../stores/sale";
 import ProductCard from "../components/product/product-card";
 import useProductStore from "../stores/product";
 import { playBeep, playSwitchClicked } from "../utils/interactive-sound";
-
-interface CardNumberProps {
-  title: string;
-  content: number | string;
-  focus?: boolean;
-}
-
-function CardNumber({ title, content, focus = false }: CardNumberProps) {
-  return (
-    <div className={`rounded-md w-auto py-2 px-2 ${focus ? "bg-primary-200 text-primary-800" : " bg-primary-700 text-primary-50"}`}>
-      <div className="text-xs">{title}</div>
-      <div>
-        <div className="text-2xl -mt-1 text-right font-bold"> {content} </div>
-      </div>
-    </div>
-  );
-}
+import { generateSequentialNo } from "../utils/helpers/generate-sequential-no";
+import Statistic from "../components/ui/statistic";
 
 function AddDeposit({ divisible }: { divisible: number }) {
   const addDeposit = useCartStore((state) => state.addDeposit);
@@ -53,36 +38,21 @@ function AddDeposit({ divisible }: { divisible: number }) {
   );
 }
 
-function CartTotal() {
-  const cartTotal = useCartStore((state) => state.cartTotal);
-  return <CardNumber title="MONTANT A PAYER" content={numberWithCommas(cartTotal)} />;
-}
-
-function CartDeposit() {
-  const cartDeposit = useCartStore((state) => state.cartDeposit);
-  return <CardNumber title="MONTANT REÇU" content={numberWithCommas(cartDeposit)} />;
-}
-
-function CartDiscount() {
-  // const cartDeposit = useCartStore((state) => state.cartDeposit);
-  return <CardNumber title="REDUCTION" content={0} />;
-}
-
-function CartDiff() {
+function CartStat() {
   const cartTotal = useCartStore((state) => state.cartTotal);
   const cartDeposit = useCartStore((state) => state.cartDeposit);
   return (
-    <CardNumber
-      focus
-      title={cartTotal - cartDeposit < 0 ? "MONNAIE :" : cartTotal - cartDeposit > 0 ? "RÉSTANT :" : "OK"}
-      content={numberWithCommas(Number((cartTotal - cartDeposit).toPrecision(4)))}
-    />
+    <div className="divide-y divide-primary-600 bg-primary-700 rounded-md">
+      <Statistic title="Montant a payer" value={numberWithCommas(cartTotal)} />
+      <Statistic title="Montant reçu" value={numberWithCommas(cartDeposit)} />
+      <Statistic title="Reduction" value={0} />
+    </div>
   );
 }
 
 function PayButton() {
   const [showModalReceipt, setShowModalReceipt] = useState<boolean>(false);
-  const [receiptNo, setReceiptNo] = useState<string>("");
+  const [receiptNo, setReceiptNo] = useState<string>("22");
 
   const receiptRef = useRef<HTMLDivElement | null>(null);
   const cartClient = useCartStore((state) => state.cartClient);
@@ -101,6 +71,7 @@ function PayButton() {
       advance: cartDeposit,
       itemsNumbers: cartProducts.length,
       customer: cartClient,
+      receiptNo: receiptNo,
     };
 
     const saleItems: SaleItemsType[] = cartProducts.map((product) => ({
@@ -128,8 +99,7 @@ function PayButton() {
   const viewReceipt = () => {
     playSwitchClicked();
     setShowModalReceipt(true);
-    const NO = genererUIDProduit();
-    setReceiptNo(`R-${NO}`);
+    setReceiptNo(generateSequentialNo("sales"));
   };
 
   return (
@@ -291,11 +261,7 @@ function BoxSection() {
   return (
     <div className="w-full h-full gap-2 flex flex-col justify-between ">
       <div className="h-full w-full flex flex-col justify-between ">
-        <div className="h-fit w-full flex flex-col gap-2">
-          <CartTotal />
-          <CartDiscount />
-          <CartDeposit />
-        </div>
+        <CartStat />
 
         <div style={{ height: `${height / 14}%` }} className="w-full flex flex-col">
           <div className="w-full flex gap-2 text-white">

@@ -1,4 +1,4 @@
-import { ReactNode, memo } from "react";
+import { ReactNode, memo, useId } from "react";
 
 interface TextFieldProps {
   label?: string | ReactNode;
@@ -14,6 +14,7 @@ interface TextFieldProps {
 
 const TextField = memo(
   ({ label, name, type, value, placeholder, roundedBorder = "full", variant = "tonal", clrearValue, onChange }: TextFieldProps) => {
+    const id = useId();
     return (
       <div className="p-[2px] h-10 w-full">
         <div
@@ -26,10 +27,11 @@ const TextField = memo(
         `}
         >
           <div className="h-full w-full flex items-center gap-2">
-            <label htmlFor={name} className="text-gray-500 whitespace-nowrap border-r border-black/20 pr-2 text-xs">
+            <label htmlFor={id} className="text-gray-500 whitespace-nowrap border-r border-black/20 pr-2 text-xs">
               {label}
             </label>
             <input
+              id={id}
               name={name}
               type={type}
               value={value}

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CustomerType, SalesType } from "../utils/types";
 import { formatISODate, numberWithCommas } from "../utils";
 
@@ -9,25 +9,8 @@ import SectionTitle from "../components/ui/section-title";
 import Table from "../components/ui/data-table";
 import TextField from "../components/ui/text-field";
 import AddClient from "../components/client/client-add";
-
-const clientsColumns = [
-  {
-    title: "Prenom",
-    dataIndex: "firstName",
-  },
-  {
-    title: "Nom",
-    dataIndex: "lastName",
-  },
-  {
-    title: "Telepohne",
-    dataIndex: "phone",
-  },
-  {
-    title: "Addresse",
-    dataIndex: "address",
-  },
-];
+import { clientsColumns } from "../components/client/client-page-culumns";
+import Statistic from "../components/ui/statistic";
 
 const salesColumns = [
   {
@@ -38,29 +21,63 @@ const salesColumns = [
   {
     title: "Montant",
     dataIndex: "amount",
-    render: (record: SalesType) => (
-      <div className="whitespace-nowrap">
-        <div>Total: {numberWithCommas(record.amount)}</div>
-        <div>Reçu: {numberWithCommas(record.advance)}</div>
-      </div>
-    ),
+    render: (record: SalesType) => <div className="whitespace-nowrap">{numberWithCommas(record.amount)}</div>,
   },
   {
-    title: "Date et heure",
+    title: "Status",
+    dataIndex: "advance",
+    render(record: SalesType) {
+      return (
+        <div className="flex items-center gap-2">
+          <div
+            className={`${record.amount - record.advance > 0 ? "bg-red-500" : record.amount - record.advance <= 0 && "bg-green-500"} rounded-full w-3 h-3`}
+          />
+          <div>{record.amount - record.advance > 0 ? "Partiel" : record.amount - record.advance <= 0 && "Complet"}</div>
+        </div>
+      );
+    },
+  },
+  {
+    title: "Date",
     dataIndex: "date",
-    render: (record: SalesType) => <div className=" whitespace-normal">{formatISODate(record.date)}</div>,
+    render: (record: SalesType) => <div className="whitespace-nowrap">{formatISODate(record.date, "date")}</div>,
   },
 ];
 
 function ClientSales({ selectedClient }: { selectedClient: CustomerType | undefined }) {
-  const sales = useSaleStore((state) => state.sales);
+  const sales = useSaleStore((state) => state.sales.filter((sale) => (selectedClient ? sale.customer === selectedClient.id : null)));
+  const fetchSales = useSaleStore((state) => state.fetchSales);
+
+  const amountSum = sales.reduce((accumulator, object) => {
+    return accumulator + object.amount;
+  }, 0);
+
+  const advanceSum = sales.reduce((accumulator, object) => {
+    if (object.amount > object.advance) {
+      return accumulator + (object.amount - object.advance);
+    } else {
+      return accumulator;
+    }
+  }, 0);
+
+  useEffect(() => fetchSales(), [selectedClient]);
 
   return (
-    <div className="w-full h-full flex flex-col">
-      <SectionTitle>Achats</SectionTitle>
-      <div className="w-full h-full overflow-y-scroll">
-        <div className="w-fit h-fit text-sm">
-          <Table data={sales.filter((sale) => (selectedClient ? sale.customer === selectedClient.id : null))} columns={salesColumns} />
+    <div className="w-full h-full flex flex-col gap-2">
+      <div className="w-full h-fit">
+        <SectionTitle>Achats</SectionTitle>
+        <div className="w-full h-fit divide-y rounded-lg bg-primary-50">
+          <Statistic title="Total achat" value={amountSum} />
+          <Statistic title="Total dû" value={advanceSum} styleValue="text-red-500" />
+        </div>
+      </div>
+
+      <div className="w-full h-fit">
+        <SectionTitle>Historiques</SectionTitle>
+        <div className="w-full h-full overflow-y-scroll rounded-lg bg-primary-50">
+          <div className="w-full h-fit relative">
+            <Table data={sales} columns={salesColumns} />
+          </div>
         </div>
       </div>
     </div>
@@ -82,7 +99,7 @@ function CLientsList({ setSelectedClient }: { setSelectedClient: (client: Custom
         </div>
       </div>
 
-      <div className="w-full h-full overflow-y-scroll  pr-2">
+      <div className="w-full h-full overflow-y-scroll rounded-lg bg-primary-50">
         <div className="h-fit w-full relative">
           {users && (
             <Table
@@ -111,7 +128,7 @@ function ClientsPage() {
           <CLientsList setSelectedClient={setSelectedClient} />
         </div>
 
-        <div className="w-96 h-full bg-white/60 p-2 rounded-xl">
+        <div className="w-[30rem] h-full bg-white/60 p-2 rounded-xl">
           <ClientSales selectedClient={selectedClient} />
         </div>
       </div>
