@@ -10,7 +10,7 @@ import { ProductOptionType, ProductType } from "../../utils/types";
 const AddProductButton = memo(() => {
   const [opentAddModal, setOpentAddModal] = useState<boolean>(false);
   const [product, setProduct] = useState<ProductType>(INITIAL_PRODUCT);
-  const [options, setOptions] = useState<ProductOptionType[]>([]);
+  const [options, setOptions] = useState<ProductOptionType[]>([INITIAL_PRODUCT_OPTIONS]);
 
   const addProduct = useProductStore(useCallback((state) => state.addProduct, []));
   const fetchProducts = useProductStore(useCallback((state) => state.fetchProducts, []));

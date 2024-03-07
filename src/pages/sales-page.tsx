@@ -14,6 +14,7 @@ import Button from "../components/ui/button";
 import { Printer, ReceiptText, Send } from "lucide-react";
 import { useReactToPrint } from "react-to-print";
 import TextField from "../components/ui/text-field";
+import useTheme from "../stores/theme";
 
 function SalesList({ setSaleSelected }: { setSaleSelected: (sale: SalesType) => void }) {
   const users = useUserStore((state) => state.users);
@@ -98,12 +99,12 @@ function SalesList({ setSaleSelected }: { setSaleSelected: (sale: SalesType) => 
         </div>
       </div>
 
-      <div className="w-full h-full overflow-y-scroll rounded-lg bg-primary-50">
+      <div className="w-full h-full overflow-y-scroll rounded-lg">
         <div className="h-fit w-full relative">
           {sales && (
             <Table
               data={sales
-                .filter((sale) => sale.receiptNo.toLocaleLowerCase().includes(filterByReceiptNo.toLocaleLowerCase()))
+                .filter((sale) => (sale?.receiptNo ? sale.receiptNo.toLocaleLowerCase().includes(filterByReceiptNo.toLocaleLowerCase()) : sale))
                 .filter((sale) => (filterByClientId === 0 ? sale : sale.customer === filterByClientId))
                 .filter((sale) => {
                   const saleDate = new Date(sale.date);
@@ -128,6 +129,7 @@ function SalesList({ setSaleSelected }: { setSaleSelected: (sale: SalesType) => 
 }
 
 function ReceiptSection({ saleSelected }: { saleSelected: SalesType | null }) {
+  const { activeTheme } = useTheme();
   const receiptRef = useRef<HTMLDivElement | null>(null);
   const [saleDetails, setSaleDetails] = useState<SaleDetails | null>(null);
 
@@ -146,8 +148,8 @@ function ReceiptSection({ saleSelected }: { saleSelected: SalesType | null }) {
   }, [saleSelected]);
 
   return saleDetails ? (
-    <div className="w-full h-full flex flex-col">
-      <div className="w-full h-full overflow-y-scroll">
+    <div className="w-full h-full flex flex-col p-2 gap-2">
+      <div className="w-full h-full overflow-y-scroll rounded-lg">
         <Receipt
           receiptRef={receiptRef}
           totalPrice={saleDetails.amount}
@@ -158,7 +160,7 @@ function ReceiptSection({ saleSelected }: { saleSelected: SalesType | null }) {
         />
       </div>
       <div className="flex gap-2 items-center">
-        <Button separator variant="tonal" icon={<Send />}>
+        <Button separator icon={<Send />}>
           Envoyer
         </Button>
         <Button separator icon={<Printer />} handleClick={() => handlePrint()}>
@@ -167,22 +169,23 @@ function ReceiptSection({ saleSelected }: { saleSelected: SalesType | null }) {
       </div>
     </div>
   ) : (
-    <div className="w-full h-full flex flex-col items-center justify-center text-primary-100/50">
-      <ReceiptText size={200} />
+    <div className="w-full h-full flex flex-col items-center justify-center">
+      <ReceiptText size={200} color={activeTheme[100]} />
     </div>
   );
 }
 
 function SalesPage() {
+  const { activeTheme } = useTheme();
   const [saleSelected, setSaleSelected] = useState<SalesType | null>(null);
 
   return (
     <div className="flex gap-2 w-full h-full">
-      <div className="w-2/3 h-full bg-white/60 border border-primary-100/50 p-2 rounded-xl">
+      <div className="w-2/3 h-full rounded-xl">
         <SalesList setSaleSelected={setSaleSelected} />
       </div>
 
-      <div className="w-1/3 h-full bg-white/60 border border-primary-100/50 p-2 rounded-xl">
+      <div style={{ backgroundColor: activeTheme[50] }} className="w-1/3 h-full rounded-xl">
         <ReceiptSection saleSelected={saleSelected} />
       </div>
     </div>

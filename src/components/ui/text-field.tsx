@@ -1,4 +1,5 @@
 import { ReactNode, memo, useId } from "react";
+import useTheme from "../../stores/theme";
 
 interface TextFieldProps {
   label?: string | ReactNode;
@@ -15,15 +16,19 @@ interface TextFieldProps {
 const TextField = memo(
   ({ label, name, type, value, placeholder, roundedBorder = "full", variant = "tonal", clrearValue, onChange }: TextFieldProps) => {
     const id = useId();
+    const { activeTheme } = useTheme();
     return (
       <div className="p-[2px] h-10 w-full">
         <div
+          style={{
+            backgroundColor: variant === "outlined" ? activeTheme[50] : variant === "tonal" ? activeTheme[100] : "transparent",
+            // color: variant === "outlined" ? activeTheme[800] : activeTheme[50],
+            borderColor: variant === "outlined" ? activeTheme[50] : activeTheme[100],
+          }}
           className={`
-          relative z-0 w-full h-full px-4 pr-3 flex items-center
+          w-full h-full px-4 pr-3 flex items-center
           ${roundedBorder === "lg" && "rounded-lg"}
           ${roundedBorder === "full" && "rounded-full"}
-          ${variant === "tonal" && "bg-primary-100/50"} 
-          ${variant === "outlined" && "bg-white"} 
         `}
         >
           <div className="h-full w-full flex items-center gap-2">

@@ -14,11 +14,12 @@ import useProductStore from "../stores/product";
 import useCategoryStore from "../stores/category";
 import Table from "../components/ui/data-table";
 import AddProductButton from "../components/product/product-add-button";
+import useTheme from "../stores/theme";
 
 const ProductsList = ({ filterByName }) => {
   const products = useProductStore((state) => state.products);
   return (
-    <div>
+    <div className=" z-0">
       <Table
         // handleClick={handleClick}
         columns={productPageColumns}
@@ -29,7 +30,6 @@ const ProductsList = ({ filterByName }) => {
 };
 
 function CategorySection() {
-  // const { categories, addCategory } = useCategory();
   const categories = useCategoryStore((state) => state.categories);
   const addCategory = useCategoryStore((state) => state.addCategory);
 
@@ -50,9 +50,9 @@ function CategorySection() {
           setCategoryState(INITIAL_CATEGORY);
         }}
       />
-      <div className="w-full h-full flex flex-col justify-between">
+      <div className="w-full h-full flex flex-col justify-between p-2">
         <SectionTitle>Catégories</SectionTitle>
-        <div className="pb-2 mb-2 border-b">
+        <div className="pb-2 mb-2">
           <TextField
             label="Recherche"
             name="filter"
@@ -62,17 +62,17 @@ function CategorySection() {
             onChange={(e) => setCategorySearchName(e.target.value)}
           />
         </div>
-        <div className="h-full w-full overflow-y-scroll">
+        <div className="h-full w-full overflow-y-scroll divide-y divide-gray-300/40">
           {categories
             .filter((category) => category.name.toLocaleLowerCase().includes(categorySearchName.toLocaleLowerCase()))
             .map((category, i) => (
-              <div key={i} className="border-b py-2 flex gap-2">
+              <div key={i} className="py-2 flex gap-2">
                 <div style={{ backgroundColor: category.color }} className="h-7 w-7 bg-primary-50 rounded-full overflow-hidden" />
                 <div>{category.name}</div>
               </div>
             ))}
         </div>
-        <div className="w-full h-fit mt-2 pt-2 border-t">
+        <div className="w-full h-fit mt-2 pt-2">
           <Button handleClick={() => setOpentAddModal(true)} text="Ajouter" />
         </div>
       </div>
@@ -90,6 +90,7 @@ function ProductSection() {
         <div className="flex justify-between gap-2">
           <div>
             <TextField
+              variant="tonal"
               type="text"
               label="Recherche"
               name="search"
@@ -113,7 +114,7 @@ function ProductSection() {
         </div>
       </div>
 
-      <div className="w-full h-full overflow-y-scroll rounded-lg bg-primary-50">
+      <div className="w-full h-full overflow-y-scroll rounded-lg">
         <ProductsList filterByName={searchByName} />
       </div>
     </div>
@@ -121,13 +122,19 @@ function ProductSection() {
 }
 
 function ProductsPage() {
+  const { activeTheme } = useTheme();
   return (
     <div className="w-full h-full flex gap-3">
-      <div className="w-[75%] h-full bg-white/60 border border-primary-100/50 rounded-xl p-2">
+      <div className="w-[75%] h-full rounded-lg">
         <ProductSection />
       </div>
 
-      <div className="h-full w-[25%] bg-white/60 border border-primary-100/50 rounded-xl p-2">
+      <div
+        style={{
+          backgroundColor: activeTheme[50],
+        }}
+        className="h-full w-[25%] rounded-lg"
+      >
         <CategorySection />
       </div>
     </div>

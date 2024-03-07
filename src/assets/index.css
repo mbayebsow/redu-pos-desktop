@@ -2,6 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
+#dragRegion {
+  -webkit-user-select: none;
+  -webkit-app-region: drag;
+}
+
+button {
+  -webkit-app-region: no-drag;
+}
+
 ::-webkit-scrollbar {
   width: 3px;
   height: 3px;
@@ -19,7 +28,6 @@
 }
 
 @media print {
-
   .text-sm {
     font-size: 3mm;
     line-height: 5mm;

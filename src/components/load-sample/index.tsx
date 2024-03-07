@@ -20,15 +20,7 @@ function LoadSample() {
 
   return (
     <div className="w-fit">
-      <Button
-        loading={loading}
-        separator
-        roundedBorder="full"
-        variant="tonal"
-        text="Load sample"
-        handleClick={loadsampleData}
-        icon={<DownloadCloud />}
-      />
+      <Button loading={loading} separator roundedBorder="full" text="Load sample" handleClick={loadsampleData} icon={<DownloadCloud />} />
     </div>
   );
 }

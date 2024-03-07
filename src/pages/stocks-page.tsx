@@ -14,6 +14,7 @@ import Table from "../components/ui/data-table";
 
 import SupplierAdd from "../components/supplier/supplier-add";
 import StockAdd from "../components/stock/stock-add";
+import useTheme from "../stores/theme";
 
 const INITIAL_SUPPLIER = {
   id: 0,
@@ -79,7 +80,7 @@ function StocksSection() {
 
   return (
     <>
-      <div className="h-full w-full flex flex-col">
+      <div className="h-full w-full flex flex-col gap-2">
         <SectionTitle>Stocks</SectionTitle>
         <div className="flex justify-between items-center w-full">
           {/*
@@ -151,8 +152,8 @@ function StocksSection() {
             <StockAdd />
           </div>
         </div>
-        <div>
-          <div>
+        <div className="w-full h-full overflow-y-scroll rounded-lg">
+          <div className="h-fit w-full relative">
             <Table data={stocks} columns={stockColumns} />
           </div>
         </div>
@@ -182,9 +183,9 @@ function SuppliersSection() {
           setSupplierState(INITIAL_SUPPLIER);
         }}
       />
-      <div className="h-full w-full flex flex-col">
+      <div className="h-full w-full flex flex-col gap-2">
         <SectionTitle>Fournisseurs</SectionTitle>
-        <div className="pb-2 mb-2 border-b">
+        <div className="">
           <TextField
             label="Recherche"
             name="filter"
@@ -194,11 +195,11 @@ function SuppliersSection() {
             onChange={(e) => setSupplierSearchName(e.target.value)}
           />
         </div>
-        <div className="h-full w-full overflow-y-scroll">
+        <div className="h-full w-full overflow-y-scroll divide-y divide-black/5">
           {suppliers
             .filter((supplier) => supplier.name.toLocaleLowerCase().includes(supplierSearchName.toLocaleLowerCase()))
             .map((supplier: SupplierType, i) => (
-              <div key={i} className="border-b py-2">
+              <div key={i} className="py-2">
                 <div className="font-bold line-clamp-1">{supplier.name}</div>
                 <div className="flex items-center gap-1 text-sm">
                   <div>{supplier.phone}</div>
@@ -217,13 +218,14 @@ function SuppliersSection() {
 }
 
 function StocksPage() {
+  const { activeTheme } = useTheme();
   return (
     <div className="flex gap-2 w-full h-full">
-      <div className="w-full h-full bg-white/60 p-2 rounded-xl">
+      <div className="w-full h-full">
         <StocksSection />
       </div>
 
-      <div className="w-96 h-full bg-white/60 p-2 rounded-xl">
+      <div style={{ backgroundColor: activeTheme[50] }} className="w-96 h-full p-2 rounded-lg">
         <SuppliersSection />
       </div>
     </div>

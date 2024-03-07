@@ -1,4 +1,5 @@
-import { ChangeEvent, ReactNode, memo } from "react";
+import { ChangeEvent, memo } from "react";
+import useTheme from "../../stores/theme";
 
 interface SelectFieldProps {
   variant?: "tonal" | "outlined";
@@ -32,22 +33,26 @@ const SelectField = memo(
     defaultTextValue,
     onChange,
   }: SelectFieldProps) => {
+    const { activeTheme } = useTheme();
     return (
       <div className="p-[2px] h-10 w-full">
         <div
+          style={{
+            backgroundColor: variant === "outlined" ? activeTheme[50] : variant === "tonal" ? activeTheme[100] : "transparent",
+            // color: variant === "outlined" ? activeTheme[800] : activeTheme[50],
+            borderColor: variant === "outlined" ? activeTheme[50] : activeTheme[100],
+          }}
           className={`
-        w-full flex items-center gap-2 px-4 h-full py-2
-        ${roundedBorder === "lg" && "rounded-lg"}
-        ${roundedBorder === "full" && "rounded-full"}
-        ${variant === "tonal" && "bg-primary-100/50 border-primary-200"}
-        ${variant === "outlined" && "bg-white border-primary-100"}
-      `}
+            w-full flex items-center gap-2 px-4 h-full py-2
+            ${roundedBorder === "lg" && "rounded-lg"}
+            ${roundedBorder === "full" && "rounded-full"}
+          `}
         >
           <label htmlFor={name} className="text-gray-500 pr-2 text-xs">
             {label}
           </label>
 
-          <div className="border-l border-gray-200 h-full p-0" />
+          <div className="border-l border-black/10 h-full p-0" />
 
           <div className="rounded-lg w-full">
             <select

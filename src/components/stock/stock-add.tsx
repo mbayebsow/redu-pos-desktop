@@ -15,6 +15,7 @@ import useProductStore from "../../stores/product";
 import useSupplierStore from "../../stores/supplier";
 import ProductCard from "../product/product-card";
 import { playBeep } from "../../utils/interactive-sound";
+import useTheme from "../../stores/theme";
 
 // interface StockAddProps {
 //   stocks: StockTransactionsType[];
@@ -72,7 +73,7 @@ function ProductSection({ handleAddStock }: ProductSectionProps) {
           />
         }
       />
-      <div className="h-full w-1/2  flex flex-col gap-1">
+      <div className="h-full w-1/2  flex flex-col gap-2">
         <div className="p-2 text-xl font-bold w-2/3">Réapprovisionnement de stock</div>
         <div className="w-full">
           <TextField
@@ -106,16 +107,23 @@ function ProductSection({ handleAddStock }: ProductSectionProps) {
 }
 
 function StockSection({ stockHead, stockItems, setStockHead, handleSetStock, handleRemoveItem, saveStockReplenishment }: StockSectionProps) {
+  const { activeTheme } = useTheme();
   const getproductByIdentifierAction = useProductStore((state) => state.getproductByIdentifier);
   const suppliers = useSupplierStore((state) => state.suppliers);
 
   return (
-    <div className="py-2 h-full w-1/2 bg-primary-100 rounded-xl border border-primary-200 flex flex-col gap-2">
-      <div className="h-full w-full flex flex-col px-2 overflow-hidden gap-2">
-        <div className="p-2 bg-white rounded-lg h-fit">
+    <div className="h-full w-1/2 flex flex-col gap-2">
+      <div className="h-full w-full flex flex-col px-2 overflow-hidden gap-2 divide-y divide-black/5">
+        <div
+          style={{
+            backgroundColor: activeTheme[200],
+          }}
+          className="p-1 bg-white rounded-3xl h-fit"
+        >
           <div className="flex w-full">
-            <DateField label="Date" onSelect={(date) => setStockHead({ ...stockHead, date })} />
+            <DateField variant="outlined" label="Date" onSelect={(date) => setStockHead({ ...stockHead, date })} />
             <SelectField
+              variant="outlined"
               name="status"
               label="Status"
               value={stockHead.status}
@@ -130,6 +138,7 @@ function StockSection({ stockHead, stockItems, setStockHead, handleSetStock, han
             />
           </div>
           <SelectField
+            variant="outlined"
             name="suplier"
             label="Fournisseur"
             value={stockHead.supplier === 0 ? "null" : stockHead.supplier}
@@ -141,6 +150,7 @@ function StockSection({ stockHead, stockItems, setStockHead, handleSetStock, han
             onChange={(e) => setStockHead({ ...stockHead, supplier: Number(e.target.value) })}
           />
           <TextField
+            variant="outlined"
             name="totalAmountOrder"
             label="Montant total du commande"
             type="number"
@@ -148,6 +158,7 @@ function StockSection({ stockHead, stockItems, setStockHead, handleSetStock, han
             onChange={(e) => setStockHead({ ...stockHead, totalAmountOrder: Number(e.target.value) })}
           />
           <TextField
+            variant="outlined"
             name="payAmount"
             label="Montant payé"
             type="number"
@@ -156,11 +167,16 @@ function StockSection({ stockHead, stockItems, setStockHead, handleSetStock, han
           />
         </div>
 
-        <div className="w-full h-full overflow-hidden border-y border-primary-200">
-          <div className="overflow-y-scroll w-full h-full">
+        <div className="w-full h-full overflow-hidden">
+          <div className="overflow-y-scroll w-full h-full divide-y divide-black/5">
             {stockItems.map((stock, i) => (
               <div key={i} className="py-2">
-                <div className="flex items-center justify-between p-2 px-3 bg-white rounded-lg mb-1 text-sm">
+                <div
+                  style={{
+                    backgroundColor: activeTheme[50],
+                  }}
+                  className="flex items-center justify-between p-2 px-3 rounded-lg mb-1 text-sm"
+                >
                   <div className="w-full">
                     <div className="font-semibold">{getproductByIdentifierAction(stock.productIdentifier)?.name}</div>
                     <div className="font-semibold">
@@ -273,19 +289,17 @@ function StockAddScreen() {
   };
 
   return (
-    <>
-      <div className="flex relative items-start h-full w-[65vw] overflow-hidden p-2 gap-2 bg-white">
-        <ProductSection handleAddStock={handleAddStockItem} />
-        <StockSection
-          stockHead={stockHead}
-          setStockHead={setStockHead}
-          stockItems={stockItems}
-          handleSetStock={handleSetStockItem}
-          handleRemoveItem={deleteStockItem}
-          saveStockReplenishment={() => addStock(stockHead, stockItems, resetValue)}
-        />
-      </div>
-    </>
+    <div className="flex relative items-start h-full w-[65vw] overflow-hidden p-2 gap-2 divide-x divide-black/5">
+      <ProductSection handleAddStock={handleAddStockItem} />
+      <StockSection
+        stockHead={stockHead}
+        setStockHead={setStockHead}
+        stockItems={stockItems}
+        handleSetStock={handleSetStockItem}
+        handleRemoveItem={deleteStockItem}
+        saveStockReplenishment={() => addStock(stockHead, stockItems, resetValue)}
+      />
+    </div>
   );
 }
 

@@ -1,30 +1,41 @@
 import { ChevronDown } from "lucide-react";
 import { ReactNode, useState } from "react";
 import { playBeep } from "../../utils/interactive-sound";
+import useTheme from "../../stores/theme";
 
 interface DropdownProps {
   label: string;
   options?: string[];
   children?: ReactNode;
+  variant?: "filled" | "tonal" | "transparent";
   onSelect?: (option: string) => void;
 }
 
-function Dropdown({ label, options, children, onSelect }: DropdownProps) {
+function Dropdown({ label, options, children, variant = "filled", onSelect }: DropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
-  //   const [selectedOption, setSelectedOption] = useState(options[0]);
+  const { activeTheme } = useTheme();
 
   return (
     <div className="p-[2px] relative z-30 flex w-fit h-10 items-center gap-2 justify-center">
       <button
+        style={{
+          backgroundColor: variant === "filled" ? activeTheme[800] : variant === "tonal" ? activeTheme[50] : "",
+          color: variant === "filled" ? activeTheme[50] : activeTheme[800],
+        }}
         onClick={() => {
           setIsOpen(!isOpen);
           playBeep();
         }}
-        className={`rounded-full h-full px-4 p-2 flex items-center gap-2 ${isOpen ? "bg-primary-100" : "bg-primary-100/50"}`}
+        className={`rounded-full h-full px-4 p-2 flex items-center gap-2`}
       >
         <div>{label}</div>
 
-        <div className="border-l border-gray-200 h-full p-0" />
+        <div
+          style={{
+            borderColor: activeTheme[200],
+          }}
+          className="border-l h-full p-0"
+        />
 
         <div className="relative">
           <div className={`h-5 w-5 flex items-center justify-center transition-all duration-150 ${isOpen ? "rotate-180" : "rotate-0"}`}>

@@ -6,6 +6,7 @@ import { create } from "zustand";
 
 interface DataContextProps {
   stocks: StockReplenishmentType[] | [];
+  fetchStocks: () => void;
   addStock: (stockHead: StockReplenishmentType, stockItems: StockReplenishmentItemsType[], callBack?: () => void) => void;
 }
 
@@ -51,9 +52,16 @@ export const addStockAction = (stockHead: StockReplenishmentType, stockItems: St
   }
 };
 
-const useStockStore = create<DataContextProps>(() => ({
+const useStockStore = create<DataContextProps>((set, get) => ({
   stocks: fetchStocksAction(),
-  addStock: addStockAction,
+  fetchStocks: () => {
+    const stocks = fetchStocksAction();
+    set({ stocks });
+  },
+  addStock: (stockHead, stockItems) => {
+    addStockAction(stockHead, stockItems);
+    get().fetchStocks();
+  },
 }));
 
 export default useStockStore;

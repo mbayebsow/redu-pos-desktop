@@ -5,7 +5,7 @@ interface CardNumberProps {
   value: number | string;
   prefix?: ReactNode | string;
   suffix?: ReactNode | string;
-  styleValue?: React.HTMLAttributes<HTMLDivElement> | string;
+  styleValue?: React.HTMLAttributes<HTMLStyleElement> | string;
 }
 
 function Statistic({ title, value, prefix, suffix, styleValue }: CardNumberProps) {

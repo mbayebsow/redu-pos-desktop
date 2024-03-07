@@ -11,6 +11,7 @@ import TextField from "../components/ui/text-field";
 import AddClient from "../components/client/client-add";
 import { clientsColumns } from "../components/client/client-page-culumns";
 import Statistic from "../components/ui/statistic";
+import useTheme from "../stores/theme";
 
 const salesColumns = [
   {
@@ -45,6 +46,7 @@ const salesColumns = [
 ];
 
 function ClientSales({ selectedClient }: { selectedClient: CustomerType | undefined }) {
+  const { activeTheme } = useTheme();
   const sales = useSaleStore((state) => state.sales.filter((sale) => (selectedClient ? sale.customer === selectedClient.id : null)));
   const fetchSales = useSaleStore((state) => state.fetchSales);
 
@@ -63,18 +65,18 @@ function ClientSales({ selectedClient }: { selectedClient: CustomerType | undefi
   useEffect(() => fetchSales(), [selectedClient]);
 
   return (
-    <div className="w-full h-full flex flex-col gap-2">
-      <div className="w-full h-fit">
+    <div className="w-full h-full flex flex-col gap-2 overflow-hidden">
+      <div className="w-full h-fit flex flex-col">
         <SectionTitle>Achats</SectionTitle>
-        <div className="w-full h-fit divide-y rounded-lg bg-primary-50">
+        <div style={{ backgroundColor: activeTheme[50] }} className="w-full h-fit divide-y divide-black/10 rounded-lg">
           <Statistic title="Total achat" value={amountSum} />
           <Statistic title="Total dû" value={advanceSum} styleValue="text-red-500" />
         </div>
       </div>
 
-      <div className="w-full h-fit">
+      <div className="w-full h-full flex flex-col overflow-hidden">
         <SectionTitle>Historiques</SectionTitle>
-        <div className="w-full h-full overflow-y-scroll rounded-lg bg-primary-50">
+        <div style={{ backgroundColor: activeTheme[50] }} className="w-full h-full overflow-y-scroll rounded-lg">
           <div className="w-full h-fit relative">
             <Table data={sales} columns={salesColumns} />
           </div>
@@ -99,7 +101,7 @@ function CLientsList({ setSelectedClient }: { setSelectedClient: (client: Custom
         </div>
       </div>
 
-      <div className="w-full h-full overflow-y-scroll rounded-lg bg-primary-50">
+      <div className="w-full h-full overflow-y-scroll rounded-lg">
         <div className="h-fit w-full relative">
           {users && (
             <Table
@@ -122,17 +124,15 @@ function ClientsPage() {
   const [selectedClient, setSelectedClient] = useState<CustomerType>();
 
   return (
-    <>
-      <div className="flex gap-2 w-full h-full">
-        <div className="w-full h-full bg-white/60 p-2 rounded-xl">
-          <CLientsList setSelectedClient={setSelectedClient} />
-        </div>
-
-        <div className="w-[30rem] h-full bg-white/60 p-2 rounded-xl">
-          <ClientSales selectedClient={selectedClient} />
-        </div>
+    <div className="flex gap-2 w-full h-full">
+      <div className="w-full h-full">
+        <CLientsList setSelectedClient={setSelectedClient} />
       </div>
-    </>
+
+      <div className="w-[30rem] h-full">
+        <ClientSales selectedClient={selectedClient} />
+      </div>
+    </div>
   );
 }
 

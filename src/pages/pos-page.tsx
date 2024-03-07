@@ -20,18 +20,21 @@ import useProductStore from "../stores/product";
 import { playBeep, playSwitchClicked } from "../utils/interactive-sound";
 import { generateSequentialNo } from "../utils/helpers/generate-sequential-no";
 import Statistic from "../components/ui/statistic";
+import useTheme from "../stores/theme";
 
 function AddDeposit({ divisible }: { divisible: number }) {
+  const { activeTheme } = useTheme();
   const addDeposit = useCartStore((state) => state.addDeposit);
   const cartTotal = useCartStore((state) => state.cartTotal);
 
   return (
     <button
+      style={{ backgroundColor: activeTheme[700] }}
       onClick={() => {
         addDeposit(cartTotal / divisible);
         playBeep();
       }}
-      className="w-full p-1 bg-primary-700 rounded-md"
+      className="w-full p-1 rounded-md"
     >
       {Number((cartTotal / divisible).toPrecision(4))}
     </button>
@@ -39,10 +42,11 @@ function AddDeposit({ divisible }: { divisible: number }) {
 }
 
 function CartStat() {
+  const { activeTheme } = useTheme();
   const cartTotal = useCartStore((state) => state.cartTotal);
   const cartDeposit = useCartStore((state) => state.cartDeposit);
   return (
-    <div className="divide-y divide-primary-600 bg-primary-700 rounded-md">
+    <div style={{ backgroundColor: activeTheme[700] }} className="divide-y divide-white/30 rounded-md">
       <Statistic title="Montant a payer" value={numberWithCommas(cartTotal)} />
       <Statistic title="Montant reçu" value={numberWithCommas(cartDeposit)} />
       <Statistic title="Reduction" value={0} />
@@ -51,6 +55,7 @@ function CartStat() {
 }
 
 function PayButton() {
+  const { activeTheme } = useTheme();
   const [showModalReceipt, setShowModalReceipt] = useState<boolean>(false);
   const [receiptNo, setReceiptNo] = useState<string>("22");
 
@@ -123,9 +128,10 @@ function PayButton() {
       />
       <div className="p-0">
         <button
+          style={{ backgroundColor: activeTheme[200], color: activeTheme[700] }}
           disabled={cartTotal === 0}
           onClick={viewReceipt}
-          className={`h-fit  bg-primary-200 text-primary-900 text-center text-3xl font-bold w-full py-3 focus:outline-none rounded-md`}
+          className={`h-fit text-center text-3xl font-bold w-full py-3 focus:outline-none rounded-md`}
         >
           PAYER
         </button>
@@ -174,7 +180,7 @@ const ProductItem = memo<{ product: ProductsWithOptionsType }>(({ product }) => 
 function ProductsList({ filterByName, filterByCategory }) {
   const products = useProductStore((state) => state.products);
   return (
-    <div className="grid grid-cols-5 gap-1 h-fit w-full">
+    <div className="grid grid-cols-5 gap-2 h-fit w-full pr-1">
       {products
         .filter((product) => product.name.toLocaleLowerCase().includes(filterByName.toLocaleLowerCase()))
         .filter((product) => (filterByCategory == 0 ? product : product.category == filterByCategory))
@@ -232,7 +238,7 @@ function ProductSection() {
         </div>
       </div>
 
-      <div className="relative w-full h-full overflow-y-scroll px-1">
+      <div className="relative w-full h-full overflow-y-scroll">
         <div className="h-full w-full">
           <ProductsList filterByName={productFilterByName} filterByCategory={productFilterByCategory} />
         </div>
@@ -270,7 +276,7 @@ function BoxSection() {
             <AddDeposit divisible={1} />
           </div>
 
-          <hr className="my-2 border-primary-500" />
+          <hr className="my-2 border-white/30" />
 
           <NumericPad handleNumeric={handleNumeric} handleClear={handleClear} variant="dark" />
         </div>
@@ -282,17 +288,18 @@ function BoxSection() {
 }
 
 function PosPage() {
+  const { activeTheme } = useTheme();
   return (
-    <div className="flex-row flex gap-2 h-full w-full overflow-hidden">
-      <div className="w-1/2 h-full overflow-hidden bg-white/60 border border-primary-100/50 p-2 rounded-xl">
+    <div className="flex-row flex gap-3 h-full w-full overflow-hidden">
+      <div className="w-1/2 h-full overflow-hidden rounded-xl">
         <ProductSection />
       </div>
 
-      <div className="w-1/4 rounded-xl overflow-hidden bg-white/60 border border-primary-100/50 p-2">
+      <div style={{ backgroundColor: activeTheme[50] }} className="w-1/4 rounded-xl overflow-hidden">
         <Cart />
       </div>
 
-      <div className="rounded-xl w-1/4 p-3 h-full bg-primary-800 text-primary-50 overflow-hidden">
+      <div style={{ backgroundColor: activeTheme[800], color: activeTheme[50] }} className="rounded-xl w-1/4 p-3 h-full overflow-hidden">
         <BoxSection />
       </div>
     </div>

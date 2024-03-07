@@ -4,12 +4,14 @@ import Modal from "../ui/modal";
 import NumericPad from "../numeric-pad";
 import { CalculatorIcon } from "lucide-react";
 import { playButtonPress, playClear, playPhoneKeypad } from "../../utils/interactive-sound";
+import useTheme from "../../stores/theme";
 
 interface CalculatorContentProps {
   shouldEval: boolean;
   setShouldEval: (sate: boolean) => any;
 }
 function CalculatorContent({ shouldEval, setShouldEval }: CalculatorContentProps) {
+  const { activeTheme } = useTheme();
   const [input, setInput] = useState("0");
   const [formula, setFormula] = useState("0");
   const [sign, setSign] = useState<string | null>(null);
@@ -83,8 +85,13 @@ function CalculatorContent({ shouldEval, setShouldEval }: CalculatorContentProps
 
   return (
     <div className="w-full h-96 flex flex-col p-2 gap-3 text-lg">
-      <div className="w-full h-28 p-2 gap-2 flex flex-col rounded-lg bg-primary-100 text-right">
-        <div className="w-full h-2/5 border-b border-primary-200 pb-1 text-sm">{formula}</div>
+      <div
+        style={{
+          backgroundColor: activeTheme[300],
+        }}
+        className="w-full h-28 p-2 gap-2 flex flex-col rounded-lg text-right"
+      >
+        <div className="w-full h-2/5 border-b border-black/50 pb-1 text-sm">{formula}</div>
         <div className="w-full h-3/5 text-2xl font-bold">{input}</div>
       </div>
 
@@ -94,16 +101,48 @@ function CalculatorContent({ shouldEval, setShouldEval }: CalculatorContentProps
         </div>
 
         <div className="h-auto w-1/4 flex flex-col gap-2">
-          <button onClick={handleSign} id="multiply" value="*" className="w-full h-1/4 rounded-lg bg-primary-200">
+          <button
+            style={{
+              backgroundColor: activeTheme[300],
+            }}
+            onClick={handleSign}
+            id="multiply"
+            value="*"
+            className="w-full h-1/4 rounded-lg"
+          >
             x
           </button>
-          <button onClick={handleSign} id="subtract" value="-" className="w-full h-1/4 rounded-lg bg-primary-200">
+          <button
+            style={{
+              backgroundColor: activeTheme[300],
+            }}
+            onClick={handleSign}
+            id="subtract"
+            value="-"
+            className="w-full h-1/4 rounded-lg"
+          >
             -
           </button>
-          <button onClick={handleSign} id="add" value="+" className="w-full h-1/4 rounded-lg bg-primary-200">
+          <button
+            style={{
+              backgroundColor: activeTheme[300],
+            }}
+            onClick={handleSign}
+            id="add"
+            value="+"
+            className="w-full h-1/4 rounded-lg"
+          >
             +
           </button>
-          <button onClick={handleSign} id="divide" value="/" className="w-full h-1/4 rounded-lg bg-primary-200">
+          <button
+            style={{
+              backgroundColor: activeTheme[300],
+            }}
+            onClick={handleSign}
+            id="divide"
+            value="/"
+            className="w-full h-1/4 rounded-lg"
+          >
             /
           </button>
         </div>
@@ -117,7 +156,7 @@ function Calculator() {
   const [shouldEval, setShouldEval] = useState(false);
 
   return (
-    <div>
+    <div className="">
       <Modal
         showModal={openCalculator}
         setShowModal={setOpenCalculator}

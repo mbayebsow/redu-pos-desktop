@@ -2,9 +2,8 @@ import { formatISODate } from "../../utils";
 import { SalesType, TableColumns } from "../../utils/types";
 import useUserStore from "../../stores/users";
 import { memo } from "react";
-import Button from "../ui/button";
-import { Pen } from "lucide-react";
 import ProductsListButton from "./products-list-button";
+import SaleEditButton from "./sale-edit-button";
 
 const ClientFullName = ({ record }: { record: SalesType }) => {
   const getUserById = useUserStore((state) => state.getUserById);
@@ -21,7 +20,7 @@ const ClientFullName = ({ record }: { record: SalesType }) => {
 const SaleOptions = memo<{ saleId: number }>(({ saleId }) => {
   return (
     <div className="w-fit inline-flex gap-2 items-center">
-      <Button variant="icon" icon={<Pen />} />
+      <SaleEditButton saleId={saleId} />
       <ProductsListButton saleId={saleId} />
     </div>
   );

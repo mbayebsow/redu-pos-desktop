@@ -16,6 +16,7 @@ import UplaodField from "../ui/uplaod-field";
 import Button from "../ui/button";
 import Alert from "../ui/alert";
 import toast from "react-hot-toast";
+import useTheme from "../../stores/theme";
 
 interface ProductProps {
   product: ProductType;
@@ -110,10 +111,10 @@ function Head({ product, setProduct }: ProductProps) {
         )}
       </div>
       <div className="h-full flex flex-col justify-between items-center py-1">
-        <div className="text-orange-100 bg-orange-600 rounded-md">
+        <div className="text-blue-100 bg-blue-300 rounded-md">
           <Button variant="icon" icon={<Scan />} />
         </div>
-        <div className="bg-green-600 text-green-100 rounded-md">
+        <div className="bg-green-300 text-green-100 rounded-md">
           <Button variant="icon" icon={<RotateCcw />} handleClick={generateRandomIdentifier} />
         </div>
       </div>
@@ -244,6 +245,7 @@ function ProductPrices({ product, setProduct }: ProductProps) {
 }
 
 function ProductOptions({ product, options, setOptions }: OptionsProps & Partial<ProductProps>) {
+  const { activeTheme } = useTheme();
   const changeOptionValue = (index, name, value) => {
     const newOptions = [...options];
     newOptions[index][name] = name === "name" ? value : Number(value);
@@ -254,8 +256,13 @@ function ProductOptions({ product, options, setOptions }: OptionsProps & Partial
 
   return (
     product?.type === "variable" && (
-      <div className="bg-primary-50/50 p-2 rounded-lg border">
-        <h3 className="pl-2 mb-2 font-bold">Options:</h3>
+      <div
+        style={{
+          backgroundColor: activeTheme[50],
+        }}
+        className="p-2 rounded-lg"
+      >
+        <h3 className="pl-2 mb-2 font-bold text-left">Options:</h3>
         {options.map((option, index) => (
           <div key={index} className="border-t py-2">
             <div className="text-xs px-2 mb-2 flex items-center justify-between">
@@ -321,16 +328,16 @@ function ProductFields({ identifier, product, options, setOptions, setProduct }:
       setProduct(product);
     }
 
-    return () => {
-      if (product.identifier) {
-        setOptions(Object.create(INITIAL_PRODUCT_OPTIONS));
-        setProduct(Object.create(INITIAL_PRODUCT));
-      }
-    };
+    // return () => {
+    //   if (product.identifier) {
+    //     setOptions([Object.create(INITIAL_PRODUCT_OPTIONS)]);
+    //     setProduct(Object.create(INITIAL_PRODUCT));
+    //   }
+    // };
   }, [product.identifier]);
 
   return (
-    <div className="gap-2 flex flex-col w-[35vw] h-full bg-white">
+    <div className="gap-2 flex flex-col w-[35vw] h-full">
       <Head product={product} setProduct={setProduct} />
 
       <div className="flex flex-col gap-2 pt-0 p-2">

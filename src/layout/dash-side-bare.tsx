@@ -1,54 +1,51 @@
 import { HandCoins, ScanBarcode, ScrollText, Store, UsersRound } from "lucide-react";
 import { NavLink } from "react-router-dom";
+import useTheme from "../stores/theme";
 
 const NAVIGATIONS = [
   {
     name: "PDV",
-    path: "/i/pos",
+    path: "/dash/pos",
     color: "green",
     icon: <Store />,
   },
   {
     name: "Produits",
-    path: "/i/products",
+    path: "/dash/products",
     color: "red",
     icon: <ScanBarcode />,
   },
   {
     name: "Ventes",
-    path: "/i/sales",
+    path: "/dash/sales",
     color: "blue",
     icon: <HandCoins />,
   },
   {
     name: "Clients",
-    path: "/i/clients",
+    path: "/dash/clients",
     color: "pink",
     icon: <UsersRound />,
   },
   {
     name: "Stock",
-    path: "/i/stock",
+    path: "/dash/stock",
     color: "orange",
     icon: <ScrollText />,
   },
 ];
 
-function ApptNav() {
+function DashSideBare() {
+  const { activeTheme } = useTheme();
   return (
-    <div className="w-20 h-full flex flex-col gap-10">
-      <div className="aspect-square w-full  flex justify-center items-center h-12 p-3">
-        <div className="text-xl font-bold">REDU</div>
-      </div>
-
-      <div className="h-full flex flex-col justify-center items-center gap-5">
+    <div className="w-16 h-full flex flex-col gap-5">
+      <div className="h-full flex flex-col items-center gap-5">
         {NAVIGATIONS.map((nav, i) => (
           <NavLink
             key={i}
             to={nav.path}
-            className={({ isActive }) =>
-              `${isActive && "bg-primary-200"} aspect-square p-0 rounded-full fill-primary-600 w-12 flex flex-col gap-1 justify-center items-center`
-            }
+            style={({ isActive }) => ({ backgroundColor: isActive ? activeTheme[50] : "transparent" })}
+            className={`aspect-square p-0 rounded-xl w-12 flex flex-col gap-1 justify-center items-center`}
           >
             {nav.icon}
             <span className="text-xs hidden"> {nav.name} </span>
@@ -67,4 +64,4 @@ function ApptNav() {
   );
 }
 
-export default ApptNav;
+export default DashSideBare;

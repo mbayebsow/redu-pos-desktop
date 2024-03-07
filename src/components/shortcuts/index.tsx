@@ -39,7 +39,7 @@ function Shortcuts() {
 
   return (
     <div>
-      <Dropdown label="Racourcis">
+      <Dropdown variant="tonal" label="Racourcis">
         <div>
           <div className="opacity-50">Pages</div>
           <div className="pl-2 mt-1">

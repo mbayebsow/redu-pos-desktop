@@ -1,6 +1,8 @@
 import { createHashRouter } from "react-router-dom";
 
-import Layout from "../layout/app-layout.tsx";
+import DashLayout from "../layout/dash-layout.tsx";
+import RootLayout from "../layout/root-layout.tsx";
+
 import HomePage from "../pages/home-page.tsx";
 import ProductPage from "../pages/products-page.tsx";
 import ErrorPage from "../pages/error-page.tsx";
@@ -12,7 +14,7 @@ import StocksPage from "../pages/stocks-page.tsx";
 const routes = createHashRouter([
   {
     path: "/",
-    // element: <Layout />,
+    element: <RootLayout />,
     errorElement: <ErrorPage />,
     children: [
       {
@@ -20,32 +22,31 @@ const routes = createHashRouter([
         element: <HomePage />,
         index: true,
       },
-    ],
-  },
-  {
-    path: "i",
-    element: <Layout />,
-    errorElement: <ErrorPage />,
-    children: [
       {
-        path: "pos",
-        element: <PosPage />,
-      },
-      {
-        path: "products",
-        element: <ProductPage />,
-      },
-      {
-        path: "sales",
-        element: <SalesPage />,
-      },
-      {
-        path: "clients",
-        element: <ClientsPage />,
-      },
-      {
-        path: "stock",
-        element: <StocksPage />,
+        path: "dash",
+        element: <DashLayout />,
+        children: [
+          {
+            path: "pos",
+            element: <PosPage />,
+          },
+          {
+            path: "products",
+            element: <ProductPage />,
+          },
+          {
+            path: "sales",
+            element: <SalesPage />,
+          },
+          {
+            path: "clients",
+            element: <ClientsPage />,
+          },
+          {
+            path: "stock",
+            element: <StocksPage />,
+          },
+        ],
       },
     ],
   },
