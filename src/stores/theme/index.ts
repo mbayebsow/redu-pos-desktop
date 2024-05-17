@@ -106,7 +106,7 @@ const themes = {
 };
 
 function useTheme() {
-  let activeTheme = themes.Gray;
+  let activeTheme = themes.Green;
   let appBackground = isDesktop ? `${activeTheme[100]}80` : activeTheme[50];
   let pageBackground = isDesktop ? "#ffffff" : "#ffffff60";
   let activeNavMenu = isDesktop ? "#ffffff" : activeTheme[100];
